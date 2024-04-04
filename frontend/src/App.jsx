@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 
 function App() {
-  const [data, setData] = useState([]);// State for SQL users
+  const [data, setData] = useState([]); // State for SQL users
   const [mongoData, setMongoData] = useState([]); // State for MongoDB users
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:8081/users")
@@ -12,7 +15,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:8080/test/getAllMongoUsers")
+    fetch("http://localhost:8080/user/getAllMongoUsers")
       .then((res) => res.json())
       .then((data) => {
         console.log("MongoDB data:", data); // Log the data
@@ -20,6 +23,19 @@ function App() {
       })
       .catch((err) => console.error("Error fetching MongoDB users:", err));
   }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const user = { name, surname, email };
+    fetch("http://localhost:8080/user/addUser", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
+  };
 
   return (
     <>
@@ -32,9 +48,9 @@ function App() {
           <th>Email</th>
         </thead>
         <tbody>
-          {data.map(user => (
+          {data.map((user) => (
             <tr key={user.id}>
-              <td> {user._id} </td>
+              <td> {user.id} </td>
               <td> {user.name} </td>
               <td> {user.surname} </td>
               <td> {user.email} </td>
@@ -52,7 +68,7 @@ function App() {
           <th>Email</th>
         </thead>
         <tbody>
-        {mongoData.map(user => (
+          {mongoData.map((user) => (
             <tr key={user.id}>
               <td> {user._id} </td>
               <td> {user.name} </td>
@@ -62,10 +78,30 @@ function App() {
           ))}
         </tbody>
       </table>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Name"
+        />
+        <input
+          type="text"
+          value={surname}
+          onChange={(e) => setSurname(e.target.value)}
+          placeholder="Surname"
+        />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+        <button type="submit">Add User</button>
+      </form>
     </>
   );
 }
 
 export default App;
-
-

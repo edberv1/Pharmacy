@@ -9,6 +9,6 @@ const UserSchema = new mongoose.Schema({
 { timestamps: true });
 
 // Register the User model with Mongoose
-mongoose.model('testModel', UserSchema);
+mongoose.model('user', UserSchema);
 
-module.exports = mongoose.model('testModel', UserSchema);
+module.exports = mongoose.model('user', UserSchema);
