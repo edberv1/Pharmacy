@@ -1,10 +1,10 @@
-const User = require('../models/testModel');
+const testModel = require('../models/testModel');
 
 
 
-const getAllMongoUsers = async (req, res) => {
+  const getAllMongoUsers = async (req, res) => {
     try {
-      const users = await User.find(); // Retrieve all users from the database
+      const users = await testModel.find(); // Retrieve all users from the database
       console.log(users); // Log the users
       res.status(200).json(users); // Send the users as a JSON response
     } catch (error) {
@@ -12,9 +12,9 @@ const getAllMongoUsers = async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   };
-  
 
 
-module.exports = {
+
+  module.exports = {
     getAllMongoUsers
   }

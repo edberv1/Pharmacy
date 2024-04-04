@@ -12,10 +12,6 @@ const db = mysql.createConnection({
     database:'pharmacy'
 })
 
-app.get( '/', (req, res) => {
-    return res.json("Backend with sql")
-})
-
 app.get('/users', (req, res)=>{
     const sql = "SELECT * FROM users"
     db.query(sql , (err, data)=> { 

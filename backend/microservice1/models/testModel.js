@@ -5,7 +5,8 @@ const UserSchema = new mongoose.Schema({
   name: String,
   surname: String,
   email: String,
-}, { timestamps: true });
+}, 
+{ timestamps: true });
 
 // Register the User model with Mongoose
 mongoose.model('testModel', UserSchema);

@@ -14,9 +14,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use('/api/test', test);
-
-
+app.use('/test', test);
 
 
 mongoose.connect(process.env.MONGO_URI)

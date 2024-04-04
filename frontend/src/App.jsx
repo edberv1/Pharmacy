@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([]);// State for SQL users
   const [mongoData, setMongoData] = useState([]); // State for MongoDB users
 
   useEffect(() => {
@@ -12,8 +12,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Fetch MongoDB users
-    fetch("http://localhost:8080/api/test/getAllMongoUsers")
+    fetch("http://localhost:8080/test/getAllMongoUsers")
       .then((res) => res.json())
       .then((data) => {
         console.log("MongoDB data:", data); // Log the data
@@ -23,7 +22,7 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <>
       <h1>With SQL</h1>
       <table>
         <thead>
@@ -33,12 +32,12 @@ function App() {
           <th>Email</th>
         </thead>
         <tbody>
-          {data.map((d, i) => (
-            <tr key={d._id}>
-              <td> {d._id} </td>
-              <td> {d.name} </td>
-              <td> {d.surname} </td>
-              <td> {d.email} </td>
+          {data.map(user => (
+            <tr key={user.id}>
+              <td> {user._id} </td>
+              <td> {user.name} </td>
+              <td> {user.surname} </td>
+              <td> {user.email} </td>
             </tr>
           ))}
         </tbody>
@@ -53,18 +52,20 @@ function App() {
           <th>Email</th>
         </thead>
         <tbody>
-          {mongoData.map((d) => (
-            <tr key={d._id}>
-              <td>{d._id}</td>
-              <td>{d.name}</td>
-              <td>{d.surname}</td>
-              <td>{d.email}</td>
+        {mongoData.map(user => (
+            <tr key={user.id}>
+              <td> {user._id} </td>
+              <td> {user.name} </td>
+              <td> {user.surname} </td>
+              <td> {user.email} </td>
             </tr>
           ))}
         </tbody>
       </table>
-    </div>
+    </>
   );
 }
 
 export default App;
+
+
