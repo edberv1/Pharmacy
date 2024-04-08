@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import SignUp from "../pages/SignUp";
 
 function Navbar() {
   return (
@@ -21,17 +20,17 @@ function Navbar() {
           </a>
           <div className="flex items-center space-x-6 rtl:space-x-reverse">
             <Link
-              to={<SignUp/>}
+              to="/signup"
               className="text-sm  text-gray-500 dark:text-white hover:underline"
             >
               Sign Up
             </Link>
-            <a
-              href="#"
+            <Link
+              to="/login"
               className="text-sm  text-blue-600 dark:text-blue-500 hover:underline"
             >
               Login
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
