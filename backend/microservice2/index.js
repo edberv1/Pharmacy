@@ -12,14 +12,9 @@ const db = mysql.createConnection({
     database:'pharmacy'
 })
 
-app.get('/users', (req, res)=>{
-    const sql = "SELECT * FROM users"
-    db.query(sql , (err, data)=> { 
-        if(err) return res.json(err);
-        return res.json(data)
-    })
-})
 
 app.listen(8081, () =>{
-    console.log("listening to port 8081")
+    console.log("Listening to port 8081")
 })
+
+module.exports = db;
