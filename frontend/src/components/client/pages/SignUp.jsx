@@ -1,41 +1,32 @@
+/* eslint-disable no-undef */
 import { useState } from "react";
+import axios from 'axios';
+
 
 function SignUp() {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState('');
-
+  const [values, setValues] = useState({
+    firstname: '',
+    lastname: '',
+    password: '',
+    confirmPassword: ''
+  })
+ 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-     // Check if passwords match
-     if (password !== confirmPassword) {
-        alert('Passwords do not match!');
-        return;
+    //  // Check if passwords match
+    //  if (password !== confirmPassword) {
+    //     alert('Passwords do not match!');
+    //     return;
+    // }
+
+    try {
+      const response = await axios.post('http://localhost:8081/signup', values);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
     }
-
-    const response = await fetch('http://localhost:8081/api/users/signup', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            firstname,
-            lastname,
-            email,
-            password
-        }),
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-        alert('Signup successful!');
-    } else {
-        alert('Signup failed: ' + data.message);
-    }
+    
   };
   return (
     <>
@@ -75,8 +66,7 @@ function SignUp() {
                     name="firstname"
                     placeholder="Write your first name here..."
                     type="text"
-                    value={firstname}
-                    onChange={(e) => setFirstname(e.target.value)}
+                    onChange={(e) => setValues({...values, firstname: e.target.value})}
                     required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   />
@@ -108,8 +98,7 @@ function SignUp() {
                   name="lastname"
                   placeholder="Write your last name here..."
                   type="text"
-                  value={lastname}
-                  onChange={(e) => setLastname(e.target.value)}
+                  onChange={(e) => setValues({...values, lastname: e.target.value})}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                 />
                 <div className="hidden absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -140,7 +129,7 @@ function SignUp() {
                     name="email"
                     placeholder="user@example.com"
                     type="email"
-                    value={email} onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setValues({...values, email: e.target.value})}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5
                 "
                   />
@@ -172,7 +161,7 @@ function SignUp() {
                     id="password"
                     name="password"
                     type="password"
-                    value={password} onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setValues({...values, password: e.target.value})}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   />
                 </div>
@@ -190,7 +179,7 @@ function SignUp() {
                     id="password_confirmation"
                     name="password_confirmation"
                     type="password"
-                    value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => setValues({...values, confirmPassword: e.target.value})}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   />
                 </div>
