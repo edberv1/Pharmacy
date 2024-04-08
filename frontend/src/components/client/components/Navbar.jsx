@@ -18,7 +18,7 @@ function Navbar() {
           </a>
           <div className="flex items-center space-x-6 rtl:space-x-reverse">
             <a
-              href="tel:5541251234"
+              href=""
               className="text-sm  text-gray-500 dark:text-white hover:underline"
             >
               Sign Up
