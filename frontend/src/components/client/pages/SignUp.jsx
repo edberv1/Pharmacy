@@ -2,6 +2,7 @@
 import { useState } from "react";
 
 function SignUp() {
+  const [errorMessage, setErrorMessage] = useState(null);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -34,14 +35,29 @@ function SignUp() {
       },
       body: JSON.stringify(dataToSubmit),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          // If the response is not ok, parse the response body as text
+          return response.text().then((text) => {
+            // Throw the text as an error
+            throw new Error(text);
+          });
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log("Success:", data);
+        setErrorMessage(null); // Clear any previous error messages
+
+        // Save the token in local storage
+        localStorage.setItem('token', data.token);
       })
       .catch((error) => {
-        console.error("Error:", error);
+        setErrorMessage(error.message);
       });
   };
+
+
 
   return (
     <>
@@ -204,7 +220,9 @@ function SignUp() {
                   />
                 </div>
               </div>
-
+              {errorMessage && (
+                <div className="text-red-500 mt-2">{errorMessage}</div>
+              )}
               <div className="mt-6">
                 <span className="block w-full rounded-md shadow-sm">
                   <button
