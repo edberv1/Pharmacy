@@ -1,33 +1,47 @@
-/* eslint-disable no-undef */
 import { useState } from "react";
-import axios from 'axios';
-
 
 function SignUp() {
-  const [values, setValues] = useState({
-    firstname: '',
-    lastname: '',
-    password: '',
-    confirmPassword: ''
-  })
- 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-    //  // Check if passwords match
-    //  if (password !== confirmPassword) {
-    //     alert('Passwords do not match!');
-    //     return;
-    // }
-
-    try {
-      const response = await axios.post('http://localhost:8081/signup', values);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-    
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    const { confirmPassword, ...dataToSubmit } = formData;
+
+    fetch("http://localhost:8081/users/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataToSubmit),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -66,7 +80,8 @@ function SignUp() {
                     name="firstname"
                     placeholder="Write your first name here..."
                     type="text"
-                    onChange={(e) => setValues({...values, firstname: e.target.value})}
+                    value={formData.firstname}
+                    onChange={handleChange}
                     required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   />
@@ -98,7 +113,8 @@ function SignUp() {
                   name="lastname"
                   placeholder="Write your last name here..."
                   type="text"
-                  onChange={(e) => setValues({...values, lastname: e.target.value})}
+                  value={formData.lastname}
+                  onChange={handleChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                 />
                 <div className="hidden absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -129,7 +145,8 @@ function SignUp() {
                     name="email"
                     placeholder="user@example.com"
                     type="email"
-                    onChange={(e) => setValues({...values, email: e.target.value})}
+                    value={formData.email}
+                    onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5
                 "
                   />
@@ -161,7 +178,8 @@ function SignUp() {
                     id="password"
                     name="password"
                     type="password"
-                    onChange={(e) => setValues({...values, password: e.target.value})}
+                    value={formData.password}
+                    onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   />
                 </div>
@@ -169,17 +187,18 @@ function SignUp() {
 
               <div className="mt-6">
                 <label
-                  htmlFor="password_confirmation"
+                  htmlFor="confirmPassword"
                   className="block text-sm font-medium leading-5 text-gray-700"
                 >
                   Confirm Password
                 </label>
                 <div className="mt-1 rounded-md shadow-sm">
                   <input
-                    id="password_confirmation"
-                    name="password_confirmation"
+                    id="confirmPassword"
+                    name="confirmPassword"
                     type="password"
-                    onChange={(e) => setValues({...values, confirmPassword: e.target.value})}
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   />
                 </div>
