@@ -22,7 +22,7 @@ const signup = (req, res) => {
           const token = jwt.sign({ id: user }, process.env.SECRET, {
               expiresIn: 86400 // expires in 24 hours
           });
-          res.status(200).send({ auth: true, token: token });
+          res.status(200).send({ auth: true, token: token});
       }
   });
 }

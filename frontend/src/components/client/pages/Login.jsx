@@ -2,13 +2,18 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/no-unescaped-entities */
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../contexts/UserContexts";
 
 
 
 
 function Login() {
+
+  // Use user context
+  const { setUser } = useContext(UserContext)
+
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
@@ -52,6 +57,9 @@ function Login() {
 
         // Save the token in local storage
         localStorage.setItem('token', data.token);
+        // Update the user state
+        setUser({email: formData.email})
+        navigate('/')
       })
       .catch((error) => {
         setError(error.message);

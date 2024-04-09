@@ -1,8 +1,14 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../contexts/UserContexts";
 
 function SignUp() {
+
+  // Use user context
+  const { setUser } = useContext(UserContext)
+
   const [errorMessage, setErrorMessage] = useState(null);
   const [formData, setFormData] = useState({
     firstname: "",
@@ -12,12 +18,17 @@ function SignUp() {
     confirmPassword: "",
   });
 
+  // Use navigate hook
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,6 +40,7 @@ function SignUp() {
 
     const { confirmPassword, ...dataToSubmit } = formData;
 
+    
     fetch("http://localhost:8081/users/signup", {
       method: "POST",
       headers: {
@@ -36,22 +48,25 @@ function SignUp() {
       },
       body: JSON.stringify(dataToSubmit),
     })
-      .then((response) => {
-        if (!response.ok) {
-          // If the response is not ok, parse the response body as text
-          return response.text().then((text) => {
-            // Throw the text as an error
-            throw new Error(text);
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        setErrorMessage(null); // Clear any previous error messages
-
-        // Save the token in local storage
-        localStorage.setItem('token', data.token);
+    .then((response) => {
+      if (!response.ok) {
+        // If the response is not ok, parse the response body as text
+        return response.text().then((text) => {
+          // Throw the text as an error
+          throw new Error(text);
+        });
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Success:", data);
+      setErrorMessage(null); // Clear any previous error messages
+      
+      // Save the token in local storage
+      localStorage.setItem('token', data.token);
+      // Update the user state
+      setUser({email: formData.email})
+        navigate('/')
       })
       .catch((error) => {
         setErrorMessage(error.message);
