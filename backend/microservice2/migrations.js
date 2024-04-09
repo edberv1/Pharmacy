@@ -6,82 +6,72 @@ const runMigrations = (pool) => {
       console.error('Error getting connection from pool:', err);
       return;
     }
+    
     console.log('Connected to MySQL database');
-
-    // Create Users Table
-    const createTableQueryUsers = `
-      CREATE TABLE IF NOT EXISTS users (
+    // Create Roles Table
+    const createTableQueryRoles = `
+      CREATE TABLE IF NOT EXISTS roles (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        firstname VARCHAR(255) NOT NULL,
-        lastname VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        roleId INT DEFAULT 3
+        role VARCHAR(255) NOT NULL
       )
     `;
 
-    connection.query(createTableQueryUsers, (err, result) => {
+    connection.query(createTableQueryRoles, (err, result) => {
       if (err) {
-        console.error('Error creating users table:', err);
+        console.error('Error creating roles table:', err);
         connection.release(); // Release the connection back to the pool
         return;
       }
-      console.log('Users Table created successfully');
+      console.log('Roles Table created successfully');
 
-      // Create Roles Table
-      const createTableQueryRoles = `
-        CREATE TABLE IF NOT EXISTS roles (
+      // Create Users Table
+      const createTableQueryUsers = `
+        CREATE TABLE IF NOT EXISTS users (
           id INT AUTO_INCREMENT PRIMARY KEY,
-          role VARCHAR(255) NOT NULL
+          firstname VARCHAR(255) NOT NULL,
+          lastname VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          roleId INT,
+          FOREIGN KEY (roleId) REFERENCES roles(id)
         )
       `;
 
-      connection.query(createTableQueryRoles, (err, result) => {
+      connection.query(createTableQueryUsers, (err, result) => {
         if (err) {
-          console.error('Error creating roles table:', err);
+          console.error('Error creating users table:', err);
           connection.release(); // Release the connection back to the pool
           return;
         }
-        console.log('Roles Table created successfully');
+        console.log('Users Table created successfully');
 
-        // Check the current count of roles
-        connection.query('SELECT * FROM roles', (err, rows) => {
+        // Insert initial roles if necessary
+        connection.query('SELECT COUNT(*) AS roleCount FROM roles', (err, rows) => {
           if (err) {
-            console.error('Error getting roles:', err);
+            console.error('Error counting roles:', err);
             connection.release(); // Release the connection back to the pool
             return;
           }
-          console.log('Result:', rows);
 
-          const existingRoles = rows.map(row => row.role);
-          console.log('Existing Roles:', existingRoles);
+          const roleCount = rows[0].roleCount;
+          if (roleCount < 3) {
+            const rolesToInsert = ['superadmin', 'admin', 'user'];
+            const insertRoleQuery = 'INSERT INTO roles (role) VALUES ?';
+            const roleValues = rolesToInsert.map(role => [role]);
 
-          if (existingRoles.length < 3) {
-            const roles = ['superadmin', 'admin', 'user'];
-            const missingRoles = roles.filter(role => !existingRoles.includes(role));
-            console.log('Missing Roles:', missingRoles);
-
-            if (missingRoles.length > 0) {
-              const values = missingRoles.map(role => [role]);
-              const insertDataQuery = `INSERT INTO roles (role) VALUES ?`;
-
-              connection.query(insertDataQuery, [values], (err, result) => {
-                if (err) {
-                  console.error('Error inserting data into roles table:', err);
-                  connection.release(); // Release the connection back to the pool
-                  return;
-                }
-                console.log('Data inserted into roles table');
-              });
-            } else {
-              console.log('No new roles to insert.');
-            }
+            connection.query(insertRoleQuery, [roleValues], (err, result) => {
+              if (err) {
+                console.error('Error inserting roles:', err);
+                connection.release(); // Release the connection back to the pool
+                return;
+              }
+              console.log('Roles inserted successfully');
+              connection.release(); // Release the connection back to the pool
+            });
           } else {
             console.log('Roles table already contains 3 roles. No new roles inserted.');
+            connection.release(); // Release the connection back to the pool
           }
-
-          // Release the connection back to the pool
-          connection.release();
         });
       });
     });
