@@ -1,4 +1,3 @@
-const mysql = require('mysql');
 const db = require('../db.js');
 
 let User = function(user){
