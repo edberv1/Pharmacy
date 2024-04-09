@@ -23,7 +23,7 @@ function SignUp() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      setErrorMessage("Passwords do not match!");
       return;
     }
 
@@ -133,6 +133,7 @@ function SignUp() {
                   type="text"
                   value={formData.lastname}
                   onChange={handleChange}
+                  required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                 />
                 <div className="hidden absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -165,6 +166,7 @@ function SignUp() {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
+                    required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5
                 "
                   />
@@ -198,6 +200,7 @@ function SignUp() {
                     type="password"
                     value={formData.password}
                     onChange={handleChange}
+                    required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   />
                 </div>
@@ -217,6 +220,7 @@ function SignUp() {
                     type="password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
+                    required
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   />
                 </div>
