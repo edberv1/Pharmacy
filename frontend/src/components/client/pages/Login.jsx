@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { Link } from "react-router-dom";
 
 
 function Login() {
@@ -46,8 +47,8 @@ function Login() {
               Login
             </button>
             <span className="text-gray-400 ">Don't have an account?</span>
-            <span className="text-blue-500 hover:underline cursor-pointer pl-1">
-              Sign Up.
+            <span className="text-blue-500 hover:underline cursor-pointer pl-1 hover:font-semibold">
+              <Link to="../signup">Sign Up. </Link>
           </span> </span>
                 </div>
 

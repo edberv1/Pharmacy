@@ -21,16 +21,20 @@ function Navbar() {
           <div className="flex items-center space-x-6 rtl:space-x-reverse">
             <Link
               to="/signup"
-              className="text-sm  text-gray-500 dark:text-white hover:underline"
+              className="text-md  text-white dark:text-white-500 hover:underline"
             >
+              <i className="fa-solid fa-user pr-2"></i>
               Sign Up
             </Link>
+            <span>
             <Link
               to="/login"
-              className="text-sm  text-blue-600 dark:text-blue-500 hover:underline"
+              className="text-md pl-2 text-white dark:text-white-500 hover:underline "
             >
-              Login
+            <i className="fa-solid text-white fa-right-to-bracket pr-2"></i>
+               Login
             </Link>
+            </span>
           </div>
         </div>
       </nav>

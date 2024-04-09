@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function SignUp() {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -72,12 +73,12 @@ function SignUp() {
             Create a new account
           </h2>
           <p className="mt-2 text-center text-sm leading-5 text-gray-500 max-w">
-            <a
-              href="#"
+            <Link
+              to='../login'
               className="font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline transition ease-in-out duration-150"
             >
               Already have an account? Login.
-            </a>
+            </Link>
           </p>
         </div>
 
