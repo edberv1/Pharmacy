@@ -1,15 +1,17 @@
 const mysql = require('mysql');
+const runMigrations = require('./migrations.js');
 
-const db = mysql.createConnection({
-    host: "localhost",
-    user: 'root',
-    password: '',
-    database:'pharmacy'
-})
-
-db.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected to the database!");
+// Create a connection pool to the MySQL database
+const pool = mysql.createPool({
+  connectionLimit: 10, // Adjust the connection limit as needed
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'pharmacy'
 });
 
-module.exports = db;
+// Export the pool
+module.exports = pool;
+
+// Run migrations
+runMigrations(pool);
