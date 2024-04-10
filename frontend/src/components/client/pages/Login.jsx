@@ -54,12 +54,25 @@ function Login() {
       .then((data) => {
         console.log("Success:", data);
         setError(null); // Clear any previous error messages
-
-        // Save the token in local storage
+      
+        // Save the token and roleId in local storage
         localStorage.setItem('token', data.token);
+        localStorage.setItem('roleId', data.roleId);
+      
         // Update the user state
         setUser({email: formData.email})
-        navigate('/')
+      
+        // Navigate based on roleId
+        switch(data.roleId) {
+          case 1:
+            navigate('/superadmin');
+            break;
+          case 2:
+            navigate('/admin');
+            break;
+          default:
+            navigate('/');
+        }
       })
       .catch((error) => {
         setError(error.message);

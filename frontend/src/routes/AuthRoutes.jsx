@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-import { UserContext } from "../contexts/UserContext";
+import { UserContext } from "../contexts/UserContexts";
 
 const AuthRoutes = () => {
   const { user } = useContext(UserContext);

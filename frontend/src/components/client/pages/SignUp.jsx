@@ -66,7 +66,7 @@ function SignUp() {
       localStorage.setItem('token', data.token);
       // Update the user state
       setUser({email: formData.email})
-        navigate('/')
+        navigate('/login')
       })
       .catch((error) => {
         setErrorMessage(error.message);

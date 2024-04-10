@@ -19,6 +19,7 @@ const handleLogout = () => {
     setUser({ email: null, posts: [] });
     // Remove the items from local storage
     localStorage.removeItem("token");
+    localStorage.removeItem("roleId");
     // Navigate to Home page
     navigate("/");
   }

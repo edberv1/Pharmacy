@@ -58,11 +58,11 @@ const loginUser = async (req, res) => {
         }
   
         // Create a token
-        const token = jwt.sign({ id: user.id }, process.env.SECRET, {
+        const token = jwt.sign({ id: user.id, roleId: user.roleId }, process.env.SECRET, {
           expiresIn: 86400 // expires in 24 hours
         });
   
-        res.status(200).send({ auth: true, token: token });
+        res.status(200).send({ auth: true, token: token, roleId: user.roleId });
       });
     } catch (error) {
       res.status(500).json({ error: error.message });
