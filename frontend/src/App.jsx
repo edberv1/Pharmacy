@@ -6,11 +6,13 @@ import SignUp from "./components/client/pages/SignUp";
 import Login from "./components/client/pages/Login";
 import withRole from "./routes/WithRole";
 import Users from "./components/superadmin/pages/Users"
+import Roles from "./components/superadmin/pages/Roles";
 
 function App() {
   const AdminRoute = withRole(Admin, 'admin');
   const SuperAdminRoute = withRole(SuperAdmin, 'superadmin');
   const UsersRoute = withRole(Users, 'superadmin');
+  const RolesRoutes = withRole(Roles, 'superadmin');
 
   return (
     <Router>
@@ -26,6 +28,7 @@ function App() {
         {/* SuperAdmin Routes */}
         <Route path="superadmin" element={<SuperAdminRoute />} />
         <Route path="/superadmin/users" element={<UsersRoute />} />
+        <Route path="/superadmin/roles" element={<RolesRoutes />} />
         {/* SuperAdmin Routes */}
 
       
