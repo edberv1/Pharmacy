@@ -26,7 +26,7 @@ function App() {
         {/* Admin Routes */}
 
         {/* SuperAdmin Routes */}
-        <Route path="superadmin" element={<SuperAdminRoute />} />
+        <Route path="superadmin" element={<SuperAdminRoute />}/>
         <Route path="/superadmin/users" element={<UsersRoute />} />
         <Route path="/superadmin/roles" element={<RolesRoutes />} />
         {/* SuperAdmin Routes */}

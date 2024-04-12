@@ -24,7 +24,8 @@ function Navbar() {
 
   return (
     <>
-      <nav className="bg-white border-gray-200 dark:bg-gray-900">
+    {/* <nav className="bg-white border-gray-200 text-black dark:bg-gray-900"> */} 
+      <nav className="border-gray-200 bg-gray-900 text-white">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
           <a
             href="#"
