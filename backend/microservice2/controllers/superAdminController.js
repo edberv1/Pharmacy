@@ -1,5 +1,11 @@
-const superAdminController = (req, res) => {
-  res.status(200).json({ message: "SuperAdmin route accessed." });
-};
+const User = require('../models/userModel');
+const db = require('../db.js');
+require('dotenv').config();
 
-module.exports = superAdminController;
+
+
+const getAllUsers = async (req,res) =>{
+ 
+}
+
+module.exports = {getAllUsers};

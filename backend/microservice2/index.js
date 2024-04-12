@@ -4,6 +4,8 @@ const bodyParser = require('body-parser'); //for session login save
 const cookieParser = require('cookie-parser') //for session login save
 const session = require('express-session'); //for session login save
 const userRouter = require('./routes/user');
+const adminRouter = require('./routes/admin');
+const superAdminRouter = require('./routes/superAdmin.js')
 
 const app = express()
 app.use(
@@ -28,8 +30,10 @@ app.use(
     })
   );
 
-  app.use('/users', userRouter);
 
+  app.use('/users', userRouter);
+  app.use('/admin', adminRouter);
+  app.use('/superAdmin', superAdminRouter);
 
 app.listen(8081, () =>{
     console.log("Listening to port 8081")

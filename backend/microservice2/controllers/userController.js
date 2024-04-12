@@ -85,9 +85,4 @@ const getLoginUser = async (req, res) => {
   });
 };
 
-
-const getAllUsers = async (req,res) =>{
- 
-}
-
- module.exports = { signup, loginUser, getLoginUser, getAllUsers};
+ module.exports = { signup, loginUser, getLoginUser};
