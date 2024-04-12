@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContexts";
@@ -5,7 +6,6 @@ import { UserContext } from "../../../contexts/UserContexts";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loginStatus, setLoginStatus] = useState(null);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
@@ -25,9 +25,9 @@ function Login() {
     })
       .then((response) => {
         if (!response.ok) {
-          setLoginStatus(false);
-          setError("Login failed. Please try again.");
-          throw new Error("Login failed");
+          return response.json().then((data) => {
+            throw new Error(data.message || "Login failed. Please try again.");
+          });
         }
         return response.json();
       })
@@ -41,10 +41,10 @@ function Login() {
   
         // Navigate based on role
         switch (data.role) {
-          case 'superadmin':
+          case "superadmin":
             navigate("/superadmin");
             break;
-          case 'admin':
+          case "admin":
             navigate("/admin");
             break;
           default:
@@ -52,9 +52,14 @@ function Login() {
         }
       })
       .catch((error) => {
-        console.error("Login Error:", error);
+        console.error("Login Error:", error.message);
+        setError(error.message || "An error occurred. Please try again."); // Update error state with the error message from the backend
       });
   };
+  
+  
+  
+  
   
 
   return (
@@ -111,9 +116,10 @@ function Login() {
               </div>
             </div>
 
-            {loginStatus === false && (
-              <div className="text-red-500 mt-2">Login failed. Please try again.</div>
-            )}
+            {error && (
+                    <div className="text-red-500 mt-2">{error}</div>
+                    )}
+
 
             <div className="mt-6">
               <span className="block w-full rounded-md shadow-sm">
