@@ -4,27 +4,35 @@ import Client from "./components/client/Client";
 import SuperAdmin from "./components/superadmin/SuperAdmin";
 import SignUp from "./components/client/pages/SignUp";
 import Login from "./components/client/pages/Login";
-import AuthRoutes from "./routes/AuthRoutes";
-import GuestRoutes from "./routes/GuestRoutes";
+import withRole from "./routes/WithRole";
+import Users from "./components/superadmin/pages/Users"
 
 function App() {
+  const AdminRoute = withRole(Admin, 'admin');
+  const SuperAdminRoute = withRole(SuperAdmin, 'superadmin');
+  const UsersRoute = withRole(Users, 'superadmin');
+
   return (
     <Router>
       <Routes>
         <Route path="/" index element={<Client />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
 
-        <Route element={<AuthRoutes />}>
-          <Route path="admin" element={<Admin />} />
-          <Route path="superadmin" element={<SuperAdmin />} />
-        </Route>
+        {/* Admin Routes */}
+        <Route path="admin" element={<AdminRoute />} />
+        {/* Admin Routes */}
 
-        <Route element={<GuestRoutes />}>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-        </Route>
+        {/* SuperAdmin Routes */}
+        <Route path="superadmin" element={<SuperAdminRoute />} />
+        <Route path="/superadmin/users" element={<UsersRoute />} />
+        {/* SuperAdmin Routes */}
+
+      
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
