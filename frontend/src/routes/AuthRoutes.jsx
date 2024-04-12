@@ -6,8 +6,15 @@ import { UserContext } from "../contexts/UserContexts";
 const AuthRoutes = () => {
   const { user } = useContext(UserContext);
 
-  // Check if User email is true/exist then show the proper routes otherwise redirect to Login page
-  return user.email ? <Outlet /> : <Navigate to="/login" />;
+  // If the user is not authenticated, redirect to the login page
+  if (!user.email) {
+    return <Navigate to="/login" />;
+  }
+
+  // If the user is authenticated, render the child routes
+  return <Outlet />;
 };
+
+
 
 export default AuthRoutes;

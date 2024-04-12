@@ -19,55 +19,71 @@ const signup = (req, res) => {
           }
       } else {
           // Create a token
-          const token = jwt.sign({ id: user }, process.env.SECRET, {
-              expiresIn: 86400 // expires in 24 hours
-          });
+          const token = jwt.sign({ id: user.id }, "pharmacy", {
+            expiresIn: 86400 // expires in 24 hours
+        });
           res.status(200).send({ auth: true, token: token});
       }
   });
 }
 
+
 const loginUser = async (req, res) => {
-    // Grab data from request body
-    const { email, password } = req.body;
-  
-    // Check the fields are not empty
-    if (!email || !password) {
-        return res.status(400).send("All fields are required."); // Incorrect email
+  const { email, password } = req.body;
+
+  const query = "SELECT users.*, roles.role FROM users INNER JOIN roles ON users.roleId = roles.id WHERE email = ?";
+  const values = [email];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      return res.status(500).send({ auth: false, message: 'Database error.' });
     }
-  
-    try {
-      // Query the database for user with given email
-      const query = 'SELECT * FROM users WHERE email = ?';
-      db.query(query, [email], async (error, results) => {
-        if (error) {
-          return res.status(500).json({ error: error.message });
-        }
-  
-        // Check if user exists
-        if (results.length === 0) {
-            return res.status(400).send("Incorrect email. Please try again."); // Incorrect email
-        }
-  
-        const user = results[0];
-  
-        // Check password
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            return res.status(400).send("Incorrect password. Please try again."); // Incorrect password
-        }
-  
-        // Create a token
-        const token = jwt.sign({ id: user.id, roleId: user.roleId }, process.env.SECRET, {
-          expiresIn: 86400 // expires in 24 hours
-        });
-  
-        res.status(200).send({ auth: true, token: token, roleId: user.roleId });
+
+    if (result.length === 0) {
+      return res.status(401).send({ auth: false, message: 'User not found.' });
+    }
+
+    const user = result[0];
+
+    bcrypt.compare(password, user.password, (err, response) => {
+      if (err) {
+        return res.status(500).send({ auth: false, message: 'Failed to compare passwords.' });
+      }
+
+      if (!response) {
+        return res.status(401).send({ auth: false, message: 'Wrong email/password combination.' });
+      }
+
+      const token = jwt.sign({ id: user.id, role: user.role }, "pharmacy", {
+        expiresIn: 300, // 5 minutes
       });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+
+      res.json({
+        auth: true,
+        token: token,
+        role: user.role,
+        email: user.email, 
+      });
+    });
+  });
+};
+
+const getLoginUser = async (req, res) => {
+  const token = req.headers['x-access-token'];
+  
+  if (!token) {
+    return res.send({ loggedIn: false });
+  }
+
+  jwt.verify(token, "pharmacy", (err, decoded) => {
+    if (err) {
+      return res.send({ loggedIn: false });
     }
-  };
+
+    // You could query your database here to get more user information if needed
+    res.send({ loggedIn: true, user: { id: decoded.id, role: decoded.role } });
+  });
+};
 
 
- module.exports = { signup, loginUser };
+ module.exports = { signup, loginUser, getLoginUser};

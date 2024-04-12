@@ -7,7 +7,7 @@ const GuestRoutes = () => {
   const { user } = useContext(UserContext);
 
   // Check if User email is NOT true/exist then show the proper routes otherwise redirect to Dashboard page
-  return !user.email ? <Outlet /> : <Navigate to="/admin" />;
+  return !user.email ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default GuestRoutes;

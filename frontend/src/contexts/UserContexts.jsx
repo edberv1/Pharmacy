@@ -1,17 +1,23 @@
-/* eslint-disable react/prop-types */
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
-// User context to be used in useContext hook
 export const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
-  // User global state
   const [user, setUser] = useState({
-    email: localStorage.getItem("email"),
-    // posts: [],
+    email: null,
+    role: null,
   });
 
-  // Return a custom component to expose User state to the children components
+  // Add this useEffect hook
+  useEffect(() => {
+    const email = localStorage.getItem("email");
+    const role = localStorage.getItem("role");
+
+    if (email && role) {
+      setUser({ email, role });
+    }
+  }, []);
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}
