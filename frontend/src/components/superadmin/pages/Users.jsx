@@ -31,7 +31,6 @@ const Users = () => {
   
   return (
     <div>
-      <Sidebar/>
       <h1>All Users</h1>
       {users.map(user => (
         <div key={user.id}>
