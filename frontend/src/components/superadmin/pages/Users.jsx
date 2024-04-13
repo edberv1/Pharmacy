@@ -1,41 +1,48 @@
-import { useState, useEffect } from 'react';
-import Sidebar from "../components/Sidebar";
+import React, { useEffect, useState } from 'react';
 
-function Users() {
-  // Define state to store the list of users
+const Users = () => {
   const [users, setUsers] = useState([]);
 
-  // Fetch all users from the backend when the component mounts
   useEffect(() => {
-    async function fetchUsers() {
+    const fetchUsers = async () => {
       try {
-        const response = await fetch('/superadmin/getAllUsers');
+        const token = localStorage.getItem('token'); 
+        const response = await fetch('http://localhost:8081/superAdmin/getAllUsers', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': token
+          },
+          credentials: 'include',
+        });
         if (!response.ok) {
-          throw new Error('Failed to fetch users');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const usersData = await response.json();
-        setUsers(usersData);
+        const data = await response.json();
+        setUsers(data);
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error fetching users: ", error);
       }
-    }
-
+    };
+  
     fetchUsers();
-  }, []); // Empty dependency array ensures the effect runs only once when the component mounts
+  }, []);
+  
+  
+  
 
   return (
-    <>
-      <Sidebar/>
-      <div>
-        <h2>All Users</h2>
-        <ul>
-          {users.map(user => (
-            <li key={user.id}>{user.name}</li>
-          ))}
-        </ul>
-      </div>
-    </>
+    <div>
+      <h1>All Users</h1>
+      {users.map(user => (
+        <div key={user.id}>
+          <p>{user.id}</p>
+          <h2>{user.firstname}</h2>
+          <p>{user.email}</p>        
+        </div>
+      ))}
+    </div>
   );
-}
+};
 
 export default Users;
