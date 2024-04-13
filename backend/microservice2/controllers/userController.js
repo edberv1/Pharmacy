@@ -55,7 +55,7 @@ const loginUser = async (req, res) => {
       }
 
       const token = jwt.sign({ id: user.id, role: user.role }, "pharmacy", {
-        expiresIn: 300, // 5 minutes
+        expiresIn: 21600, // 6 hours
       });
 
       res.json({

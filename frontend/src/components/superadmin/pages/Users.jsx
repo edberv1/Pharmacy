@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import Sidebar from '../components/Sidebar';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -28,11 +29,9 @@ const Users = () => {
     fetchUsers();
   }, []);
   
-  
-  
-
   return (
     <div>
+      <Sidebar/>
       <h1>All Users</h1>
       {users.map(user => (
         <div key={user.id}>
