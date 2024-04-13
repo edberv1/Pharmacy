@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import Sidebar from '../components/Sidebar';
+import UserTable from '../components/UserTable';
+
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -31,6 +32,7 @@ const Users = () => {
   
   return (
     <div>
+      <UserTable/>
       <h1>All Users</h1>
       {users.map(user => (
         <div key={user.id}>
