@@ -9,7 +9,7 @@ function SuperAdmin() {
         <div className="flex-none">
           <Sidebar />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 mt-6">
            {/* Use Outlet to render the content of nested routes */}
            <Outlet />
         </div>
