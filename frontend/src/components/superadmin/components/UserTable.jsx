@@ -1,6 +1,8 @@
 /* eslint-disable react/no-unknown-property */
 import { useEffect, useState } from "react";
 import CreateUserModal from "../components/CreateUserModal";
+import EditUserModal from "./EditUserModal";
+import DeleteUserModal from "./DeleteUserModal";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
@@ -88,7 +90,8 @@ function UserTable() {
                 Create User
               </button>
               <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
-              {/* Modal component */}
+              <EditUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
+              <DeleteUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
               <div className="flex items-center space-x-3 w-full md:w-auto">
                 <button
                   id="actionsDropdownButton"
