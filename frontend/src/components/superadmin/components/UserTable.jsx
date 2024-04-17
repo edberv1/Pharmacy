@@ -2,11 +2,14 @@
 import { useEffect, useState } from "react";
 import CreateUserModal from "../components/CreateUserModal";
 import DeleteUserModal from "./DeleteUserModal";
+import EditUserModal from "./EditUserModal";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -14,6 +17,16 @@ function UserTable() {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const openEditModal = (user) => {
+    setIsEditModalOpen(true);
+    setSelectedUser(user);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
   };
 
   const openDeleteModal = (userId) => {
@@ -226,6 +239,7 @@ function UserTable() {
                       <div className="flex items-center space-x-4">
                         <button
                           type="button"
+                          onClick={() => openEditModal(user)}
                           data-drawer-target="drawer-update-product"
                           data-drawer-show="drawer-update-product"
                           aria-controls="drawer-update-product"
@@ -234,6 +248,9 @@ function UserTable() {
                           <i className="fa-solid fa-pen-to-square pr-2"></i>
                           Edit
                         </button>
+                        {isEditModalOpen && selectedUser && (
+                      <EditUserModal isOpen={isEditModalOpen} onClose={closeEditModal} user={selectedUser} /> // Pass selected user details to EditUserModal  
+                    )}
 
                         <DeleteUserModal isOpen={userIdToDelete === user.id} onClose={closeDeleteModal}  userId={user.id} />{" "}
                         <button

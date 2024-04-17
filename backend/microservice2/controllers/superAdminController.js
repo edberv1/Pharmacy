@@ -93,4 +93,46 @@ const deleteUser = async (req, res) => {
   });
 };
 
-module.exports = { getAllUsers, createUser, deleteUser };
+const editUser = async (req, res) => {
+  const userId = req.params.id;
+  const { firstname, lastname, email, roleId } = req.body;
+
+  // Perform validation
+  if (!firstname || !lastname || !email || !roleId) {
+    return res.status(400).send("Firstname, lastname, email, and roleId are required");
+  }
+
+  // Check if the user with the given ID exists
+  const checkQuery = "SELECT * FROM users WHERE id = ?";
+  
+  db.query(checkQuery, [userId], async (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    // If user not found
+    if (checkResults.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    try {
+      // Update the user details
+      const updateQuery = `
+        UPDATE users 
+        SET firstname = ?, lastname = ?, email = ?, roleId = ? 
+        WHERE id = ?`;
+
+      const queryParams = [firstname, lastname, email, roleId, userId];
+
+      await db.query(updateQuery, queryParams);
+
+      res.send({ message: "User updated successfully", userId: userId });
+    } catch (updateErr) {
+      console.error("Error executing MySQL query: ", updateErr);
+      res.status(500).send("Internal Server Error: " + updateErr.message);
+    }
+  });
+};
+
+module.exports = { getAllUsers, createUser, deleteUser, editUser };
