@@ -16,6 +16,44 @@ const getAllUsers = async (req, res) => {
   });
 };
 
+const createUser = async (req, res) => {
+  const { firstname, lastname, email, password, roleId } = req.body;
+
+  // Perform validation
+  if (!firstname || !lastname || !email || !password || !roleId) {
+    return res.status(400).send("All fields are required");
+  }
+
+  // Check if the user with the same email already exists
+  const checkQuery = "SELECT * FROM users WHERE email = ?";
+  db.query(checkQuery, [email], (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    if (checkResults.length > 0) {
+      return res.status(400).send("User with this email already exists");
+    }
+
+    // If the email is unique and roleId is valid, proceed with user creation
+    const insertQuery = "INSERT INTO users (firstname, lastname, email, password, roleId) VALUES (?, ?, ?, ?, ?)";
+    db.query(insertQuery, [firstname, lastname, email, password, roleId], (insertErr, result) => {
+      if (insertErr) {
+        console.error("Error executing MySQL query: ", insertErr);
+        return res.status(500).send("Internal Server Error: " + insertErr.message);
+      }
+      res.send({ message: "User created successfully", userId: result.insertId });
+    });
+  });
+};
 
 
-module.exports = { getAllUsers };
+
+
+module.exports = { getAllUsers, createUser };
+
+
+
+
+

@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unknown-property */
 import { useEffect, useState } from "react";
-import CreateUserModal from "../components/CreateUserModal";  
+import CreateUserModal from "../components/CreateUserModal";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -57,7 +57,7 @@ function UserTable() {
                     <svg
                       aria-hidden="true"
                       className="w-5 h-5 text-gray-500 dark:text-gray-400"
-                      fill="currentColor"
+                      fillRule="currentColor"
                       viewBox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg"
                     >
@@ -79,15 +79,16 @@ function UserTable() {
               </form>
             </div>
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-            <button
-        type="button"
-        onClick={openModal}
-        className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
-      >
-        <i className="fa-solid fa-user-plus pr-2"> </i>
-        Create User
-      </button>
-      <CreateUserModal isOpen={isModalOpen} onClose={closeModal} /> {/* Modal component */}
+              <button
+                type="button"
+                onClick={openModal}
+                className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+              >
+                <i className="fa-solid fa-user-plus pr-2"> </i>
+                Create User
+              </button>
+              <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
+              {/* Modal component */}
               <div className="flex items-center space-x-3 w-full md:w-auto">
                 <button
                   id="actionsDropdownButton"
@@ -97,7 +98,7 @@ function UserTable() {
                 >
                   <svg
                     className="-ml-1 mr-1.5 w-5 h-5"
-                    fill="currentColor"
+                    fillRule="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
@@ -147,7 +148,7 @@ function UserTable() {
                     aria-hidden="true"
                     className="h-4 w-4 mr-2 text-gray-400"
                     viewBox="0 0 20 20"
-                    fill="currentColor"
+                    fillRule="currentColor"
                   >
                     <path
                       fillRule="evenodd"
@@ -158,7 +159,7 @@ function UserTable() {
                   Filter
                   <svg
                     className="-mr-1 ml-1.5 w-5 h-5"
-                    fill="currentColor"
+                    fillRule="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                     aria-hidden="true"
@@ -173,9 +174,7 @@ function UserTable() {
                 <div
                   id="filterDropdown"
                   className="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
-                >
-                  
-                </div>
+                ></div>
               </div>
             </div>
           </div>
@@ -215,19 +214,29 @@ function UserTable() {
                     <td className="px-4 py-3">{user.email}</td>
                     <td className="px-4 py-3">{user.roleId}</td>
                     <td className="px-4 py-3 flex items-center justify-end">
-                    <div className="flex items-center space-x-4">
-                                    <button type="button" data-drawer-target="drawer-update-product" data-drawer-show="drawer-update-product" aria-controls="drawer-update-product" className="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    <i class="fa-solid fa-pen-to-square pr-2"></i>
-                                        Edit
-                                    </button>
-                                    
-                                    <button type="button" data-modal-target="delete-modal" data-modal-toggle="delete-modal" class="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 -ml-0.5" viewbox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                        </svg>
-                                        Delete
-                                    </button>
-                                </div>
+                      <div className="flex items-center space-x-4">
+                        <button
+                          type="button"
+                          data-drawer-target="drawer-update-product"
+                          data-drawer-show="drawer-update-product"
+                          aria-controls="drawer-update-product"
+                          className="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                          <i className="fa-solid fa-pen-to-square pr-2"></i>
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          data-modal-target="delete-modal"
+                          data-modal-toggle="delete-modal"
+                          className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+                        >
+                          
+                          <i className="fa-solid fa-trash pr-2"></i>
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -258,7 +267,7 @@ function UserTable() {
                   <svg
                     className="w-5 h-5"
                     aria-hidden="true"
-                    fill="currentColor"
+                    fillRule="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -320,7 +329,7 @@ function UserTable() {
                   <svg
                     className="w-5 h-5"
                     aria-hidden="true"
-                    fill="currentColor"
+                    fillRule="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
                   >
