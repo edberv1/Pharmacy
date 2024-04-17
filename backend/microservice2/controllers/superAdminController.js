@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const bcrypt = require('bcrypt');
 const db = require("../db.js");
 require("dotenv").config();
 
@@ -24,6 +25,9 @@ const createUser = async (req, res) => {
     return res.status(400).send("All fields are required");
   }
 
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
   // Check if the user with the same email already exists
   const checkQuery = "SELECT * FROM users WHERE email = ?";
   db.query(checkQuery, [email], (checkErr, checkResults) => {
@@ -38,7 +42,7 @@ const createUser = async (req, res) => {
 
     // If the email is unique and roleId is valid, proceed with user creation
     const insertQuery = "INSERT INTO users (firstname, lastname, email, password, roleId) VALUES (?, ?, ?, ?, ?)";
-    db.query(insertQuery, [firstname, lastname, email, password, roleId], (insertErr, result) => {
+    db.query(insertQuery, [firstname, lastname, email, hashedPassword, roleId], (insertErr, result) => {
       if (insertErr) {
         console.error("Error executing MySQL query: ", insertErr);
         return res.status(500).send("Internal Server Error: " + insertErr.message);
