@@ -1,12 +1,12 @@
 /* eslint-disable react/no-unknown-property */
 import { useEffect, useState } from "react";
 import CreateUserModal from "../components/CreateUserModal";
-import EditUserModal from "./EditUserModal";
 import DeleteUserModal from "./DeleteUserModal";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -14,6 +14,14 @@ function UserTable() {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const openDeleteModal = (userId) => {
+    setUserIdToDelete(userId);
+  };
+
+  const closeDeleteModal = () => {
+    setUserIdToDelete(null);
   };
 
   useEffect(() => {
@@ -28,7 +36,7 @@ function UserTable() {
               "Content-Type": "application/json",
               "x-access-token": token,
             },
-            credentials: "include",
+            
           }
         );
         if (!response.ok) {
@@ -90,8 +98,6 @@ function UserTable() {
                 Create User
               </button>
               <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
-              <EditUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
-              <DeleteUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
               <div className="flex items-center space-x-3 w-full md:w-auto">
                 <button
                   id="actionsDropdownButton"
@@ -229,8 +235,10 @@ function UserTable() {
                           Edit
                         </button>
 
+                        <DeleteUserModal isOpen={userIdToDelete === user.id} onClose={closeDeleteModal}  userId={user.id} />{" "}
                         <button
                           type="button"
+                          onClick={() => openDeleteModal(user.id)} // Pass the userId to openDeleteModal
                           data-modal-target="delete-modal"
                           data-modal-toggle="delete-modal"
                           className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"

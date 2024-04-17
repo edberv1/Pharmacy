@@ -1,5 +1,5 @@
 const User = require("../models/userModel");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const db = require("../db.js");
 require("dotenv").config();
 
@@ -8,7 +8,9 @@ const getAllUsers = async (req, res) => {
   db.query(query, (err, results) => {
     if (err) {
       console.error("Error executing MySQL query: ", err);
-      return res.status(500).json({ error: "Internal Server Error", details: err.message });
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
     }
     if (!results || results.length === 0) {
       return res.status(404).json({ error: "No users found" });
@@ -41,23 +43,54 @@ const createUser = async (req, res) => {
     }
 
     // If the email is unique and roleId is valid, proceed with user creation
-    const insertQuery = "INSERT INTO users (firstname, lastname, email, password, roleId) VALUES (?, ?, ?, ?, ?)";
-    db.query(insertQuery, [firstname, lastname, email, hashedPassword, roleId], (insertErr, result) => {
-      if (insertErr) {
-        console.error("Error executing MySQL query: ", insertErr);
-        return res.status(500).send("Internal Server Error: " + insertErr.message);
+    const insertQuery =
+      "INSERT INTO users (firstname, lastname, email, password, roleId) VALUES (?, ?, ?, ?, ?)";
+    db.query(
+      insertQuery,
+      [firstname, lastname, email, hashedPassword, roleId],
+      (insertErr, result) => {
+        if (insertErr) {
+          console.error("Error executing MySQL query: ", insertErr);
+          return res
+            .status(500)
+            .send("Internal Server Error: " + insertErr.message);
+        }
+        res.send({
+          message: "User created successfully",
+          userId: result.insertId,
+        });
       }
-      res.send({ message: "User created successfully", userId: result.insertId });
+    );
+  });
+};
+
+const deleteUser = async (req, res) => {
+  const userId = req.params.id; // Assuming the user ID is passed as a route parameter
+
+  // Check if the user exists
+  const checkQuery = "SELECT * FROM users WHERE id = ?";
+  db.query(checkQuery, [userId], (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    if (checkResults.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    // If the user exists, proceed with deletion
+    const deleteQuery = "DELETE FROM users WHERE id = ?";
+    db.query(deleteQuery, [userId], (deleteErr, result) => {
+      if (deleteErr) {
+        console.error("Error executing MySQL query: ", deleteErr);
+        return res
+          .status(500)
+          .send("Internal Server Error: " + deleteErr.message);
+      }
+      res.send({ message: "User deleted successfully" });
     });
   });
 };
 
-
-
-
-module.exports = { getAllUsers, createUser };
-
-
-
-
-
+module.exports = { getAllUsers, createUser, deleteUser };
