@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
 import { useEffect, useState } from "react";
-import CreateUserModal from "../components/CreateUserModal";
-import DeleteUserModal from "./DeleteUserModal";
-import EditUserModal from "./EditUserModal";
+import CreateUserModal from "./UserModal/CreateUserModal";
+import DeleteUserModal from "./UserModal/DeleteUserModal";
+import EditUserModal from "./UserModal/EditUserModal";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
