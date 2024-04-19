@@ -1,73 +1,13 @@
-/* eslint-disable react/no-unknown-property */
 import { useEffect, useState } from "react";
-import CreateUserModal from "../components/CreateUserModal";
-import DeleteUserModal from "./DeleteUserModal";
-import EditUserModal from "./EditUserModal";
+function RoleTable() {
 
-function UserTable() {
-  const [users, setUsers] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userIdToDelete, setUserIdToDelete] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+    const [roles, setRoles] = useState([]);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const openEditModal = (user) => {
-    setIsEditModalOpen(true);
-    setSelectedUser(user);
-  };
-
-  const closeEditModal = () => {
-    setIsEditModalOpen(false);
-    setSelectedUser(null);
-  };
-
-  const openDeleteModal = (userId) => {
-    setUserIdToDelete(userId);
-  };
-
-  const closeDeleteModal = () => {
-    setUserIdToDelete(null);
-  };
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:8081/superAdmin/getAllUsers",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-access-token": token,
-            },
-            
-          }
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching users: ", error);
-      }
-    };
-
-    fetchUsers();
-  }, []);
 
   return (
     <>
-      <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
+    
+    <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
         <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
@@ -104,13 +44,13 @@ function UserTable() {
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
               <button
                 type="button"
-                onClick={openModal}
+                // onClick={openModal}
                 className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
               >
                 <i className="fa-solid fa-user-plus pr-2"> </i>
                 Create User
               </button>
-              <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
+
               <div className="flex items-center space-x-3 w-full md:w-auto">
                 
                
@@ -163,13 +103,7 @@ function UserTable() {
                     ID
                   </th>
                   <th scope="col" className="px-4 py-3">
-                    User Details
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Email
-                  </th>
-                  <th scope="col" className="py-3 ">
-                    RoleID
+                    Role
                   </th>
                   <th scope="col" className="px-4 py-3 flex justify-center">
                     Actions
@@ -177,24 +111,23 @@ function UserTable() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
-                  <tr className="border-b dark:border-gray-700" key={user.id}>
+                {roles.map((role) => (
+                  <tr className="border-b dark:border-gray-700" key={role.id}>
                     <th
                       scope="row"
                       className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      {user.id}
+                      {role.id}
                     </th>
                     <td className="px-4 py-3">
-                      {user.firstname} {user.lastname}
+                      {role.role} 
                     </td>
-                    <td className="px-4 py-3">{user.email}</td>
-                    <td className="px-4 py-3">{user.roleId}</td>
+  
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
                         <button
                           type="button"
-                          onClick={() => openEditModal(user)}
+                        //   onClick={() => openEditModal(user)}
                           data-drawer-target="drawer-update-product"
                           data-drawer-show="drawer-update-product"
                           aria-controls="drawer-update-product"
@@ -203,14 +136,10 @@ function UserTable() {
                           <i className="fa-solid fa-pen-to-square pr-2"></i>
                           Edit
                         </button>
-                        {isEditModalOpen && selectedUser && (
-                      <EditUserModal isOpen={isEditModalOpen} onClose={closeEditModal} user={selectedUser} /> // Pass selected user details to EditUserModal  
-                    )}
-
-                        <DeleteUserModal isOpen={userIdToDelete === user.id} onClose={closeDeleteModal}  userId={user.id} />{" "}
+                        
                         <button
                           type="button"
-                          onClick={() => openDeleteModal(user.id)} // Pass the userId to openDeleteModal
+                        //   onClick={() => openDeleteModal(user.id)} // Pass the userId to openDeleteModal
                           data-modal-target="delete-modal"
                           data-modal-toggle="delete-modal"
                           className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
@@ -328,8 +257,10 @@ function UserTable() {
           </nav>
         </div>
       </div>
+   
+
     </>
-  );
+  )
 }
 
-export default UserTable;
+export default RoleTable
