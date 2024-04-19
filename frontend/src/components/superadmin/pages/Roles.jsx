@@ -1,9 +1,10 @@
-
+import RoleTable from "../components/RoleTable"
 
 function Roles() {
   return (
     <>
-        <h1>This is User Roles Table</h1>
+      <RoleTable />
+      
     </>
   )
 }

@@ -1,13 +1,45 @@
 import { useEffect, useState } from "react";
+
 function RoleTable() {
+  const [roles, setRoles] = useState([]);
+  
 
-    const [roles, setRoles] = useState([]);
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "http://localhost:8081/superAdmin/getAllRoles",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-access-token": token,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setRoles(data);
+      } catch (error) {
+        console.error("Error fetching users: ", error);
+      }
+    };
 
+    fetchRoles();
+  }, []);
+
+ 
+
+  
 
   return (
     <>
-    
-    <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
+     
+
+      <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
         <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
@@ -44,16 +76,14 @@ function RoleTable() {
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
               <button
                 type="button"
-                // onClick={openModal}
+                // onClick={() => openModal()}
                 className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
               >
                 <i className="fa-solid fa-user-plus pr-2"> </i>
-                Create User
+                Create Role
               </button>
 
               <div className="flex items-center space-x-3 w-full md:w-auto">
-                
-               
                 <button
                   id="filterDropdownButton"
                   data-dropdown-toggle="filterDropdown"
@@ -119,15 +149,13 @@ function RoleTable() {
                     >
                       {role.id}
                     </th>
-                    <td className="px-4 py-3">
-                      {role.role} 
-                    </td>
-  
+                    <td className="px-4 py-3">{role.role}</td>
+
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
                         <button
                           type="button"
-                        //   onClick={() => openEditModal(user)}
+                          // onClick={() => openModal(role)}
                           data-drawer-target="drawer-update-product"
                           data-drawer-show="drawer-update-product"
                           aria-controls="drawer-update-product"
@@ -136,15 +164,14 @@ function RoleTable() {
                           <i className="fa-solid fa-pen-to-square pr-2"></i>
                           Edit
                         </button>
-                        
+
                         <button
                           type="button"
-                        //   onClick={() => openDeleteModal(user.id)} // Pass the userId to openDeleteModal
+                            // onClick={() => openModal(role.id)} // Pass the userId to openDeleteModal
                           data-modal-target="delete-modal"
                           data-modal-toggle="delete-modal"
                           className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
                         >
-                          
                           <i className="fa-solid fa-trash pr-2"></i>
                           Delete
                         </button>
@@ -257,10 +284,8 @@ function RoleTable() {
           </nav>
         </div>
       </div>
-   
-
     </>
-  )
+  );
 }
 
-export default RoleTable
+export default RoleTable;

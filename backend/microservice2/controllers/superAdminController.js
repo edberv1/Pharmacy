@@ -3,6 +3,9 @@ const bcrypt = require("bcrypt");
 const db = require("../db.js");
 require("dotenv").config();
 
+
+// =======================================USERS=======================================
+
 const getAllUsers = async (req, res) => {
   const query = "SELECT * FROM users";
   db.query(query, (err, results) => {
@@ -136,6 +139,68 @@ const editUser = async (req, res) => {
 };
 
 
+// =======================================ROLES=======================================
+
+const getAllRoles = async (req, res) => {
+  const query = "SELECT * FROM roles";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "No roles found" });
+    }
+    res.json(results);
+  });
+};
+
+const createRole = async (req, res) => {
+  const { role } = req.body;
+
+  // Perform validation
+  if (role) {
+    return res.status(400).send("All fields are required");
+  }
+
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
+  // Check if the user with the same email already exists
+  const checkQuery = "SELECT * FROM roles WHERE id = ?";
+  db.query(checkQuery, [role], (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    if (checkResults.length > 0) {
+      return res.status(400).send("Role already exists");
+    }
+
+    // If the email is unique and roleId is valid, proceed with user creation
+    const insertQuery =
+      "INSERT INTO roles (role) VALUES (?)";
+    db.query(
+      insertQuery,
+      [role],
+      (insertErr, result) => {
+        if (insertErr) {
+          console.error("Error executing MySQL query: ", insertErr);
+          return res
+            .status(500)
+            .send("Internal Server Error: " + insertErr.message);
+        }
+        res.send({
+          message: "User created successfully",
+          roleId: result.insertId,
+        });
+      }
+    );
+  });
+};
 
 
-module.exports = { getAllUsers, createUser, deleteUser, editUser };
+module.exports = { getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole };
