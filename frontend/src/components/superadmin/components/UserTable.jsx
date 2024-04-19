@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
 import { useEffect, useState } from "react";
 import CreateUserModal from "../components/CreateUserModal";
@@ -36,6 +37,8 @@ function UserTable() {
   const closeDeleteModal = () => {
     setUserIdToDelete(null);
   };
+
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -168,8 +171,8 @@ function UserTable() {
                   <th scope="col" className="px-4 py-3">
                     Email
                   </th>
-                  <th scope="col" className="py-3 ">
-                    RoleID
+                  <th scope="col" className="px-4 py-3">
+                    Role
                   </th>
                   <th scope="col" className="px-4 py-3 flex justify-center">
                     Actions
@@ -189,7 +192,7 @@ function UserTable() {
                       {user.firstname} {user.lastname}
                     </td>
                     <td className="px-4 py-3">{user.email}</td>
-                    <td className="px-4 py-3">{user.roleId}</td>
+                    <td className="px-4 py-3">{user.roleId === 1 ? "superadmin" : user.roleId === 2 ? "admin" : "user"}</td>
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
                         <button
