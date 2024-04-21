@@ -1,7 +1,41 @@
+/* eslint-disable no-undef */
 import { useEffect, useState } from "react";
+import CreateRoleModal from "./RoleModal/CreateRoleModal";
+import EditRoleModal from "./RoleModal/EditRoleModal";
+import DeleteRoleModal from "./RoleModal/DeleteRoleModal";
 
 function RoleTable() {
   const [roles, setRoles] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [roleIdToDelete, setRoleIdToDelete] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const openEditModal = (role) => {
+    setIsEditModalOpen(true);
+    setSelectedRole(role);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedRole(null);
+  };
+
+  const openDeleteModal = (roleId) => {
+    setRoleIdToDelete(roleId);
+  };
+
+  const closeDeleteModal = () => {
+    setRoleIdToDelete(null);
+  };
   
 
   useEffect(() => {
@@ -24,16 +58,12 @@ function RoleTable() {
         const data = await response.json();
         setRoles(data);
       } catch (error) {
-        console.error("Error fetching users: ", error);
+        console.error("Error fetching roles: ", error);
       }
     };
 
     fetchRoles();
   }, []);
-
- 
-
-  
 
   return (
     <>
@@ -76,13 +106,13 @@ function RoleTable() {
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
               <button
                 type="button"
-                // onClick={() => openModal()}
+                onClick={() => openModal()}
                 className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
               >
                 <i className="fa-solid fa-user-plus pr-2"> </i>
                 Create Role
               </button>
-
+              <CreateRoleModal isOpen={isModalOpen} onClose={closeModal} />{" "}
               <div className="flex items-center space-x-3 w-full md:w-auto">
                 <button
                   id="filterDropdownButton"
@@ -154,8 +184,8 @@ function RoleTable() {
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
                         <button
-                          type="button"
-                          // onClick={() => openModal(role)}
+                            type="button"
+                            onClick={() => openEditModal(role)}
                           data-drawer-target="drawer-update-product"
                           data-drawer-show="drawer-update-product"
                           aria-controls="drawer-update-product"
@@ -164,10 +194,15 @@ function RoleTable() {
                           <i className="fa-solid fa-pen-to-square pr-2"></i>
                           Edit
                         </button>
-
-                        <button
-                          type="button"
-                            // onClick={() => openModal(role.id)} // Pass the userId to openDeleteModal
+                        {isEditModalOpen && selectedRole && (
+                      <EditRoleModal isOpen={isEditModalOpen} onClose={closeEditModal} role={selectedRole} /> // Pass selected user details to EditUserModal  
+                    )} 
+                    
+                    <DeleteRoleModal isOpen={roleIdToDelete === role.id} onClose={closeDeleteModal}  roleId={role.id} />{" "}  
+                    {/* userId={role.id}  */}
+                    <button
+                        type="button"
+                        onClick={() => openDeleteModal(role.id)} // Pass the roleId to openDeleteModal
                           data-modal-target="delete-modal"
                           data-modal-toggle="delete-modal"
                           className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
