@@ -161,46 +161,104 @@ const createRole = async (req, res) => {
   const { role } = req.body;
 
   // Perform validation
-  if (role) {
-    return res.status(400).send("All fields are required");
+  if (!role) {
+    return res.status(400).send("Role required");
   }
 
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
-
-  // Check if the user with the same email already exists
-  const checkQuery = "SELECT * FROM roles WHERE id = ?";
-  db.query(checkQuery, [role], (checkErr, checkResults) => {
-    if (checkErr) {
-      console.error("Error executing MySQL query: ", checkErr);
-      return res.status(500).send("Internal Server Error: " + checkErr.message);
-    }
+  // Check if the user with the same role already exists
+  try {
+    // Check if the role already exists
+    const checkQuery = "SELECT * FROM roles WHERE role = ?";
+    const checkResults = await db.query(checkQuery, [role]);
 
     if (checkResults.length > 0) {
       return res.status(400).send("Role already exists");
     }
 
-    // If the email is unique and roleId is valid, proceed with user creation
-    const insertQuery =
-      "INSERT INTO roles (role) VALUES (?)";
-    db.query(
-      insertQuery,
-      [role],
-      (insertErr, result) => {
-        if (insertErr) {
-          console.error("Error executing MySQL query: ", insertErr);
-          return res
-            .status(500)
-            .send("Internal Server Error: " + insertErr.message);
-        }
-        res.send({
-          message: "User created successfully",
-          roleId: result.insertId,
-        });
-      }
-    );
+    // Insert the new role
+    const insertQuery = "INSERT INTO roles (role) VALUES (?)";
+    const result = await db.query(insertQuery, [role]);
+
+    res.send({
+      message: "Role created successfully",
+      roleId: result.insertId,
+    });
+
+  } catch (error) {
+    console.error("Error executing MySQL query: ", error);
+    res.status(500).send("Internal Server Error: " + error.message);
+  }
+};
+
+const editRole = async (req, res) => {
+  const roleId = req.params.id;
+  const {role} = req.body;
+
+  // Perform validation
+  if (!role) {
+    return res.status(400).send("Role required");
+  }
+
+  // Check if the user with the given ID exists
+  const checkQuery = "SELECT * FROM roles WHERE id = ?";
+  
+  db.query(checkQuery, [roleId], async (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    // If user not found
+    if (checkResults.length === 0) {
+      return res.status(404).send("Role not found");
+    }
+
+    try {
+      // Update the role details
+      const updateQuery = `
+        UPDATE roles 
+        SET role = ?
+        WHERE id = ?`;
+
+      const queryParams = [role, roleId];
+
+      await db.query(updateQuery, queryParams);
+
+      res.send({ message: "Role updated successfully", roleId: roleId }); //userId: userId
+    } catch (updateErr) {
+      console.error("Error executing MySQL query: ", updateErr);
+      res.status(500).send("Internal Server Error: " + updateErr.message);
+    }
   });
 };
 
+const deleteRole = async (req, res) => {
+  const roleId = req.params.id; // Assuming the user ID is passed as a route parameter
 
-module.exports = { getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole };
+  // Check if the user exists
+  const checkQuery = "SELECT * FROM roles WHERE id = ?";
+  db.query(checkQuery, [roleId], (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    if (checkResults.length === 0) {
+      return res.status(404).send("Role not found");
+    }
+
+    // If the user exists, proceed with deletion
+    const deleteQuery = "DELETE FROM roles WHERE id = ?";
+    db.query(deleteQuery, [roleId], (deleteErr, result) => {
+      if (deleteErr) {
+        console.error("Error executing MySQL query: ", deleteErr);
+        return res
+          .status(500)
+          .send("Internal Server Error: " + deleteErr.message);
+      }
+      res.send({ message: "Role deleted successfully" });
+    });
+  });
+};
+
+module.exports = { getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, editRole, deleteRole };
