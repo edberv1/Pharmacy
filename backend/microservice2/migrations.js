@@ -12,7 +12,7 @@ const runMigrations = (pool) => {
     const createTableQueryRoles = `
       CREATE TABLE IF NOT EXISTS roles (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        role VARCHAR(255) NOT NULL
+        role VARCHAR(255) NOT NULL UNIQUE
       )
     `;
 

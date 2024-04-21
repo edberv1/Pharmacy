@@ -141,7 +141,7 @@ const editUser = async (req, res) => {
 
 // =======================================ROLES=======================================
 
-const getAllRoles = async (req, res) => {
+const getAllRoles = async (req, res) => { 
   const query = "SELECT * FROM roles";
   db.query(query, (err, results) => {
     if (err) {
@@ -165,14 +165,13 @@ const createRole = async (req, res) => {
     return res.status(400).send("Role required");
   }
 
-  // Check if the user with the same role already exists
   try {
     // Check if the role already exists
     const checkQuery = "SELECT * FROM roles WHERE role = ?";
     const checkResults = await db.query(checkQuery, [role]);
 
     if (checkResults.length > 0) {
-      return res.status(400).send("Role already exists");
+      return res.status(400).send("Role already exists. Please try another role.");
     }
 
     // Insert the new role
@@ -185,10 +184,16 @@ const createRole = async (req, res) => {
     });
 
   } catch (error) {
+    // Check if the error is due to duplicate entry
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).send("Role already exists. Please try another role.");
+    }
+
     console.error("Error executing MySQL query: ", error);
     res.status(500).send("Internal Server Error: " + error.message);
   }
 };
+
 
 const editRole = async (req, res) => {
   const roleId = req.params.id;
