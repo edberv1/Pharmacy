@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/no-unknown-property */
 import { useEffect, useState } from "react";
 import CreateUserModal from "./UserModal/CreateUserModal";
 import DeleteUserModal from "./UserModal/DeleteUserModal";
@@ -7,10 +5,12 @@ import EditUserModal from "./UserModal/EditUserModal";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [searchInput, setSearchInput] = useState("");
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -38,8 +38,6 @@ function UserTable() {
     setUserIdToDelete(null);
   };
 
-
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -52,7 +50,6 @@ function UserTable() {
               "Content-Type": "application/json",
               "x-access-token": token,
             },
-            
           }
         );
         if (!response.ok) {
@@ -60,6 +57,7 @@ function UserTable() {
         }
         const data = await response.json();
         setUsers(data);
+        setFilteredUsers(data); // Initialize filteredUsers with all users
       } catch (error) {
         console.error("Error fetching users: ", error);
       }
@@ -67,6 +65,14 @@ function UserTable() {
 
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    // Filter users based on search input
+    const filtered = users.filter((user) =>
+      `${user.firstname} ${user.lastname}`.toLowerCase().includes(searchInput.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  }, [searchInput, users]);
 
   return (
     <>
@@ -99,6 +105,8 @@ function UserTable() {
                     id="simple-search"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Search"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                     required=""
                   />
                 </div>
@@ -115,8 +123,6 @@ function UserTable() {
               </button>
               <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
               <div className="flex items-center space-x-3 w-full md:w-auto">
-                
-               
                 <button
                   id="filterDropdownButton"
                   data-dropdown-toggle="filterDropdown"
@@ -180,7 +186,7 @@ function UserTable() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <tr className="border-b dark:border-gray-700" key={user.id}>
                     <th
                       scope="row"
@@ -192,7 +198,13 @@ function UserTable() {
                       {user.firstname} {user.lastname}
                     </td>
                     <td className="px-4 py-3">{user.email}</td>
-                    <td className="px-4 py-3">{user.roleId === 1 ? "superadmin" : user.roleId === 2 ? "admin" : "user"}</td>
+                    <td className="px-4 py-3">
+                      {user.roleId === 1
+                        ? "superadmin"
+                        : user.roleId === 2
+                        ? "admin"
+                        : "user"}
+                    </td>
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
                         <button
@@ -207,10 +219,18 @@ function UserTable() {
                           Edit
                         </button>
                         {isEditModalOpen && selectedUser && (
-                      <EditUserModal isOpen={isEditModalOpen} onClose={closeEditModal} user={selectedUser} /> // Pass selected user details to EditUserModal  
-                    )}
+                          <EditUserModal
+                            isOpen={isEditModalOpen}
+                            onClose={closeEditModal}
+                            user={selectedUser} // Pass selected user details to EditUserModal
+                          />
+                        )}
 
-                        <DeleteUserModal isOpen={userIdToDelete === user.id} onClose={closeDeleteModal}  userId={user.id} />{" "}
+                        <DeleteUserModal
+                          isOpen={userIdToDelete === user.id}
+                          onClose={closeDeleteModal}
+                          userId={user.id}
+                        />{" "}
                         <button
                           type="button"
                           onClick={() => openDeleteModal(user.id)} // Pass the userId to openDeleteModal
@@ -218,7 +238,6 @@ function UserTable() {
                           data-modal-toggle="delete-modal"
                           className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
                         >
-                          
                           <i className="fa-solid fa-trash pr-2"></i>
                           Delete
                         </button>
@@ -236,11 +255,12 @@ function UserTable() {
             <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
               Showing
               <span className="font-semibold text-gray-900 dark:text-white">
-                1-10
+                {filteredUsers.length > 0 ? 1 : 0}-
+                {filteredUsers.length > 10 ? 10 : filteredUsers.length}
               </span>
               of
               <span className="font-semibold text-gray-900 dark:text-white">
-                1000
+                {users.length}
               </span>
             </span>
             <ul className="inline-flex items-stretch -space-x-px">
