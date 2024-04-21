@@ -11,6 +11,9 @@ function UserTable() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchInput, setSearchInput] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -74,6 +77,14 @@ function UserTable() {
     setFilteredUsers(filtered);
   }, [searchInput, users]);
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <>
       <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
@@ -121,7 +132,7 @@ function UserTable() {
                 <i className="fa-solid fa-user-plus pr-2"> </i>
                 Create User
               </button>
-              <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />{" "}
+              <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />
               <div className="flex items-center space-x-3 w-full md:w-auto">
                 <button
                   id="filterDropdownButton"
@@ -186,7 +197,7 @@ function UserTable() {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map((user) => (
+                {currentItems.map((user) => (
                   <tr className="border-b dark:border-gray-700" key={user.id}>
                     <th
                       scope="row"
@@ -222,7 +233,7 @@ function UserTable() {
                           <EditUserModal
                             isOpen={isEditModalOpen}
                             onClose={closeEditModal}
-                            user={selectedUser} // Pass selected user details to EditUserModal
+                            user={selectedUser}
                           />
                         )}
 
@@ -230,10 +241,10 @@ function UserTable() {
                           isOpen={userIdToDelete === user.id}
                           onClose={closeDeleteModal}
                           userId={user.id}
-                        />{" "}
+                        />
                         <button
                           type="button"
-                          onClick={() => openDeleteModal(user.id)} // Pass the userId to openDeleteModal
+                          onClick={() => openDeleteModal(user.id)}
                           data-modal-target="delete-modal"
                           data-modal-toggle="delete-modal"
                           className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
@@ -248,25 +259,12 @@ function UserTable() {
               </tbody>
             </table>
           </div>
-          <nav
-            className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
-            aria-label="Table navigation"
-          >
-            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-              Showing
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {filteredUsers.length > 0 ? 1 : 0}-
-                {filteredUsers.length > 10 ? 10 : filteredUsers.length}
-              </span>
-              of
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {users.length}
-              </span>
-            </span>
-            <ul className="inline-flex items-stretch -space-x-px">
+          <nav className="flex justify-center my-4">
+            <ul className="flex items-center space-x-2">
               <li>
-                <a
-                  href="#"
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
                   className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                 >
                   <span className="sr-only">Previous</span>
@@ -283,52 +281,22 @@ function UserTable() {
                       clipRule="evenodd"
                     />
                   </svg>
-                </a>
+                </button>
               </li>
+              {[...Array(Math.ceil(filteredUsers.length / itemsPerPage)).keys()].map((number) => (
+                <li key={number}>
+                  <button
+                    onClick={() => handlePageChange(number + 1)}
+                    className={`flex items-center justify-center text-sm py-2 px-3 leading-tight ${currentPage === number + 1 ? 'text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'}`}
+                  >
+                    {number + 1}
+                  </button>
+                </li>
+              ))}
               <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  1
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  2
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  aria-current="page"
-                  className="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                >
-                  3
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  ...
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  100
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  // disabled={currentPage === totalPages}
                   className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                 >
                   <span className="sr-only">Next</span>
@@ -345,7 +313,7 @@ function UserTable() {
                       clipRule="evenodd"
                     />
                   </svg>
-                </a>
+                </button>
               </li>
             </ul>
           </nav>
