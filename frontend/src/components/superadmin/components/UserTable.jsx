@@ -12,8 +12,11 @@ function UserTable() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for dropdown visibility
 
   const itemsPerPage = 5;
+  const roles = ["superadmin", "admin", "user"];
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -60,7 +63,7 @@ function UserTable() {
         }
         const data = await response.json();
         setUsers(data);
-        setFilteredUsers(data); // Initialize filteredUsers with all users
+        setFilteredUsers(data);
       } catch (error) {
         console.error("Error fetching users: ", error);
       }
@@ -70,15 +73,29 @@ function UserTable() {
   }, []);
 
   useEffect(() => {
-    // Filter users based on search input
-    const filtered = users.filter((user) =>
+    let filtered = users.filter((user) =>
       `${user.firstname} ${user.lastname}`.toLowerCase().includes(searchInput.toLowerCase())
     );
+    if (selectedRole) {
+      filtered = filtered.filter((user) => user.roleId === selectedRole);
+    }
     setFilteredUsers(filtered);
-  }, [searchInput, users]);
+  }, [searchInput, users, selectedRole]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleShowAll = () => {
+    setSelectedRole(null);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -124,35 +141,13 @@ function UserTable() {
               </form>
             </div>
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-              <button
-                type="button"
-                onClick={openModal}
-                className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
-              >
-                <i className="fa-solid fa-user-plus pr-2"> </i>
-                Create User
-              </button>
-              <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />
-              <div className="flex items-center space-x-3 w-full md:w-auto">
+              <div className="relative">
                 <button
                   id="filterDropdownButton"
-                  data-dropdown-toggle="filterDropdown"
+                  onClick={toggleDropdown}
                   className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   type="button"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                    className="h-4 w-4 mr-2 text-gray-400"
-                    viewBox="0 0 20 20"
-                    fillRule="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
                   Filter
                   <svg
                     className="-mr-1 ml-1.5 w-5 h-5"
@@ -162,17 +157,46 @@ function UserTable() {
                     aria-hidden="true"
                   >
                     <path
-                      clipRule="evenodd"
                       fillRule="evenodd"
                       d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                     />
                   </svg>
                 </button>
                 <div
-                  id="filterDropdown"
-                  className="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-gray-700"
-                ></div>
+                  className={`${
+                    isDropdownOpen ? "" : "hidden"
+                  } origin-top-right absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5`}
+                >
+                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="filterDropdownButton">
+                    <button
+                      onClick={handleShowAll}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+                      role="menuitem"
+                    >
+                      Show All
+                    </button>
+                    {roles.map((role, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedRole(index + 1)}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+                        role="menuitem"
+                      >
+                        {role}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={openModal}
+                className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+              >
+                <i className="fa-solid fa-user-plus pr-2"> </i>
+                Create User
+              </button>
+              <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -277,7 +301,7 @@ function UserTable() {
                   >
                     <path
                       fillRule="evenodd"
-                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                       clipRule="evenodd"
                     />
                   </svg>
@@ -296,7 +320,6 @@ function UserTable() {
               <li>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
-                  // disabled={currentPage === totalPages}
                   className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                 >
                   <span className="sr-only">Next</span>
@@ -309,7 +332,7 @@ function UserTable() {
                   >
                     <path
                       fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                       clipRule="evenodd"
                     />
                   </svg>
