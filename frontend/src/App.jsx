@@ -7,6 +7,7 @@ import Login from "./components/client/pages/Login";
 import withRole from "./routes/WithRole";
 import Users from "./components/superadmin/pages/Users"
 import Roles from "./components/superadmin/pages/Roles";
+import Profile from "./components/client/pages/Profile";
 
 function App() {
   const AdminRoute = withRole(Admin, 'admin');
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" index element={<Client />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
 
         {/* Admin Routes */}
         <Route path="admin/*" element={<AdminRoute />}>
