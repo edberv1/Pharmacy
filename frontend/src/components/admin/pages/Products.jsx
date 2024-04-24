@@ -1,9 +1,10 @@
-import Sidebar from "../components/Sidebar"
+// import Sidebar from "../components/Sidebar"
 
 function Products() {
   return (
     <>
-    <Sidebar/>
+    {/* <Sidebar/> */}
+    
     </>
   )
 }

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser'); //for session login save
 const cookieParser = require('cookie-parser') //for session login save
 const session = require('express-session'); //for session login save
 const userRouter = require('./routes/user');
-const adminRouter = require('./routes/admin');
+const adminRouter = require('./routes/admin'); //============== .js e kom shtu
 const superAdminRouter = require('./routes/superAdmin.js')
 
 const app = express()

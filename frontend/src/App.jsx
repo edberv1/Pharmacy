@@ -8,15 +8,18 @@ import withRole from "./routes/WithRole";
 import Users from "./components/superadmin/pages/Users"
 import Roles from "./components/superadmin/pages/Roles";
 import Profile from "./components/client/pages/Profile";
+import Pharmacies from "./components/admin/pages/Pharmacies";
+import Products from "./components/admin/pages/Products";
 
 function App() {
   const AdminRoute = withRole(Admin, 'admin');
   const SuperAdminRoute = withRole(SuperAdmin, 'superadmin');
+
   const UsersRoute = withRole(Users, 'superadmin');
   const RolesRoutes = withRole(Roles, 'superadmin');
 
-  // const PharmaciesRoute = withRole(Pharmacies, 'admin');
-  // const ProductsRoute = withRole(Products, 'admin');
+  const PharmaciesRoute = withRole(Pharmacies, 'superadmin');
+  const ProductsRoute = withRole(Products, 'superadmin');
 
   return (
     <Router>
@@ -27,16 +30,17 @@ function App() {
         <Route path="/profile" element={<Profile />} />
 
         {/* Admin Routes */}
-        <Route path="admin/*" element={<AdminRoute />}>
-          {/* <Route path="pharmacies" element={<PharmaciesRoute />} />
-          <Route path="products" element={<ProductsRoute />} /> */}
-        </Route>
+        <Route path="admin/*" element={<AdminRoute />} />
+         
         {/* Admin Routes */}
 
         {/* SuperAdmin Routes */}
         <Route path="superadmin/*" element={<SuperAdminRoute />}>
           <Route path="users" element={<UsersRoute />} />
           <Route path="roles" element={<RolesRoutes />} />
+
+          <Route path="pharmacies" element={<PharmaciesRoute />} />
+          <Route path="products" element={<ProductsRoute />} />
         </Route>
         {/* SuperAdmin Routes */}
 

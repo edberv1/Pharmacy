@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const db = require("../db.js");
 require("dotenv").config();
 
-
 // =======================================USERS=======================================
 
 const getAllUsers = async (req, res) => {
@@ -102,12 +101,14 @@ const editUser = async (req, res) => {
 
   // Perform validation
   if (!firstname || !lastname || !email || !roleId) {
-    return res.status(400).send("Firstname, lastname, email, and roleId are required");
+    return res
+      .status(400)
+      .send("Firstname, lastname, email, and roleId are required");
   }
 
   // Check if the user with the given ID exists
   const checkQuery = "SELECT * FROM users WHERE id = ?";
-  
+
   db.query(checkQuery, [userId], async (checkErr, checkResults) => {
     if (checkErr) {
       console.error("Error executing MySQL query: ", checkErr);
@@ -138,10 +139,9 @@ const editUser = async (req, res) => {
   });
 };
 
-
 // =======================================ROLES=======================================
 
-const getAllRoles = async (req, res) => { 
+const getAllRoles = async (req, res) => {
   const query = "SELECT * FROM roles";
   db.query(query, (err, results) => {
     if (err) {
@@ -171,7 +171,9 @@ const createRole = async (req, res) => {
     const checkResults = await db.query(checkQuery, [role]);
 
     if (checkResults.length > 0) {
-      return res.status(400).send("Role already exists. Please try another role.");
+      return res
+        .status(400)
+        .send("Role already exists. Please try another role.");
     }
 
     // Insert the new role
@@ -189,12 +191,9 @@ const createRole = async (req, res) => {
   }
 };
 
-
-
-
 const editRole = async (req, res) => {
   const roleId = req.params.id;
-  const {role} = req.body;
+  const { role } = req.body;
 
   // Perform validation
   if (!role) {
@@ -203,7 +202,7 @@ const editRole = async (req, res) => {
 
   // Check if the user with the given ID exists
   const checkQuery = "SELECT * FROM roles WHERE id = ?";
-  
+
   db.query(checkQuery, [roleId], async (checkErr, checkResults) => {
     if (checkErr) {
       console.error("Error executing MySQL query: ", checkErr);
@@ -263,4 +262,80 @@ const deleteRole = async (req, res) => {
   });
 };
 
-module.exports = { getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, editRole, deleteRole };
+// =======================================PHARMACIES=======================================
+
+const getAllPharmacies = async (req, res) => {
+  const query = "SELECT * FROM pharmacies";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "No pharmacies found" });
+    }
+    res.json(results);
+  });
+};
+
+const createPharmacy = async (req, res) => {
+  const { name, location, userId } = req.body;
+
+  // Perform validation
+  if (!name || !location || !userId) {
+    return res.status(400).send("All fields are required");
+  }
+
+  // Insert pharmacy
+  const insertQuery =
+    "INSERT INTO pharmacies (name, location, userId) VALUES (?, ?, ?)";
+  db.query(
+    insertQuery,
+    [name, location, userId],
+    (insertErr, result) => {
+      if (insertErr) {
+        console.error("Error executing MySQL query: ", insertErr);
+        return res
+          .status(500)
+          .send("Internal Server Error: " + insertErr.message);
+      }
+      res.send({
+        message: "Pharmacy created successfully",
+        pharmacyId: result.insertId,
+      });
+    }
+  );
+};
+
+const getAllUserIds = async (req, res) => {
+  const query = "SELECT id, firstname FROM users";  // Fetching id and firstname
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res.status(500).send("Internal Server Error: " + err.message);
+    }
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "No users found" });
+    }
+
+    res.json(results);
+  });
+};
+
+module.exports = {
+  getAllUsers,
+  createUser,
+  deleteUser,
+  editUser,
+  getAllRoles,
+  createRole,
+  editRole,
+  deleteRole,
+  getAllPharmacies,
+  createPharmacy,
+  getAllUserIds,
+};

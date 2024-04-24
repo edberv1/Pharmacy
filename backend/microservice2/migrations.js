@@ -75,6 +75,26 @@ const runMigrations = (pool) => {
         });
       });
     });
+
+    // Create Pharmacies Table
+    const createTableQueryPharmacies = `
+    CREATE TABLE IF NOT EXISTS pharmacies (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      location VARCHAR(255) NOT NULL,
+      userId INT NOT NULL,
+      FOREIGN KEY (userId) REFERENCES users(id) 
+    )`;
+
+    connection.query(createTableQueryPharmacies, (err, result) => {
+      if (err) {
+        console.error('Error creating pharmacies table:', err);
+        connection.release(); // Release the connection back to the pool
+        return;
+      }
+      console.log('Pharmacies Table created successfully');
+    });
+
   });
 };
 
