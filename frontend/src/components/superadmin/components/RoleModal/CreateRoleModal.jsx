@@ -32,7 +32,7 @@ function CreateRoleModal({ isOpen, onClose }) {
       if (!token) {
         throw new Error("No token found.");
       }
-
+  
       // Make HTTP POST request to create user with token included in headers
       const response = await fetch(
         "http://localhost:8081/superAdmin/createRole",
@@ -45,22 +45,25 @@ function CreateRoleModal({ isOpen, onClose }) {
           body: JSON.stringify(formData),
         }
       );
-
+  
       // Check if the request was successful
       if (!response.ok) {
         // Handle non-200 response status
         const errorMessage = await response.text();
         throw new Error(errorMessage);
       }
-
+  
       const data = await response.json();
       console.log(data); // Log the response if needed
       onClose();
       setFormSubmitted(true); // Set form submission status to true
     } catch (error) {
       setError(error.message); // Set error state
+      setFormSubmitted(false); // Set form submission status to false
     }
   };
+  
+  
 
   const handleClose = () => {
     setFormData({

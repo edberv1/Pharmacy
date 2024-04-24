@@ -54,7 +54,7 @@ const runMigrations = (pool) => {
           }
 
           const roleCount = rows[0].roleCount;
-          if (roleCount < 4) {
+          if (roleCount < 3) {
             const rolesToInsert = ['superadmin', 'admin', 'user'];
             const insertRoleQuery = 'INSERT INTO roles (role) VALUES ?';
             const roleValues = rolesToInsert.map(role => [role]);

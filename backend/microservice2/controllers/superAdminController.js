@@ -182,17 +182,14 @@ const createRole = async (req, res) => {
       message: "Role created successfully",
       roleId: result.insertId,
     });
-
   } catch (error) {
-    // Check if the error is due to duplicate entry
-    if (error.code === 'ER_DUP_ENTRY') {
-      return res.status(400).send("Role already exists. Please try another role.");
-    }
-
-    console.error("Error executing MySQL query: ", error);
-    res.status(500).send("Internal Server Error: " + error.message);
+    // Handle database errors or other unexpected errors
+    console.error("Error creating role:", error);
+    return res.status(500).send("Internal server error");
   }
 };
+
+
 
 
 const editRole = async (req, res) => {
