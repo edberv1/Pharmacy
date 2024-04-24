@@ -94,6 +94,7 @@ function UserTable() {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const closeDropdown = () => {
     setIsDropdownOpen(false);
   };
@@ -104,7 +105,9 @@ function UserTable() {
 
   return (
     <>
-      <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
+      <div className="mx-auto max-w-screen-xl mr-4 rounded-xl pb-32 pt-2 bg-gray-200  px-4 lg:px-12">
+        <div className=" rounded-sm flex " ><h1 className="text-3xl font-semibold ">Users</h1></div>
+        <hr className="size-1 flex w-full mb-4 bg-gray-800 rounded-full " />
         <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
@@ -141,19 +144,28 @@ function UserTable() {
               </form>
             </div>
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={openModal}
+                        className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+                      >
+                        <i className="fa-solid fa-user-plus pr-2"> </i>
+                        Create User
+                      </button>
+                      <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />
               <div className="relative">
                 <button
                   id="filterDropdownButton"
                   onClick={toggleDropdown}
-                  className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                  className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-white bg-gray-800 rounded-lg border border-gray-200 hover:bg-gray-700 focus:outline-none dark:bg-gray-600 dark:border-gray-600 dark:hover:bg-gray-700"
                   type="button"
                 >
                   Filter
                   <svg
-                    className="-mr-1 ml-1.5 w-5 h-5"
-                    fillRule="currentColor"
-                    viewBox="0 0 20 20"
+                    className="-mr-1 ml-1.5 h-5 w-5"
                     xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                     aria-hidden="true"
                   >
                     <path
@@ -165,12 +177,12 @@ function UserTable() {
                 <div
                   className={`${
                     isDropdownOpen ? "" : "hidden"
-                  } origin-top-right absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5`}
+                  } origin-top-right absolute  right-0 mt-2 w-auto rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5`}
                 >
                   <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="filterDropdownButton">
                     <button
                       onClick={handleShowAll}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+                      className="block px-4 py-2 text-sm  w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
                       role="menuitem"
                     >
                       Show All
@@ -179,7 +191,7 @@ function UserTable() {
                       <button
                         key={index}
                         onClick={() => setSelectedRole(index + 1)}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+                        className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
                         role="menuitem"
                       >
                         {role}
@@ -188,15 +200,6 @@ function UserTable() {
                   </div>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={openModal}
-                className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
-              >
-                <i className="fa-solid fa-user-plus pr-2"> </i>
-                Create User
-              </button>
-              <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />
             </div>
           </div>
           <div className="overflow-x-auto">

@@ -13,14 +13,7 @@ function CreateRoleModal({ isOpen, onClose }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // If the name is "roleId", set the value directly
-  if (name === "roleId") {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-  } else {
-    // For other fields, set the value normally
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  }
-    setFormSubmitted(false); // Reset form submission status when a change is made
   };
 
   const handleSubmit = async (e) => {
@@ -59,7 +52,6 @@ function CreateRoleModal({ isOpen, onClose }) {
       setFormSubmitted(true); // Set form submission status to true
     } catch (error) {
       setError(error.message); // Set error state
-      setFormSubmitted(false); // Set form submission status to false
     }
   };
   
@@ -136,22 +128,6 @@ function CreateRoleModal({ isOpen, onClose }) {
             />
           </div>
 
-          <div className="mb-4">
-            {/* <label className="block text-sm font-medium text-gray-600">
-              Role
-            </label> */}
-            {/* <select
-              name="roleId"
-              value={formData.roleId}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
-              required
-            >
-              <option value="" disabled>Select Role</option>
-              <option value="3">User</option>
-              <option value="2">Admin</option>
-            </select> */}
-          </div>
           {error && <div className="text-red-500 mt-2">{error}</div>}
           <div className="flex justify-end">
             <button

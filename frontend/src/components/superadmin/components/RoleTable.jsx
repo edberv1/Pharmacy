@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import { useEffect, useState } from "react";
 import CreateRoleModal from "./RoleModal/CreateRoleModal";
@@ -98,7 +99,9 @@ function RoleTable() {
 
   return (
     <>
-      <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
+      <div className="mx-auto max-w-screen-xl px-4 pb-32 pt-2 mr-4 rounded-xl bg-gray-200 lg:px-12">
+      <div className=" rounded-sm flex " ><h1 className="text-3xl font-semibold ">Roles</h1></div>
+        <hr className="size-1 flex w-full mb-4 bg-gray-800 rounded-full " />
         <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
@@ -166,7 +169,7 @@ function RoleTable() {
                   </svg>
                 </button>
                 {isFilterDropdownOpen && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 dark:bg-gray-800">
+                  <div className="origin-top-right absolute  right-0 mt-2 w-auto rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5">
                     <div
                       className="py-1"
                       role="menu"
@@ -175,7 +178,7 @@ function RoleTable() {
                     >
                       <button
                         onClick={() => handleFilterChange("All")}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+                        className="block px-4 py-2 text-sm  w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
                         role="menuitem"
                       >
                         All
@@ -184,7 +187,7 @@ function RoleTable() {
                         <button
                           key={role.id}
                           onClick={() => handleFilterChange(role.role)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+                          className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
                           role="menuitem"
                         >
                           {role.role}
