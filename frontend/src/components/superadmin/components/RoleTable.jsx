@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import CreateRoleModal from "./RoleModal/CreateRoleModal";
 import EditRoleModal from "./RoleModal/EditRoleModal";
 import DeleteRoleModal from "./RoleModal/DeleteRoleModal";
@@ -77,19 +77,55 @@ function RoleTable() {
     const filtered = roles.filter((role) =>
       role.role.toLowerCase().includes(searchQuery.toLowerCase())
     );
+  
     setFilteredRoles(filtered);
   }, [searchQuery, roles]);
+  
+  useEffect(() => {
+    // Filter roles based on selected role name
+    let filtered = [];
+    if (selectedFilter === "All") {
+      filtered = roles;
+    } else {
+      filtered = roles.filter((role) => role.role === selectedFilter);
+    }
+    setFilteredRoles(filtered);
+  }, [selectedFilter, roles]);
+  
 
   const handleFilterChange = (filter) => {
     setSelectedFilter(filter);
-    if (filter === "All") {
-      setFilteredRoles(roles);
-    } else {
-      const filtered = roles.filter((role) => role.role === filter);
-      setFilteredRoles(filtered);
-    }
     setIsFilterDropdownOpen(false);
   };
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsFilterDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+  
+
+  const roleOptions = roles && roles.length > 0 ? roles.map((role, index) => (
+    <button
+      className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+      role="menuitem"
+      onClick={() => handleFilterChange(role.role)} // Update this line
+      key={role.id} // Assuming role.id is unique
+      value={role.id} // Assuming role.id is the value you want to assign
+    >
+      {role.role} {/* Assuming role.name contains the display name */}
+    </button>
+  )) : null;
 
   const indexOfLastRole = currentPage * rolesPerPage;
   const indexOfFirstRole = indexOfLastRole - rolesPerPage;
@@ -169,7 +205,7 @@ function RoleTable() {
                   </svg>
                 </button>
                 {isFilterDropdownOpen && (
-                  <div className="origin-top-right absolute  right-0 mt-2 w-auto rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5">
+                  <div ref={dropdownRef} className="origin-top-right absolute  right-0 mt-2 w-auto rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5">
                     <div
                       className="py-1"
                       role="menu"
@@ -181,18 +217,9 @@ function RoleTable() {
                         className="block px-4 py-2 text-sm  w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
                         role="menuitem"
                       >
-                        All
+                        Show All
                       </button>
-                      {roles.map((role) => (
-                        <button
-                          key={role.id}
-                          onClick={() => handleFilterChange(role.role)}
-                          className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
-                          role="menuitem"
-                        >
-                          {role.role}
-                        </button>
-                      ))}
+                      {roleOptions}
                     </div>
                   </div>
                 )}
