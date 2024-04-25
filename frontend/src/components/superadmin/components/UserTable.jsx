@@ -78,7 +78,7 @@ function UserTable() {
           throw new Error("No token found.");
         }
         
-        const response = await fetch("http://localhost:8081/superAdmin/getAllRoleIds", {
+        const response = await fetch("http://localhost:8081/superAdmin/getAllRoles", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

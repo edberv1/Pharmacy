@@ -16,7 +16,6 @@ router.get('/getAllUserIds',  authMiddleware, getAllUserIds);
 
 //=====================================ROLES=====================================
 router.get('/getAllRoles',  authMiddleware, getAllRoles);
-router.get('/getAllRoleIds',  authMiddleware, getAllRoleIds);
 router.post('/createRole',  authMiddleware, createRole);
 router.delete('/deleteRole/:id', authMiddleware, deleteRole); 
 router.put('/editRole/:id',  authMiddleware, editRole);

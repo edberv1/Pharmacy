@@ -157,21 +157,6 @@ const getAllRoles = async (req, res) => {
   });
 };
 
-const getAllRoleIds = async (req, res) => {
-  const query = "SELECT id, role FROM roles";
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error executing MySQL query: ", err);
-      return res
-        .status(500)
-        .json({ error: "Internal Server Error", details: err.message });
-    }
-    if (!results || results.length === 0) {
-      return res.status(404).json({ error: "No roles found" });
-    }
-    res.json(results);
-  });
-};
 
 const createRole = async (req, res) => {
   const { role } = req.body;
