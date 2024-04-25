@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
-const {getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds, getAllRoleIds} = require('../controllers/superAdminController');
+const {getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds} = require('../controllers/superAdminController');
 
 
 router.get('/superadmin',  authMiddleware);

@@ -333,7 +333,6 @@ module.exports = {
   deleteUser,
   editUser,
   getAllRoles,
-  getAllRoleIds,
   createRole,
   editRole,
   deleteRole,
