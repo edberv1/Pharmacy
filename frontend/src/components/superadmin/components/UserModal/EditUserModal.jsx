@@ -13,6 +13,7 @@ function EditUserModal({ isOpen, onClose, user }) {
 
   const modalRef = useRef(null);
   const contentRef = useRef(null);
+  const [roles, setRoles] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,6 +58,43 @@ function EditUserModal({ isOpen, onClose, user }) {
       setError(error.message); // Set error state
     }
   };
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No token found.");
+        }
+  
+        const response = await fetch("http://localhost:8081/superAdmin/getAllRoleIds", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": token,
+          },
+        });
+  
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage);
+        }
+  
+        const data = await response.json();
+        setRoles(data); // Assuming the backend returns an array of user objects with 'id' and 'name' fields
+      } catch (error) {
+        console.error("Failed to fetch role ids:", error);
+        setError("Failed to fetch role ids.");
+      }
+    };
+    fetchRoles();
+  }, []);
+
+  const roleOptions = roles && roles.length > 0 ? roles.map((role) => (
+    <option key={role.id} value={role.id}>
+      {role.role} 
+    </option>
+  )) : null;
 
   const handleClose = () => {
     onClose();
@@ -155,8 +193,7 @@ function EditUserModal({ isOpen, onClose, user }) {
               required
             >
               <option value="" disabled>Select Role</option>
-              <option value="3">User</option>
-              <option value="2">Admin</option>
+              {roleOptions}
             </select>
           </div>
           {error && <div className="text-red-500 mt-2">{error}</div>}

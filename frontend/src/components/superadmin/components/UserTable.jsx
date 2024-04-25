@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import CreateUserModal from "./UserModal/CreateUserModal";
 import DeleteUserModal from "./UserModal/DeleteUserModal";
@@ -14,9 +15,10 @@ function UserTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRole, setSelectedRole] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for dropdown visibility
+  const [roles, setRoles] = useState([]); // State to store fetched roles
 
   const itemsPerPage = 5;
-  const roles = ["superadmin", "admin", "user"];
+
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -69,18 +71,94 @@ function UserTable() {
       }
     };
 
+    const fetchRoles = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No token found.");
+        }
+        
+        const response = await fetch("http://localhost:8081/superAdmin/getAllRoleIds", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": token,
+          },
+        });
+  
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage);
+        }
+  
+        const dataRoles = await response.json();
+        setRoles(dataRoles); // Assuming the backend returns an array of user objects with 'id' and 'name' fields
+      } catch (error) {
+        console.error("Failed to fetch roles ids:", error);
+        // setError("Failed to fetch roles ids.");
+      }
+    };
+
     fetchUsers();
+    fetchRoles();
   }, []);
 
+  const roleOptions = roles && roles.length > 0 ? roles.map((role, index) => (
+    <button
+      className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+      role="menuitem"
+      onClick={() => setSelectedRole(role)}
+      key={role.id} // Assuming role.id is unique
+      value={role.id} // Assuming role.id is the value you want to assign
+    >
+      {role.role} {/* Assuming role.name contains the display name */}
+    </button>
+  )) : null;
+  
+  
+
   useEffect(() => {
+    // Filter users based on search input and selected role
     let filtered = users.filter((user) =>
       `${user.firstname} ${user.lastname}`.toLowerCase().includes(searchInput.toLowerCase())
     );
-    if (selectedRole) {
-      filtered = filtered.filter((user) => user.roleId === selectedRole);
+    
+    if (selectedRole !== null) {
+      // If a role is selected, filter users based on the selected role ID
+      filtered = filtered.filter((user) => user.roleId === selectedRole.id); // Assuming selectedRole is an object with an 'id' field
     }
+    
     setFilteredUsers(filtered);
   }, [searchInput, users, selectedRole]);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      // Check if the click is outside the dropdown
+      if (!event.target.closest("#filterDropdownButton")) {
+        setIsDropdownOpen(false);
+      }
+    };
+  
+    // Add event listener when dropdown is open
+    if (isDropdownOpen) {
+      document.body.addEventListener("click", handleOutsideClick);
+    } else {
+      // Remove event listener when dropdown is closed
+      document.body.removeEventListener("click", handleOutsideClick);
+    }
+  
+    // Clean up event listener on component unmount
+    return () => {
+      document.body.removeEventListener("click", handleOutsideClick);
+    };
+  }, [isDropdownOpen]);
+  
+  
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -88,15 +166,6 @@ function UserTable() {
 
   const handleShowAll = () => {
     setSelectedRole(null);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  // eslint-disable-next-line no-unused-vars
-  const closeDropdown = () => {
-    setIsDropdownOpen(false);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -187,16 +256,8 @@ function UserTable() {
                     >
                       Show All
                     </button>
-                    {roles.map((role, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedRole(index + 1)}
-                        className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
-                        role="menuitem"
-                      >
-                        {role}
-                      </button>
-                    ))}
+               
+                        {roleOptions}
                   </div>
                 </div>
               </div>
@@ -237,12 +298,14 @@ function UserTable() {
                     </td>
                     <td className="px-4 py-3">{user.email}</td>
                     <td className="px-4 py-3">
-                      {user.roleId === 1
-                        ? "superadmin"
-                        : user.roleId === 2
-                        ? "admin"
-                        : "user"}
+                      {user.roleId ? (
+                        roles.find(role => role.id === user.roleId)?.role || 'Unknown'
+                      ) : (
+                        'No Role Assigned'
+                      )}
                     </td>
+
+
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
                         <button
