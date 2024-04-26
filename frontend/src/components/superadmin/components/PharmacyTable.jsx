@@ -4,7 +4,6 @@ import CreatePharmacyModal from "./PharmacyModal/CreatePharmacyModal";
 import DeletePharmacyModal from "./PharmacyModal/DeletePharmacyModal";
 import EditPharmacyModal from "./PharmacyModal/EditPharmacyModal";
 
-
 function PharmacyTable() {
   const [pharmacies, setPharmacies] = useState([]);
   const [filteredPharmacies, setFilteredPharmacies] = useState([]);
@@ -22,7 +21,7 @@ function PharmacyTable() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for dropdown visibility
 
   const itemsPerPage = 5;
-  const roles = ["admin"]; 
+  const roles = ["admin"];
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -66,7 +65,7 @@ function PharmacyTable() {
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
-        } 
+        }
         const data = await response.json();
         setPharmacies(data);
         setFilteredPharmacies(data);
@@ -80,14 +79,17 @@ function PharmacyTable() {
 
   useEffect(() => {
     let filtered = pharmacies.filter((pharmacy) =>
-      `${pharmacy.name} ${pharmacy.location}`.toLowerCase().includes(searchInput.toLowerCase())
+      `${pharmacy.name} ${pharmacy.location}`
+        .toLowerCase()
+        .includes(searchInput.toLowerCase())
     );
     if (selectedPharmacy) {
-      filtered = filtered.filter((pharmacy) => pharmacy.userId === selectedPharmacy);
+      filtered = filtered.filter(
+        (pharmacy) => pharmacy.userId === selectedPharmacy
+      );
     }
     setFilteredPharmacies(filtered);
   }, [searchInput, pharmacies, selectedPharmacy]);
-
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -107,7 +109,10 @@ function PharmacyTable() {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPharmacies.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredPharmacies.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   return (
     <>
@@ -174,7 +179,12 @@ function PharmacyTable() {
                     isDropdownOpen ? "" : "hidden"
                   } origin-top-right absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5`}
                 >
-                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="filterDropdownButton">
+                  <div
+                    className="py-1"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="filterDropdownButton"
+                  >
                     <button
                       onClick={handleShowAll}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
@@ -203,7 +213,7 @@ function PharmacyTable() {
                 <i className="fa-solid fa-pharmacy-plus pr-2"> </i>
                 Create Pharmacy
               </button>
-              <CreatePharmacyModal isOpen={isModalOpen} onClose={closeModal}/> 
+              <CreatePharmacyModal isOpen={isModalOpen} onClose={closeModal} />
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -214,10 +224,10 @@ function PharmacyTable() {
                     ID
                   </th>
                   <th scope="col" className="px-4 py-3">
-                  Name
+                    Name
                   </th>
                   <th scope="col" className="px-4 py-3">
-                  Location
+                    Location
                   </th>
                   <th scope="col" className="px-4 py-3">
                     ID
@@ -229,34 +239,24 @@ function PharmacyTable() {
               </thead>
               <tbody>
                 {currentItems.map((pharmacy) => (
-                  <tr className="border-b dark:border-gray-700" key={pharmacy.id}>
+                  <tr
+                    className="border-b dark:border-gray-700"
+                    key={pharmacy.id}
+                  >
                     <th
                       scope="row"
                       className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       {pharmacy.id}
                     </th>
-                    <td className="px-4 py-3">
-                      {pharmacy.name} 
-                    </td>
+                    <td className="px-4 py-3">{pharmacy.name}</td>
 
-                    <td className="px-4 py-3">
-                      {pharmacy.location}
-                    </td>
+                    <td className="px-4 py-3">{pharmacy.location}</td>
                     <td className="px-4 py-3">{pharmacy.userId}</td>
-
-
-                    {/* <td className="px-4 py-3">
-                      {pharmacy.roleId === 1
-                        ? "superadmin"
-                        : pharmacy.roleId === 2
-                        ? "admin"
-                        : "pharmacy"}
-                    </td> */}
-
 
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
+
                         <button
                           type="button"
                           onClick={() => openEditModal(pharmacy)}
@@ -268,6 +268,7 @@ function PharmacyTable() {
                           <i className="fa-solid fa-pen-to-square pr-2"></i>
                           Edit
                         </button>
+                        
                         {isEditModalOpen && selectedPharmacy && (
                           <EditPharmacyModal
                             isOpen={isEditModalOpen}
@@ -276,7 +277,7 @@ function PharmacyTable() {
                           />
                         )}
 
-                        <DeletePharmacyModal 
+                        <DeletePharmacyModal
                           isOpen={pharmacyIdToDelete === pharmacy.id}
                           onClose={closeDeleteModal}
                           pharmacyId={pharmacy.id}
@@ -292,6 +293,7 @@ function PharmacyTable() {
                           Delete
                         </button>
                       </div>
+
                     </td>
                   </tr>
                 ))}
@@ -322,11 +324,19 @@ function PharmacyTable() {
                   </svg>
                 </button>
               </li>
-              {[...Array(Math.ceil(filteredPharmacies.length / itemsPerPage)).keys()].map((number) => (
+              {[
+                ...Array(
+                  Math.ceil(filteredPharmacies.length / itemsPerPage)
+                ).keys(),
+              ].map((number) => (
                 <li key={number}>
                   <button
                     onClick={() => handlePageChange(number + 1)}
-                    className={`flex items-center justify-center text-sm py-2 px-3 leading-tight ${currentPage === number + 1 ? 'text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'}`}
+                    className={`flex items-center justify-center text-sm py-2 px-3 leading-tight ${
+                      currentPage === number + 1
+                        ? "text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                        : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    }`}
                   >
                     {number + 1}
                   </button>

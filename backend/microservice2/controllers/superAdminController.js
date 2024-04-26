@@ -327,6 +327,78 @@ const getAllUserIds = async (req, res) => {
   });
 };
 
+const editPharmacy = async (req, res) => {
+  const pharmacyId = req.params.id;
+  const { name , location } = req.body;
+
+  // Perform validation
+  if (!name || !location) {
+    return res.status(400).send("Pharmacy required");
+  }
+
+  // Check if the user with the given ID exists
+  const checkQuery = "SELECT * FROM pharmacies WHERE id = ?";
+
+  db.query(checkQuery, [pharmacyId], async (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    // If user not found
+    if (checkResults.length === 0) {
+      return res.status(404).send("Pharmacy not found");
+    }
+
+    try {
+      // Update the pharmacy details
+      const updateQuery = `
+        UPDATE pharmacies 
+        SET pharmacy = ?
+        WHERE id = ?`;
+
+      const queryParams = [pharmacy, pharmacyId];
+
+      await db.query(updateQuery, queryParams);
+
+      res.send({ message: "Pharmacy updated successfully", pharmacyId: pharmacyId }); //userId: userId
+    } catch (updateErr) {
+      console.error("Error executing MySQL query: ", updateErr);
+      res.status(500).send("Internal Server Error: " + updateErr.message);
+    }
+  });
+};
+
+const deletePharmacy = async (req, res) => {
+  const pharmacyId = req.params.id; // Assuming the user ID is passed as a route parameter
+
+  // Check if the user exists
+  const checkQuery = "SELECT * FROM pharmacies WHERE id = ?";
+  db.query(checkQuery, [pharmacyId], (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    if (checkResults.length === 0) {
+      return res.status(404).send("Pharmacy not found");
+    }
+
+    // If the user exists, proceed with deletion
+    const deleteQuery = "DELETE FROM pharmacies WHERE id = ?";
+    db.query(deleteQuery, [pharmacyId], (deleteErr, result) => {
+      if (deleteErr) {
+        console.error("Error executing MySQL query: ", deleteErr);
+        return res
+          .status(500)
+          .send("Internal Server Error: " + deleteErr.message);
+      }
+      res.send({ message: "Pharmacy deleted successfully" });
+    });
+  });
+};
+
+
 module.exports = {
   getAllUsers,
   createUser,
@@ -339,4 +411,6 @@ module.exports = {
   getAllPharmacies,
   createPharmacy,
   getAllUserIds,
+  deletePharmacy,
+  editPharmacy
 };
