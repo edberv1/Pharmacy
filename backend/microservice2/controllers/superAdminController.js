@@ -354,10 +354,10 @@ const editPharmacy = async (req, res) => {
       // Update the pharmacy details
       const updateQuery = `
         UPDATE pharmacies 
-        SET pharmacy = ?
+        SET name = ? , location = ? 
         WHERE id = ?`;
 
-      const queryParams = [pharmacy, pharmacyId];
+      const queryParams = [name, location , pharmacyId];
 
       await db.query(updateQuery, queryParams);
 

@@ -50,7 +50,7 @@
     };
 
     useEffect(() => {
-      const fetchAdminPharmacies = async () => {
+      const fetchPharmacies = async () => {
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
@@ -74,7 +74,7 @@
         }
       };
 
-      fetchAdminPharmacies();
+      fetchPharmacies();
     }, []);
 
     useEffect(() => {
