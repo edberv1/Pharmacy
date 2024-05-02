@@ -31,4 +31,30 @@ describe('User Signup', () => {
   });
 });
 
+describe('User Login', () => {
+    let driver;
+  
+    beforeAll(async () => {
+        driver = new webdriver.Builder()
+          .forBrowser('MicrosoftEdge')
+          .setLoggingPrefs({ browser: 'ALL' }) // enable log collection
+          .build();
+        await driver.get('http://localhost:3000/login'); // replace with your signup page url
+        await driver.sleep(2000);
+      }, 10000);
+
+    afterAll(async () => {
+      await driver.quit();
+    }, 15000);
+  
+    test('logs in an existing user', async () => {
+      // replace the selectors with the actual ones from your login form
+      await driver.findElement(By.name('email')).sendKeys('edber12345@example.com');
+      await driver.findElement(By.name('password')).sendKeys('password123');
+  
+      await driver.findElement(By.css('button[type="submit"]')).click();
+  
+    });
+  });
+
 
