@@ -10,6 +10,7 @@ import Roles from "./components/superadmin/pages/Roles";
 import Profile from "./components/client/pages/Profile";
 import Pharmacies from "./components/admin/pages/Pharmacies";
 import Products from "./components/admin/pages/Products";
+import ProfileAdmin from "./components/admin/pages/Profile";
 
 function App() {
   const AdminRoute = withRole(Admin, 'admin');
@@ -21,6 +22,8 @@ function App() {
   const PharmaciesRoute = withRole(Pharmacies, 'superadmin');
   const ProductsRoute = withRole(Products, 'superadmin');
 
+  const ProfileAdminRoute = withRole(ProfileAdmin, 'admin')
+
   return (
     <Router>
       <Routes>
@@ -30,7 +33,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
 
         {/* Admin Routes */}
-        <Route path="admin/*" element={<AdminRoute />} />
+        <Route path="admin/*" element={<AdminRoute />}>
+          <Route path="profileAdmin" element={<ProfileAdminRoute />} />
+        </Route>
          
         {/* Admin Routes */}
 
