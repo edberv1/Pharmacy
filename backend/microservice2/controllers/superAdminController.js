@@ -97,13 +97,13 @@ const deleteUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   const userId = req.params.id;
-  const { firstname, lastname, email, roleId } = req.body;
+  const { firstname, lastname, email, roleId, verified} = req.body;
 
   // Perform validation
-  if (!firstname || !lastname || !email || !roleId) {
+  if (!firstname || !lastname || !email || !roleId || !verified) {
     return res
       .status(400)
-      .send("Firstname, lastname, email, and roleId are required");
+      .send("Firstname, lastname, email, verified and roleId are required");
   }
 
   // Check if the user with the given ID exists
@@ -124,10 +124,10 @@ const editUser = async (req, res) => {
       // Update the user details
       const updateQuery = `
         UPDATE users 
-        SET firstname = ?, lastname = ?, email = ?, roleId = ? 
+        SET firstname = ?, lastname = ?, email = ?, roleId = ?, verified =?
         WHERE id = ?`;
 
-      const queryParams = [firstname, lastname, email, roleId, userId];
+        const queryParams = [firstname, lastname, email, roleId, verified, userId]; // Put 'userId' at the end
 
       await db.query(updateQuery, queryParams);
 

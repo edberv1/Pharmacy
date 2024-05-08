@@ -120,32 +120,25 @@ function UserTable() {
         ))
       : null;
 
-      useEffect(() => {
-        // Filter users based on search input and selected role
-        let filtered = users.filter((user) =>
-          `${user.firstname} ${user.lastname} ${user.email} ${user.id}`
-            .toLowerCase()
-            .includes(searchInput.toLowerCase())
-        );
-      
-        if (selectedRole !== null) {
-          // If a role is selected, filter users based on the selected role ID
-          filtered = filtered.filter((user) => user.roleId === selectedRole.id); // Assuming selectedRole is an object with an 'id' field
-        }
-      
-        setFilteredUsers(filtered);
-      }, [searchInput, users, selectedRole]);
-      
+  useEffect(() => {
+    // Filter users based on search input and selected role
+    let filtered = users.filter((user) =>
+      `${user.firstname} ${user.lastname} ${user.email} ${user.id}`
+        .toLowerCase()
+        .includes(searchInput.toLowerCase())
+    );
 
+    if (selectedRole !== null) {
+      // If a role is selected, filter users based on the selected role ID
+      filtered = filtered.filter((user) => user.roleId === selectedRole.id); // Assuming selectedRole is an object with an 'id' field
+    }
 
-
-
+    setFilteredUsers(filtered);
+  }, [searchInput, users, selectedRole]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
- 
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -178,12 +171,11 @@ function UserTable() {
     setCurrentPage(newPage);
   };
 
-  const usersToShow = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const usersToShow = filteredUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-
-
-  
-  
   return (
     <>
       <div className="mx-auto max-w-screen-xl pt-16">
@@ -281,6 +273,9 @@ function UserTable() {
                     Email
                   </th>
                   <th scope="col" className="px-4 py-3">
+                    Verified
+                  </th>
+                  <th scope="col" className="px-4 py-3">
                     Role
                   </th>
                   <th scope="col" className="px-4 py-3 flex justify-center">
@@ -289,7 +284,7 @@ function UserTable() {
                 </tr>
               </thead>
               <tbody>
-                {usersToShow.map(user => (
+                {usersToShow.map((user) => (
                   <tr className="border-b dark:border-gray-700" key={user.id}>
                     <th
                       scope="row"
@@ -301,6 +296,14 @@ function UserTable() {
                       {user.firstname} {user.lastname}
                     </td>
                     <td className="px-4 py-3">{user.email}</td>
+                    <td className="px-4 py-3">
+                      {user.verified === 1 ? (
+                        <span style={{ color: "green" }}>✔️</span>
+                      ) : (
+                        <span style={{ color: "red" }}>❌</span>
+                      )}
+                    </td>
+
                     <td className="px-4 py-3">
                       {user.roleId
                         ? roles.find((role) => role.id === user.roleId)?.role ||
@@ -352,11 +355,10 @@ function UserTable() {
             </table>
           </div>
           <Pagination
-  currentPage={currentPage}
-  totalPages={Math.ceil(users.length / itemsPerPage)}
-  handlePageChange={handlePageChange}
-/>
-
+            currentPage={currentPage}
+            totalPages={Math.ceil(users.length / itemsPerPage)}
+            handlePageChange={handlePageChange}
+          />
         </div>
       </div>
     </>
