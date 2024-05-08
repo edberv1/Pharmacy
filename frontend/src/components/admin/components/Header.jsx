@@ -21,7 +21,7 @@ export default function Header() {
           localStorage.removeItem("email");
           localStorage.removeItem("role");
           // Redirect the user to the login page (or wherever you want)
-          window.location.href = "/login";
+          window.location.href = "/";
         }
       });
   };

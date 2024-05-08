@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import CreatePharmacyModal from "./PharmacyModal/CreatePharmacyModal";
 import DeletePharmacyModal from "./PharmacyModal/DeletePharmacyModal";
 import EditPharmacyModal from "./PharmacyModal/EditPharmacyModal";
+import Pagination from "./Pagination";
 
 function PharmacyTable() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -15,10 +16,9 @@ function PharmacyTable() {
 
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for dropdown visibility
-
-  const itemsPerPage = 5;
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -120,10 +120,6 @@ function PharmacyTable() {
     };
   }, [isDropdownOpen]);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
   const handleShowAll = () => {
     setSelectedPharmacy(null);
   };
@@ -136,17 +132,20 @@ function PharmacyTable() {
     setIsDropdownOpen(false);
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPharmacies.slice(
-    indexOfFirstItem,
-    indexOfLastItem
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > Math.ceil(pharmacies.length / itemsPerPage))
+      return;
+    setCurrentPage(newPage);
+  };
+  const pharmaciesToShow = pharmacies.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   return (
     <>
-      <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
-        <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+      <div className="mx-auto max-w-screen-xl pt-16 ">
+        <div className="bg-white dark:bg-gray-900 relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
               <form className="flex items-center">
@@ -284,7 +283,7 @@ function PharmacyTable() {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((pharmacy) => (
+                {pharmaciesToShow.map((pharmacy) => (
                   <tr
                     className="border-b dark:border-gray-700"
                     key={pharmacy.id}
@@ -343,71 +342,11 @@ function PharmacyTable() {
               />
             )}
           </div>
-          <nav className="flex justify-center my-4">
-            <ul className="flex items-center space-x-2">
-              <li>
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  <span className="sr-only">Previous</span>
-                  <svg
-                    className="w-5 h-5"
-                    aria-hidden="true"
-                    fillRule="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </li>
-              {[
-                ...Array(
-                  Math.ceil(filteredPharmacies.length / itemsPerPage)
-                ).keys(),
-              ].map((number) => (
-                <li key={number}>
-                  <button
-                    onClick={() => handlePageChange(number + 1)}
-                    className={`flex items-center justify-center text-sm py-2 px-3 leading-tight ${
-                      currentPage === number + 1
-                        ? "text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                        : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                    }`}
-                  >
-                    {number + 1}
-                  </button>
-                </li>
-              ))}
-              <li>
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  <span className="sr-only">Next</span>
-                  <svg
-                    className="w-5 h-5"
-                    aria-hidden="true"
-                    fillRule="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </li>
-            </ul>
-          </nav>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(pharmacies.length / itemsPerPage)}
+            handlePageChange={handlePageChange}
+          />
         </div>
       </div>
     </>
