@@ -85,4 +85,8 @@ const getLoginUser = async (req, res) => {
   });
 };
 
- module.exports = { signup, loginUser, getLoginUser};
+const logoutUser = (req, res) => {
+  res.status(200).send({ auth: false, token: null });
+};
+
+ module.exports = { signup, loginUser, getLoginUser, logoutUser};

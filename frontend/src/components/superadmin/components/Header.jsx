@@ -4,6 +4,30 @@ import { BellIcon } from '@heroicons/react/24/outline'
 import { Link } from "react-router-dom";
 
 export default function Header() {
+
+  const handleLogout = () => {
+    // Call the logout API
+    fetch('http://localhost:8081/users/logoutUser', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.getItem('token') // or wherever you store your token
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.auth === false && data.token === null) {
+        // Remove the token from local storage
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        localStorage.removeItem('role');
+        // Redirect the user to the login page (or wherever you want)
+        window.location.href = '/login';
+      }
+    });
+  };
+
+  
   return (
     <Disclosure as="nav" className="dark:bg-gray-900 dark:border-gray-700">
         <>
@@ -71,17 +95,18 @@ export default function Header() {
                         )}
                       </Menu.Item>
                       <Menu.Item>
-                        {({ active }) => (
-                          <a
-                            href="#"
-                            className={`block px-4 py-2 text-sm text-gray-700 ${
-                              active ? "bg-gray-100" : ""
-                            }`}
-                          >
-                            Sign out
-                          </a>
-                        )}
-                      </Menu.Item>
+  {({ active }) => (
+    <a
+      href="#"
+      onClick={handleLogout}
+      className={`block px-4 py-2 text-sm text-gray-700 ${
+        active ? "bg-gray-100" : ""
+      }`}
+    >
+      Sign out
+    </a>
+  )}
+</Menu.Item>
                     </Menu.Items>
                   </Transition>
                 </Menu>
