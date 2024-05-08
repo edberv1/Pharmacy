@@ -213,7 +213,7 @@ const editRole = async (req, res) => {
     // If user not found
     if (checkResults.length === 0) {
       return res.status(404).send("Role not found");
-    }
+    }a
 
     try {
       // Update the role details
