@@ -11,18 +11,6 @@ function Sidebar() {
   // Grab the User global state
   const { user, setUser } = useContext(UserContext);
 
-  // Handle logout
-  const handleLogout = () => {
-    // Reset the User state
-    setUser({ email: null, posts: [] });
-    // Remove the items from local storage
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("email");
-    // Navigate to Home page
-    navigate("/");
-  };
-
   return (
 
 <>

@@ -137,7 +137,7 @@ function PharmacyTable() {
       return;
     setCurrentPage(newPage);
   };
-  const pharmaciesToShow = pharmacies.slice(
+  const pharmaciesToShow = filteredPharmacies.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );

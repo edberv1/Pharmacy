@@ -120,25 +120,32 @@ function UserTable() {
         ))
       : null;
 
-  useEffect(() => {
-    // Filter users based on search input and selected role
-    let filtered = users.filter((user) =>
-      `${user.firstname} ${user.lastname} ${user.email} ${user.id}`
-        .toLowerCase()
-        .includes(searchInput.toLowerCase())
-    );
+      useEffect(() => {
+        // Filter users based on search input and selected role
+        let filtered = users.filter((user) =>
+          `${user.firstname} ${user.lastname} ${user.email} ${user.id}`
+            .toLowerCase()
+            .includes(searchInput.toLowerCase())
+        );
+      
+        if (selectedRole !== null) {
+          // If a role is selected, filter users based on the selected role ID
+          filtered = filtered.filter((user) => user.roleId === selectedRole.id); // Assuming selectedRole is an object with an 'id' field
+        }
+      
+        setFilteredUsers(filtered);
+      }, [searchInput, users, selectedRole]);
+      
 
-    if (selectedRole !== null) {
-      // If a role is selected, filter users based on the selected role ID
-      filtered = filtered.filter((user) => user.roleId === selectedRole.id); // Assuming selectedRole is an object with an 'id' field
-    }
 
-    setFilteredUsers(filtered);
-  }, [searchInput, users, selectedRole]);
+
+
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+ 
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -171,7 +178,11 @@ function UserTable() {
     setCurrentPage(newPage);
   };
 
-  const usersToShow = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const usersToShow = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+
+
+  
   
   return (
     <>
