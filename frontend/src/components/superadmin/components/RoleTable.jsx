@@ -72,15 +72,24 @@ function RoleTable() {
     fetchRoles();
   }, []);
 
+  // useEffect(() => {
+  //   // Filter roles based on search query
+  //   const filtered = roles.filter((role) =>
+  //     role.role.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+  
+  //   setFilteredRoles(filtered);
+  // }, [searchQuery, roles]);
+
   useEffect(() => {
     // Filter roles based on search query
     const filtered = roles.filter((role) =>
-      role.role.toLowerCase().includes(searchQuery.toLowerCase())
+      role.role.toLowerCase().includes(searchQuery.toLowerCase()) || role.id.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
   
     setFilteredRoles(filtered);
   }, [searchQuery, roles]);
-  
+
   useEffect(() => {
     // Filter roles based on selected role name
     let filtered = [];

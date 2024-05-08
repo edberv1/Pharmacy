@@ -120,7 +120,7 @@ function UserTable() {
   useEffect(() => {
     // Filter users based on search input and selected role
     let filtered = users.filter((user) =>
-      `${user.firstname} ${user.lastname}`.toLowerCase().includes(searchInput.toLowerCase())
+      `${user.firstname} ${user.lastname} ${user.email} ${user.id}`.toLowerCase().includes(searchInput.toLowerCase())
     );
     
     if (selectedRole !== null) {
