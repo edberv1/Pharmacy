@@ -436,6 +436,71 @@ const getUserGrowth = async (req, res) => {
   });
 };
 
+const getAdminGrowth = async (req, res) => {
+  // Get the total number of admins
+  db.query("SELECT COUNT(*) as total FROM users WHERE roleId = 2", function (err, res1) {
+    if (err) {
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      const totalAdmins = res1[0].total;
+
+      // Get the number of admins created in the last week
+      db.query(
+        "SELECT COUNT(*) as newAdmins FROM users WHERE roleId = 2 AND created_at > DATE_SUB(NOW(), INTERVAL 1 WEEK)",
+        function (err, res2) {
+          if (err) {
+            res
+              .status(500)
+              .json({ error: "Internal Server Error", details: err.message });
+          } else {
+            const newAdmins = res2[0].newAdmins;
+
+            // Calculate the growth percentage
+            const growth = (newAdmins / totalAdmins) * 100;
+
+            res.json({ growth });
+          }
+        }
+      );
+    }
+  });
+};
+
+const getPharmacyCountAndGrowth = async (req, res) => {
+  // Get the total number of pharmacies
+  db.query("SELECT COUNT(*) as total FROM pharmacies", function (err, res1) {
+    if (err) {
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      const totalPharmacies = res1[0].total;
+
+      // Get the number of pharmacies created in the last week
+      db.query(
+        "SELECT COUNT(*) as newPharmacies FROM pharmacies WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 WEEK)",
+        function (err, res2) {
+          if (err) {
+            res
+              .status(500)
+              .json({ error: "Internal Server Error", details: err.message });
+          } else {
+            const newPharmacies = res2[0].newPharmacies;
+
+            // Calculate the growth percentage
+            const growth = (newPharmacies / totalPharmacies) * 100;
+
+            res.json({ totalPharmacies, growth });
+          }
+        }
+      );
+    }
+  });
+};
+
+
 module.exports = {
   getAllUsers,
   createUser,
@@ -451,4 +516,6 @@ module.exports = {
   deletePharmacy,
   editPharmacy,
   getUserGrowth,
+  getAdminGrowth,
+  getPharmacyCountAndGrowth,
 };

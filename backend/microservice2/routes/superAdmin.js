@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
-const {getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth} = require('../controllers/superAdminController');
+const {getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth} = require('../controllers/superAdminController');
 
 
 router.get('/superadmin',  authMiddleware);
@@ -25,6 +25,8 @@ router.get("/getAllPharmacies",  authMiddleware, getAllPharmacies);
 router.post('/createPharmacy',  authMiddleware, createPharmacy);
 router.delete('/deletePharmacy/:id', authMiddleware, deletePharmacy); 
 router.put('/editPharmacy/:id',  authMiddleware, editPharmacy);
-router.get('/getUserGrowth', authMiddleware, getUserGrowth)
+router.get('/getUserGrowth', authMiddleware, getUserGrowth);
+router.get('/getAdminGrowth', authMiddleware, getAdminGrowth);
+router.get('/getPharmacyCountAndGrowth', authMiddleware, getPharmacyCountAndGrowth)
 
 module.exports = router;
