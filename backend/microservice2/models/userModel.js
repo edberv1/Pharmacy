@@ -78,6 +78,18 @@ User.verifyUser = function(userId, result) {
 };
 
 
+User.logoutUser = function(refreshToken, result) {
+    db.query("UPDATE users SET refreshToken = NULL WHERE refreshToken = ?", refreshToken, function(err, res) {
+        if(err) {
+            console.log('Database error: ', err); // Log the error message
+            result(err, null);
+        }
+        else {
+            console.log('Database response: ', res); // Log the database response
+            result(null, res);
+        }
+    });
+};
 
 
 User.login = function(email, password, result) {

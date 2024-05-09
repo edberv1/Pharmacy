@@ -4,6 +4,7 @@ import CreateUserModal from "./UserModal/CreateUserModal";
 import DeleteUserModal from "./UserModal/DeleteUserModal";
 import EditUserModal from "./UserModal/EditUserModal";
 import Pagination from "./Pagination";
+import fetchWithTokenRefresh from "../../../../utils/fetchWithTokenRefresh";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
@@ -48,7 +49,7 @@ function UserTable() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
+        const response = await fetchWithTokenRefresh(
           "http://localhost:8081/superAdmin/getAllUsers",
           {
             method: "GET",
@@ -68,10 +69,10 @@ function UserTable() {
         console.error("Error fetching users: ", error);
       }
     };
-
+  
     const fetchRoles = async () => {
       try {
-        const response = await fetch(
+        const response = await fetchWithTokenRefresh(
           "http://localhost:8081/superAdmin/getAllRoles",
           {
             method: "GET",
@@ -81,12 +82,12 @@ function UserTable() {
             },
           }
         );
-
+  
         if (!response.ok) {
           const errorMessage = await response.text();
           throw new Error(errorMessage);
         }
-
+  
         const dataRoles = await response.json();
         setRoles(dataRoles); // Assuming the backend returns an array of user objects with 'id' and 'name' fields
       } catch (error) {
@@ -94,10 +95,11 @@ function UserTable() {
         // setError("Failed to fetch roles ids.");
       }
     };
-
+  
     fetchUsers();
     fetchRoles();
   }, []);
+  
 
   const roleOptions =
     roles && roles.length > 0

@@ -37,10 +37,10 @@ const signup = (req, res) => {
     } else {
       // Generate tokens
       const accessToken = jwt.sign({ id: userId }, "pharmacy", {
-        expiresIn: 86400,
+        expiresIn: 20,
       }); // expires in 24 hours
       const refreshToken = jwt.sign({ id: userId }, "pharmacyRefresh", {
-        expiresIn: "7d",
+        expiresIn: 40,
       });
 
       User.updateRefreshToken(userId, refreshToken, function(err, res) {
@@ -107,29 +107,6 @@ const verify = (req, res) => {
   });
 };
 
-// const signup = (req, res) => {
-//   let newUser = new User(req.body);
-//   User.addUser(newUser, function(err, user) {
-//     // Check the fields are not empty
-//     if (!newUser.firstname || !newUser.lastname || !newUser.email || !newUser.password) {
-//         return res.status(400).json({ error: "All fields are required." });
-//         }
-//       if (err) {
-//           if (err.message === 'User already exists') {
-//               res.status(400).send('User already exists');
-//           } else {
-//               res.send(err);
-//           }
-//       } else {
-//           // Create a token
-//           const token = jwt.sign({ id: user.id }, "pharmacy", {
-//             expiresIn: 86400 // expires in 24 hours
-//         });
-//           res.status(200).send({ auth: true, token: token});
-//       }
-//   });
-// }
-
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -171,12 +148,12 @@ const loginUser = async (req, res) => {
       const accessToken = jwt.sign(
         { id: user.id, role: user.role },
         "pharmacy",
-        { expiresIn: 21600 }
+        { expiresIn: 20 }
       ); // 6 hours
       const refreshToken = jwt.sign(
         { id: user.id, role: user.role },
         "pharmacyRefresh",
-        { expiresIn: "7d" }
+        { expiresIn: 40 }
       ); // 7 days
       user.refreshToken = refreshToken;
 
@@ -209,9 +186,16 @@ const getLoginUser = async (req, res) => {
 
 const logoutUser = (req, res) => {
   const refreshToken = req.body.token;
-  user.refreshTokens = user.refreshTokens.filter(token => token !== refreshToken);
-  res.status(200).send({ auth: false, token: null });
+  User.logoutUser(refreshToken, function(err) {
+    if (err) {
+      // handle error
+      res.status(500).send({ auth: false, message: "Failed to logout." });
+    } else {
+      res.status(200).send({ auth: false, token: null });
+    }
+  });
 };
+
 
 const refresh = (req, res) => {
   const refreshToken = req.body.token;
@@ -229,4 +213,4 @@ const refresh = (req, res) => {
   });
 };
 
-module.exports = { signup, loginUser, getLoginUser, logoutUser, verify };
+module.exports = { signup, loginUser, getLoginUser, logoutUser, verify, refresh};
