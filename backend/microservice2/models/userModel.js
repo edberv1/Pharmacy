@@ -9,6 +9,7 @@ let User = function(user){
     this.password = bcrypt.hashSync(user.password, 10); // Hash the password
     this.roleId = 3 ;
     this.verified = false;
+    this.created_at = new Date();
 };
 
 User.addUser = function(newUser, result) {

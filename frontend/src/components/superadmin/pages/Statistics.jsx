@@ -1,9 +1,10 @@
-import Sidebar from "../components/Sidebar"
+import StatsCards from "../components/StatsCards"
+
 
 function Statistics() {
   return (
     <>
-    <Sidebar/>
+  <StatsCards/>
     </>
   )
 }

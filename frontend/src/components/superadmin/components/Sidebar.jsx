@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { UserContext } from "../../../contexts/UserContexts";
+import Statistics from "../pages/Statistics";
 
 function Sidebar() {
   // Use navigate hook
@@ -30,9 +31,9 @@ function Sidebar() {
           analytics
         </label>
 
-        <a
+        <Link
           className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
-          href="#"
+          to="/superadmin/statistics"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +46,7 @@ function Sidebar() {
           </svg>
 
           <span className="mx-2 text-sm font-medium">Statistics</span>
-        </a>
+        </Link>
 
         <Link to="/superadmin/users"
           className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"

@@ -97,7 +97,7 @@ const deleteUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   const userId = req.params.id;
-  const { firstname, lastname, email, roleId, verified} = req.body;
+  const { firstname, lastname, email, roleId, verified } = req.body;
 
   // Perform validation
   if (!firstname || !lastname || !email || !roleId || !verified) {
@@ -127,7 +127,14 @@ const editUser = async (req, res) => {
         SET firstname = ?, lastname = ?, email = ?, roleId = ?, verified =?
         WHERE id = ?`;
 
-        const queryParams = [firstname, lastname, email, roleId, verified, userId]; // Put 'userId' at the end
+      const queryParams = [
+        firstname,
+        lastname,
+        email,
+        roleId,
+        verified,
+        userId,
+      ]; // Put 'userId' at the end
 
       await db.query(updateQuery, queryParams);
 
@@ -156,7 +163,6 @@ const getAllRoles = async (req, res) => {
     res.json(results);
   });
 };
-
 
 const createRole = async (req, res) => {
   const { role } = req.body;
@@ -213,7 +219,8 @@ const editRole = async (req, res) => {
     // If user not found
     if (checkResults.length === 0) {
       return res.status(404).send("Role not found");
-    }a
+    }
+    a;
 
     try {
       // Update the role details
@@ -292,26 +299,22 @@ const createPharmacy = async (req, res) => {
   // Insert pharmacy
   const insertQuery =
     "INSERT INTO pharmacies (name, location, userId) VALUES (?, ?, ?)";
-  db.query(
-    insertQuery,
-    [name, location, userId],
-    (insertErr, result) => {
-      if (insertErr) {
-        console.error("Error executing MySQL query: ", insertErr);
-        return res
-          .status(500)
-          .send("Internal Server Error: " + insertErr.message);
-      }
-      res.send({
-        message: "Pharmacy created successfully",
-        pharmacyId: result.insertId,
-      });
+  db.query(insertQuery, [name, location, userId], (insertErr, result) => {
+    if (insertErr) {
+      console.error("Error executing MySQL query: ", insertErr);
+      return res
+        .status(500)
+        .send("Internal Server Error: " + insertErr.message);
     }
-  );
+    res.send({
+      message: "Pharmacy created successfully",
+      pharmacyId: result.insertId,
+    });
+  });
 };
 
 const getAllUserIds = async (req, res) => {
-  const query = "SELECT id, firstname FROM users";  // Fetching id and firstname
+  const query = "SELECT id, firstname FROM users"; // Fetching id and firstname
 
   db.query(query, (err, results) => {
     if (err) {
@@ -329,7 +332,7 @@ const getAllUserIds = async (req, res) => {
 
 const editPharmacy = async (req, res) => {
   const pharmacyId = req.params.id;
-  const { name , location } = req.body;
+  const { name, location } = req.body;
 
   // Perform validation
   if (!name || !location) {
@@ -357,11 +360,14 @@ const editPharmacy = async (req, res) => {
         SET name = ? , location = ? 
         WHERE id = ?`;
 
-      const queryParams = [name, location , pharmacyId];
+      const queryParams = [name, location, pharmacyId];
 
       await db.query(updateQuery, queryParams);
 
-      res.send({ message: "Pharmacy updated successfully", pharmacyId: pharmacyId }); //userId: userId
+      res.send({
+        message: "Pharmacy updated successfully",
+        pharmacyId: pharmacyId,
+      }); //userId: userId
     } catch (updateErr) {
       console.error("Error executing MySQL query: ", updateErr);
       res.status(500).send("Internal Server Error: " + updateErr.message);
@@ -398,6 +404,37 @@ const deletePharmacy = async (req, res) => {
   });
 };
 
+const getUserGrowth = async (req, res) => {
+  // Get the total number of users
+  db.query("SELECT COUNT(*) as total FROM users", function (err, res1) {
+    if (err) {
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      const totalUsers = res1[0].total;
+
+      // Get the number of users created in the last month
+      db.query(
+        "SELECT COUNT(*) as newUsers FROM users WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 WEEK)",
+        function (err, res2) {
+          if (err) {
+            res
+              .status(500)
+              .json({ error: "Internal Server Error", details: err.message });
+          } else {
+            const newUsers = res2[0].newUsers;
+
+            // Calculate the growth percentage
+            const growth = (newUsers / totalUsers) * 100;
+
+            res.json({ growth });
+          }
+        }
+      );
+    }
+  });
+};
 
 module.exports = {
   getAllUsers,
@@ -412,5 +449,6 @@ module.exports = {
   createPharmacy,
   getAllUserIds,
   deletePharmacy,
-  editPharmacy
+  editPharmacy,
+  getUserGrowth,
 };
