@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
+import React from 'react'
 
-function Requests () {
- 
+function ProductsTable() {
   return (
     <>
       <div className="mx-auto max-w-screen-xl pt-16">
@@ -63,15 +62,7 @@ function Requests () {
         </div>
       </div>
     </>
-  );
-
-
-
+  )
 }
 
-export default Requests;
-
-
-
-
-
+export default ProductsTable

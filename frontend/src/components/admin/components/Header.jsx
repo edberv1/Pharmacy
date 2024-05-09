@@ -7,11 +7,12 @@ export default function Header() {
   const handleLogout = () => {
     // Call the logout API
     fetch("http://localhost:8081/users/logoutUser", {
-      method: "GET",
+      method: "POST", // or 'DELETE'
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token")
+        Authorization: "Bearer " + localStorage.getItem("token"),
       },
+      body: JSON.stringify({ token: localStorage.getItem("token") }), // send the token in the request body
     })
       .then((response) => response.json())
       .then((data) => {

@@ -1,10 +1,9 @@
-// import Sidebar from "../components/Sidebar"
+import ProductsTable from "../components/ProductsTable"
 
 function Products() {
   return (
     <>
-    {/* <Sidebar/> */}
-    
+     <ProductsTable/>
     </>
   )
 }

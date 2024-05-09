@@ -20,10 +20,10 @@ function App() {
   const UsersRoute = withRole(Users, 'superadmin');
   const RolesRoutes = withRole(Roles, 'superadmin');
   const PharmaciesRoute = withRole(Pharmacies, 'superadmin');
-  const ProductsRoute = withRole(Products, 'superadmin');
-  const ProfileAdminRoute = withRole(ProfileAdmin, 'admin')
-  const RequestsRoute = withRole(Requests, 'superadmin')
-  const StatisticsRoute = withRole(Statistics,'superadmin')
+  const ProductsRoute = withRole(Products, 'admin');
+  const ProfileAdminRoute = withRole(ProfileAdmin, 'admin');
+  const RequestsRoute = withRole(Requests, 'superadmin');
+  const StatisticsRoute = withRole(Statistics,'superadmin');
 
   return (
     <Router>
@@ -36,6 +36,7 @@ function App() {
         {/* Admin Routes */}
         <Route path="admin/*" element={<AdminRoute />}>
           <Route path="profileAdmin" element={<ProfileAdminRoute />} />
+          <Route path="products" element={<ProductsRoute />} />
         </Route>
          
         {/* Admin Routes */}
@@ -45,7 +46,7 @@ function App() {
           <Route path="users" element={<UsersRoute />} />
           <Route path="roles" element={<RolesRoutes />} />
           <Route path="pharmacies" element={<PharmaciesRoute />} />
-          <Route path="products" element={<ProductsRoute />} />
+          
           <Route path="requests" element={<RequestsRoute />} />
           <Route path="statistics" element={<StatisticsRoute/>}/>
         </Route>

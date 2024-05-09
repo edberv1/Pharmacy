@@ -86,7 +86,8 @@ const runMigrations = (pool) => {
       name VARCHAR(255) NOT NULL,
       location VARCHAR(255) NOT NULL,
       userId INT NOT NULL,
-      FOREIGN KEY (userId) REFERENCES users(id) 
+      FOREIGN KEY (userId) REFERENCES users(id) ,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`;
 
     connection.query(createTableQueryPharmacies, (err, result) => {
@@ -96,6 +97,27 @@ const runMigrations = (pool) => {
         return;
       }
       console.log('Pharmacies Table created successfully');
+    });
+
+    // Create Products Table
+    const createTableQueryProducts = `
+    CREATE TABLE IF NOT EXISTS products (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      produced VARCHAR(255) NOT NULL,
+      pharmacyId INT NOT NULL,
+      FOREIGN KEY (pharmacyId) REFERENCES pharmacies(id),
+      stock INT NOT NULL DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`;
+
+    connection.query(createTableQueryProducts, (err, result) => {
+      if (err) {
+        console.error('Error creating products table:', err);
+        connection.release(); // Release the connection back to the pool
+        return;
+      }
+      console.log('Products Table created successfully');
     });
 
   });
