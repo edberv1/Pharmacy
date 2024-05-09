@@ -26,16 +26,19 @@ const runMigrations = (pool) => {
 
       // Create Users Table
       const createTableQueryUsers = `
-        CREATE TABLE IF NOT EXISTS users (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          firstname VARCHAR(255) NOT NULL,
-          lastname VARCHAR(255) NOT NULL,
-          email VARCHAR(255) NOT NULL,
-          password VARCHAR(255) NOT NULL,
-          roleId INT,
-          FOREIGN KEY (roleId) REFERENCES roles(id)
-        )
-      `;
+    CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        firstname VARCHAR(255) NOT NULL,
+        lastname VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        roleId INT,
+        FOREIGN KEY (roleId) REFERENCES roles(id),
+        refreshToken VARCHAR(255),
+        verified BOOLEAN DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+`;
 
       connection.query(createTableQueryUsers, (err, result) => {
         if (err) {
