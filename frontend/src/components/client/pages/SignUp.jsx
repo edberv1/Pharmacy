@@ -47,6 +47,7 @@ function SignUp() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(dataToSubmit),
+      credentials: "include",
     })
     .then((response) => {
       if (!response.ok) {

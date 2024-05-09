@@ -48,14 +48,13 @@ function UserTable() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem("token");
         const response = await fetch(
           "http://localhost:8081/superAdmin/getAllUsers",
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "x-access-token": token,
+              "Authorization": "Bearer " + localStorage.getItem("token")
             },
           }
         );
@@ -72,18 +71,13 @@ function UserTable() {
 
     const fetchRoles = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No token found.");
-        }
-
         const response = await fetch(
           "http://localhost:8081/superAdmin/getAllRoles",
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "x-access-token": token,
+              "Authorization": "Bearer " + localStorage.getItem("token")
             },
           }
         );

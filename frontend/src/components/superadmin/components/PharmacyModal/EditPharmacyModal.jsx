@@ -21,12 +21,6 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
     e.preventDefault();
     // Here you can add your logic to update a pharmacy
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found.");
-      }
-
       // Make HTTP PUT request to update pharmacy with token included in headers
       const response = await fetch(
         `http://localhost:8081/superAdmin/editPharmacy/${pharmacy.id}`, //pharmacy.id
@@ -34,7 +28,7 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "x-access-token": token, // Include the token in the headers
+            "Authorization": "Bearer " + localStorage.getItem("token")
           },
           body: JSON.stringify(formData),
         }

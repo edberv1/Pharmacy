@@ -48,14 +48,13 @@ function RoleTable() {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const token = localStorage.getItem("token");
         const response = await fetch(
           "http://localhost:8081/superAdmin/getAllRoles",
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "x-access-token": token,
+              "Authorization": "Bearer " + localStorage.getItem("token")
             },
           }
         );

@@ -20,20 +20,13 @@ function CreateRoleModal({ isOpen, onClose }) {
     e.preventDefault();
     // Here you can add your logic to create a user
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found.");
-      }
-  
-      // Make HTTP POST request to create user with token included in headers
       const response = await fetch(
         "http://localhost:8081/superAdmin/createRole",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-access-token": token, // Include the token in the headers
+            "Authorization": "Bearer " + localStorage.getItem("token")
           },
           body: JSON.stringify(formData),
         }

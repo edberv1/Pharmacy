@@ -10,7 +10,7 @@ export default function Header() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "x-access-token": localStorage.getItem("token"), // or wherever you store your token
+        "Authorization": "Bearer " + localStorage.getItem("token")
       },
     })
       .then((response) => response.json())

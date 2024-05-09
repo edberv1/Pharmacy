@@ -10,9 +10,9 @@ export default function Header() {
     fetch('http://localhost:8081/users/logoutUser', {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': localStorage.getItem('token') // or wherever you store your token
-      }
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token")
+      },
     })
     .then(response => response.json())
     .then(data => {

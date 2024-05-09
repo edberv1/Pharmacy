@@ -25,12 +25,6 @@ function EditUserModal({ isOpen, onClose, user }) {
     e.preventDefault();
     // Here you can add your logic to update a user
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found.");
-      }
-
       // Make HTTP PUT request to update user with token included in headers
       const response = await fetch(
         `http://localhost:8081/superAdmin/editUser/${user.id}`, //userId
@@ -38,7 +32,7 @@ function EditUserModal({ isOpen, onClose, user }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "x-access-token": token, // Include the token in the headers
+            "Authorization": "Bearer " + localStorage.getItem("token")
           },
           body: JSON.stringify(formData),
         }
@@ -63,18 +57,13 @@ function EditUserModal({ isOpen, onClose, user }) {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No token found.");
-        }
-
         const response = await fetch(
           "http://localhost:8081/superAdmin/getAllRoles",
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "x-access-token": token,
+              "Authorization": "Bearer " + localStorage.getItem("token")
             },
           }
         );

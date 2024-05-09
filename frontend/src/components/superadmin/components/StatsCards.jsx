@@ -6,38 +6,37 @@ function StatsCards() {
 
     useEffect(() => {
         const fetchUsers = async () => {
-          try {
-            const token = localStorage.getItem("token");
-            const response = await fetch(
-              "http://localhost:8081/superAdmin/getAllUsers",
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  "x-access-token": token,
-                },
+            try {
+              const response = await fetch(
+                "http://localhost:8081/superAdmin/getAllUsers",
+                {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("token")
+                  },
+                }
+              );
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
               }
-            );
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+              const data = await response.json();
+              setUsers(data);
+            } catch (error) {
+              console.error("Error fetching users: ", error);
             }
-            const data = await response.json();
-            setUsers(data);
-          } catch (error) {
-            console.error("Error fetching users: ", error);
-          }
-        };
+          };
+          
         
         const getGrowth = async () => {
             try {
-              const token = localStorage.getItem("token");
               const response = await fetch(
                 "http://localhost:8081/superAdmin/getUserGrowth",
                 {
                   method: "GET",
                   headers: {
                     "Content-Type": "application/json",
-                    "x-access-token": token,
+                    "Authorization": "Bearer " + localStorage.getItem("token")
                   },
                 }
               );
@@ -53,8 +52,9 @@ function StatsCards() {
           
        fetchUsers();
        getGrowth();
+       
       }, []);
-        
+        const adminCount = users.filter(user => user.roleId === 2).length;
   return (
     <div className="flex flex-wrap">
     <div className="mt-4 w-full lg:w-6/12 xl:w-3/12 px-5 mb-4">
@@ -84,7 +84,7 @@ function StatsCards() {
         <div className="flex flex-wrap">
             <div className="relative w-full pr-4 max-w-full flex-grow flex-1">
             <h5 className="text-white uppercase font-bold text-xs">Admins</h5>
-            <span className="font-semibold text-xl text-white">2,999</span>
+            <span className="font-semibold text-xl text-white">{adminCount}</span>
             </div>
             <div className="relative w-auto pl-4 flex-initial">
             <div className="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full  bg-pink-500">

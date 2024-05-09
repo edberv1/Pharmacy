@@ -22,7 +22,7 @@ export default function ProfileAdmin() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "x-access-token": token,
+              "Authorization": "Bearer " + localStorage.getItem("token")
             },
           }
         );

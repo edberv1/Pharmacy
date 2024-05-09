@@ -7,16 +7,12 @@ function DeleteUserModal({ isOpen, onClose, userId}) {
 
   const handleDeleteUser = async () => {
     try {
-        const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found.");
-      }
       // Make a DELETE request to your backend endpoint to delete the user
       const response = await fetch(`http://localhost:8081/superAdmin/deleteUser/${userId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "x-access-token": token, 
+          "Authorization": "Bearer " + localStorage.getItem("token")
         },
       });
   

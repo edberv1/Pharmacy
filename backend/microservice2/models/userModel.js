@@ -10,7 +10,9 @@ let User = function(user){
     this.roleId = 3 ;
     this.verified = false;
     this.created_at = new Date();
+    this.refreshToken = "";
 };
+
 
 User.addUser = function(newUser, result) {
     db.query("SELECT * FROM users WHERE email = ?", newUser.email, function(err, res) {
@@ -36,6 +38,20 @@ User.addUser = function(newUser, result) {
         }
     });
 };
+
+User.updateRefreshToken = function(userId, refreshToken, result) {
+    db.query("UPDATE users SET refreshToken = ? WHERE id = ?", [refreshToken, userId], function(err, res) {
+        if(err) {
+            console.log('Database error: ', err); // Log the error message
+            result(err, null);
+        }
+        else {
+            console.log('Database response: ', res); // Log the database response
+            result(null, res);
+        }
+    });
+};
+
 
 User.getUserById = function(userId, result) {
     db.query("SELECT * FROM users WHERE id = ?", userId, function(err, res) {
