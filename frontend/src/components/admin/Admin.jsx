@@ -4,6 +4,7 @@ import Header from "./components/Header";
 
 function Admin() {
   return (
+    <>
     <div className="flex">
         <div className="flex-none">
           <Sidebar />
@@ -14,6 +15,7 @@ function Admin() {
            <Outlet />
         </div>
       </div>
+    </>
   );
 }
 

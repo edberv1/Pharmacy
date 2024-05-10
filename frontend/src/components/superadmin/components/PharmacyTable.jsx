@@ -13,6 +13,7 @@ function PharmacyTable() {
   const [pharmacyIdToDelete, setPharmacyIdToDelete] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedPharmacy, setSelectedPharmacy] = useState(null);
+  const [selectedPharmacyLocation, setSelectedPharmacyLocation] = useState(null);
 
   const [searchInput, setSearchInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,15 +74,7 @@ function PharmacyTable() {
     fetchPharmacies();
   }, []);
 
-  // useEffect(() => {
-  //   let filtered = pharmacies.filter((pharmacy) =>
-  //     `${pharmacy.name} ${pharmacy.location}`.toLowerCase().includes(searchInput.toLowerCase())
-  //   );
-  //   if (selectedPharmacy !== null) {
-  //     filtered = filtered.filter((pharmacy) => pharmacy.location === selectedPharmacy); //selectedPharmacy.location???
-  //   }
-  //   setFilteredPharmacies(filtered);
-  // }, [searchInput, pharmacies, selectedPharmacy]);
+
 
   useEffect(() => {
     let filtered = pharmacies.filter((pharmacy) =>
@@ -89,13 +82,12 @@ function PharmacyTable() {
         .toLowerCase()
         .includes(searchInput.toLowerCase())
     );
-    if (selectedPharmacy !== null) {
+    if (selectedPharmacyLocation !== null) {
       filtered = filtered.filter(
-        (pharmacy) => pharmacy.location === selectedPharmacy
-      ); // Filter by pharmacy.location === selectedPharmacy
+        (pharmacy) => pharmacy.location === selectedPharmacyLocation); // Filter by pharmacy.location === selectedPharmacy
     }
     setFilteredPharmacies(filtered);
-  }, [searchInput, pharmacies, selectedPharmacy]);
+  }, [searchInput, pharmacies, selectedPharmacyLocation]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -120,7 +112,7 @@ function PharmacyTable() {
   }, [isDropdownOpen]);
 
   const handleShowAll = () => {
-    setSelectedPharmacy(null);
+    setSelectedPharmacyLocation(null);
   };
 
   const toggleDropdown = () => {
@@ -219,16 +211,7 @@ function PharmacyTable() {
                     >
                       Show All
                     </button>
-                    {/* {pharmacies.map((pharmacy, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedPharmacy(pharmacy.location)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
-                          role="menuitem"
-                        >
-                          {pharmacy.location}
-                        </button>
-                      ))} */}
+                   
                     {pharmacies
                       .reduce((uniqueLocations, pharmacy) => {
                         if (!uniqueLocations.includes(pharmacy.location)) {
@@ -239,7 +222,7 @@ function PharmacyTable() {
                       .map((location, index) => (
                         <button
                           key={index}
-                          onClick={() => setSelectedPharmacy(location)}
+                          onClick={() => selectedPharmacyLocation(location)}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
                           role="menuitem"
                         >
@@ -309,6 +292,13 @@ function PharmacyTable() {
                           <i className="fa-solid fa-pen-to-square pr-2"></i>
                           Edit
                         </button>
+                        {isEditModalOpen && selectedPharmacy && (
+                          <EditPharmacyModal
+                            isOpen={isEditModalOpen}
+                            onClose={closeEditModal}
+                            pharmacy={selectedPharmacy}
+                          />
+                        )}
                         <DeletePharmacyModal
                           isOpen={pharmacyIdToDelete === pharmacy.id}
                           onClose={closeDeleteModal}
@@ -330,13 +320,6 @@ function PharmacyTable() {
                 ))}
               </tbody>
             </table>
-            {isEditModalOpen && selectedPharmacy && (
-              <EditPharmacyModal
-                isOpen={isEditModalOpen}
-                onClose={closeEditModal}
-                pharmacy={selectedPharmacy}
-              />
-            )}
           </div>
           <Pagination
             currentPage={currentPage}

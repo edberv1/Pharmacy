@@ -145,6 +145,27 @@ const runMigrations = (pool) => {
       }
       console.log("License Table created successfully");
     });
+
+    // Create Login Table Charts
+    const createTableQueryLogins = `
+    CREATE TABLE IF NOT EXISTS logins (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      login_time DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`;
+    
+    connection.query(createTableQueryLogins, (err, result) => {
+      if (err) {
+        console.error('Error creating logins table:', err);
+        connection.release(); // Release the connection back to the pool
+        return;
+      }
+      console.log('Logins Table created successfully');
+    });
+
+
+
   });
 };
 
