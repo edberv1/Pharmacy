@@ -17,6 +17,10 @@ import Statistics from "./components/superadmin/pages/Statistics";
 import PharmacyForm from "./components/client/pages/PharmacyForm";
 import Home from "./components/client/pages/Home";
 
+import AboutUsClient from "./components/client/pages/AboutUs";
+import ClientPharmacies from "./components/client/pages/Pharmacies";
+import PharmacyDetails from "./components/client/components/PharmacyDetails";
+
 function App() {
   const AdminRoute = withRole(Admin, "admin");
   const SuperAdminRoute = withRole(SuperAdmin, "superadmin");
@@ -28,6 +32,7 @@ function App() {
   const RequestsRoute = withRole(Requests, "superadmin");
   const StatisticsRoute = withRole(Statistics, "superadmin");
 
+  
   return (
     <Router>
       <Routes>
@@ -38,6 +43,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/pharmacyForm" element={<PharmacyForm />} />
+
+          <Route path="/pharmacies" element={<ClientPharmacies />} />
+          <Route path="/aboutUs" element={<AboutUsClient />} />
+          <Route path="/pharmacies/:id" element={<PharmacyDetails />} />
 
         </Route>
 
