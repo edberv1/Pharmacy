@@ -41,7 +41,18 @@ function Navbar() {
             </span>
           </a>
           {user.email ? (
+            
             <div className="flex items-center space-x-6 rtl:space-x-reverse">
+
+              <Link to="/pharmacies" className="text-md text-white dark:text-white-500 hover:underline">
+                <i className="fa-solid fa-hospital pr-2"></i>
+                Pharmacies
+              </Link>
+              <Link to="/aboutUs" className="text-md text-white dark:text-white-500 hover:underline">
+                <i className="fa-solid fa-regular fa-circle-info pr-2"></i>
+                About Us
+              </Link>
+              
               <Link to="/profile" className="text-md text-white dark:text-white-500 hover:underline">
                 <i className="fa-solid fa-user pr-2"></i>
                 Profile
