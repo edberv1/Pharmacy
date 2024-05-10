@@ -1,7 +1,71 @@
 /* eslint-disable no-unused-vars */
+import { useState, useEffect } from "react";
+import fetchWithTokenRefresh from "../../../../utils/fetchWithTokenRefresh";
 
-function Requests () {
- 
+function Requests() {
+  const [licenses, setLicenses] = useState([]);
+
+  const fetchLicenses = async () => {
+    try {
+      const response = await fetchWithTokenRefresh(
+        "http://localhost:8081/superAdmin/fetchPendingLicenses",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setLicenses(data.data); // Adjusted this line
+    } catch (error) {
+      console.error("Error fetching licenses: ", error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchLicenses();
+  }, []);
+
+  const handleApprove = async (userId, licenseId, fetchLicenses) => {
+    try {
+      console.log(JSON.stringify({ userId, licenseId }));
+      const response = await fetchWithTokenRefresh(
+        "http://localhost:8081/superAdmin/approveUser",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ userId, licenseId }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data.message); // Log the success message
+
+      // Refresh the licenses
+      fetchLicenses();
+    } catch (error) {
+      console.error("Error approving user: ", error);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.getDate()}/${date.getMonth() + 1}/${date
+      .getFullYear()
+      .toString()
+      .substr(-2)}`;
+  };
   return (
     <>
       <div className="mx-auto max-w-screen-xl pt-16">
@@ -21,7 +85,6 @@ function Requests () {
                     id="simple-search"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Search"
-                    
                     required=""
                   />
                 </div>
@@ -33,7 +96,7 @@ function Requests () {
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-4 py-3">
-                    ID
+                    ID of License
                   </th>
                   <th scope="col" className="px-4 py-3">
                     User Details
@@ -42,7 +105,16 @@ function Requests () {
                     Email
                   </th>
                   <th scope="col" className="px-4 py-3">
-                    Role
+                    License ID PDF
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Issue Date
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Expiry Date
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    License
                   </th>
                   <th scope="col" className="px-4 py-3 flex justify-center">
                     Actions
@@ -50,7 +122,33 @@ function Requests () {
                 </tr>
               </thead>
               <tbody>
-             
+                {licenses.map((license) => (
+                  <tr key={license.licenseId}>
+                    <td className="px-4 py-3">{license.licenseId}</td>
+                    <td className="px-4 py-3">
+                      {license.firstname} {license.lastname}
+                    </td>
+                    <td className="px-4 py-3">{license.email}</td>
+                    <td className="px-4 py-3">{license.license}</td>
+                    <td className="px-4 py-3">
+                      {formatDate(license.issueDate)}
+                    </td>
+                    <td className="px-4 py-3">
+                      {formatDate(license.expiryDate)}
+                    </td>
+                    <td className="px-4 py-3">{license.status}</td>
+                    <td className="px-4 py-3">
+                    <button
+  onClick={() =>
+    handleApprove(license.userId, license.licenseId, fetchLicenses)
+  }
+>
+  Approve
+</button>
+
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -59,19 +157,10 @@ function Requests () {
   totalPages={Math.ceil(users.length / itemsPerPage)}
   handlePageChange={handlePageChange}
 /> */}
-
         </div>
       </div>
     </>
   );
-
-
-
 }
 
 export default Requests;
-
-
-
-
-

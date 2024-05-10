@@ -553,7 +553,43 @@ const getDailyLogins = async (req, res) => {
   });
 };
 
+const fetchPendingLicenses = async (req, res) => {
+  const selectQuery = "SELECT license.licenseId, license.userId, license.issueDate, license.expiryDate, license.license, license.status, users.firstname, users.lastname, users.email FROM license INNER JOIN users ON license.userId = users.id WHERE license.status = 'PENDING'";
 
+  db.query(selectQuery, (selectErr, result) => {
+      if (selectErr) {
+          console.error("Error executing MySQL query: ", selectErr);
+          return res.status(500).send("Internal Server Error: " + selectErr.message);
+      }
+      res.send({
+          message: "Fetched pending licenses successfully",
+          data: result
+      });
+  });
+};
+
+const approveUser = async (req, res) => {
+const { userId, licenseId } = req.body;
+
+  if (!userId || !licenseId) {
+    return res.status(400).send("User ID and License ID are required");
+  }
+
+  const updateLicenseQuery = "UPDATE license SET status = 'APPROVED' WHERE licenseId = ?";
+  const updateUserQuery = "UPDATE users SET roleId = 2 WHERE id = ?";
+
+  try {
+    await db.query(updateLicenseQuery, [licenseId]);
+    await db.query(updateUserQuery, [userId]);
+
+    res.send({
+      message: "User approved successfully"
+    });
+  } catch (error) {
+    console.error("Error executing MySQL query: ", error);
+    return res.status(500).send("Internal Server Error: " + error.message);
+  }
+};
 
 module.exports = {
   getAllUsers,
@@ -573,5 +609,7 @@ module.exports = {
   getAdminGrowth,
   getPharmacyCountAndGrowth,
   getDailyRegistrations,
-  getDailyLogins
+  getDailyLogins,
+  fetchPendingLicenses,
+  approveUser
 };
