@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
-const {getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth} = require('../controllers/superAdminController');
+const {getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth} = require('../controllers/superAdminController');
 
 
 router.get('/superadmin',  authMiddleware);
@@ -28,5 +28,10 @@ router.put('/editPharmacy/:id',  authMiddleware, editPharmacy);
 router.get('/getUserGrowth', authMiddleware, getUserGrowth);
 router.get('/getAdminGrowth', authMiddleware, getAdminGrowth);
 router.get('/getPharmacyCountAndGrowth', authMiddleware, getPharmacyCountAndGrowth)
+router.get('/getDailyRegistrations', authMiddleware, getDailyRegistrations)
+router.get('/getDailyLogins', authMiddleware, getDailyLogins)
+
+
+
 
 module.exports = router;

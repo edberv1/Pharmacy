@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const db = require("../db.js");
+const moment = require('moment');
 require("dotenv").config();
 
 // =======================================USERS=======================================
@@ -500,6 +501,59 @@ const getPharmacyCountAndGrowth = async (req, res) => {
   });
 };
 
+const getDailyRegistrations = async (req, res) => {
+  try {
+    let registrations = [];
+    for(let i = 6; i >= 0; i--) {
+      const startOfDay = moment().subtract(i, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss');
+      const endOfDay = moment().subtract(i, 'days').endOf('day').format('YYYY-MM-DD HH:mm:ss');
+
+      const query = `
+        SELECT COUNT(*) as count 
+        FROM users 
+        WHERE created_at BETWEEN ? AND ?`;
+
+      db.query(query, [startOfDay, endOfDay], (err, results) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send('Server Error');
+        }
+
+        registrations.push({
+          day: `Day ${6 - i + 1}`,
+          registrations: results[0].count
+        });
+
+        if (i === 0) {
+          res.json(registrations);
+          console.log(registrations);
+        }
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+};
+
+const getDailyLogins = async (req, res) => {
+  const query = `
+    SELECT DATE(login_time) as day, COUNT(*) as logins
+    FROM logins
+    GROUP BY DATE(login_time)
+    ORDER BY day ASC
+  `;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.status(500).send({ message: "Database error." });
+    }
+
+    res.json(result);
+  });
+};
+
+
 
 module.exports = {
   getAllUsers,
@@ -518,4 +572,6 @@ module.exports = {
   getUserGrowth,
   getAdminGrowth,
   getPharmacyCountAndGrowth,
+  getDailyRegistrations,
+  getDailyLogins
 };

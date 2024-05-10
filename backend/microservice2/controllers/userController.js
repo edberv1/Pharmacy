@@ -43,11 +43,11 @@ const signup = (req, res) => {
         expiresIn: "7d",
       });
 
-      User.updateRefreshToken(userId, refreshToken, function(err, res) {
+      User.updateRefreshToken(userId, refreshToken, function (err, res) {
         if (err) {
-          console.log('Database error: ', err); // Log the error message
+          console.log("Database error: ", err); // Log the error message
         } else {
-          console.log('Database response: ', res); // Log the database response
+          console.log("Database response: ", res); // Log the database response
         }
       });
 
@@ -74,7 +74,6 @@ const signup = (req, res) => {
     }
   });
 };
-
 
 // This is your verification route
 const verify = (req, res) => {
@@ -157,6 +156,14 @@ const loginUser = async (req, res) => {
       ); // 7 days
       user.refreshToken = refreshToken;
 
+      // Insert a row into the user_logins table
+      const loginQuery = "INSERT INTO logins (user_id) VALUES (?)";
+      db.query(loginQuery, [user.id], (err, result) => {
+        if (err) {
+          console.error("Error inserting into logins", err);
+        }
+      });
+
       res.json({
         auth: true,
         token: accessToken,
@@ -186,7 +193,7 @@ const getLoginUser = async (req, res) => {
 
 const logoutUser = (req, res) => {
   const refreshToken = req.body.token;
-  User.logoutUser(refreshToken, function(err) {
+  User.logoutUser(refreshToken, function (err) {
     if (err) {
       // handle error
       res.status(500).send({ auth: false, message: "Failed to logout." });
@@ -195,7 +202,6 @@ const logoutUser = (req, res) => {
     }
   });
 };
-
 
 const refresh = (req, res) => {
   const refreshToken = req.body.token;
@@ -208,20 +214,34 @@ const refresh = (req, res) => {
       return res.sendStatus(403); // Forbidden
     }
 
-    const accessToken = jwt.sign({ id: user.id, role: user.role }, "pharmacy", { expiresIn: 21600 }); // 6 hours
-    const newRefreshToken = jwt.sign({ id: user.id, role: user.role }, "pharmacyRefresh", { expiresIn: 604800 }); // 7 days
+    const accessToken = jwt.sign({ id: user.id, role: user.role }, "pharmacy", {
+      expiresIn: 21600,
+    }); // 6 hours
+    const newRefreshToken = jwt.sign(
+      { id: user.id, role: user.role },
+      "pharmacyRefresh",
+      { expiresIn: 604800 }
+    ); // 7 days
 
-    User.updateRefreshToken(user.id, newRefreshToken, function(err, res) {
+    User.updateRefreshToken(user.id, newRefreshToken, function (err, res) {
       if (err) {
-        console.log('Database error: ', err); // Log the error message
-        return res.status(500).send({ auth: false, message: "Failed to update refresh token." });
+        console.log("Database error: ", err); // Log the error message
+        return res
+          .status(500)
+          .send({ auth: false, message: "Failed to update refresh token." });
       } else {
-        console.log('Database response: ', res); // Log the database response
+        console.log("Database response: ", res); // Log the database response
         return res.json({ accessToken, refreshToken: newRefreshToken });
       }
     });
   });
 };
 
-
-module.exports = { signup, loginUser, getLoginUser, logoutUser, verify, refresh};
+module.exports = {
+  signup,
+  loginUser,
+  getLoginUser,
+  logoutUser,
+  verify,
+  refresh,
+};

@@ -6,7 +6,6 @@ const session = require('express-session');
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const superAdminRouter = require('./routes/superAdmin.js');
-const authMiddleware = require('./middlewares/authMiddleware.js'); 
 
 const app = express();
 app.use(
