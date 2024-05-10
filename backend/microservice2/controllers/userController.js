@@ -237,6 +237,44 @@ const refresh = (req, res) => {
   });
 };
 
+const getAllPharmacies = async (req, res) => {
+  const query = "SELECT * FROM pharmacies";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "No pharmacies found" });
+    }
+    res.json(results);
+  });
+};
+
+const getPharmacyById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Fetch pharmacy details from the database based on the id
+    const query = "SELECT * FROM pharmacies WHERE id = ?"; // Example: Using Mongoose to query MongoDB
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error('Error fetching pharmacy details:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+      if (!results || results.length === 0) {
+        return res.status(404).json({ error: 'Pharmacy not found' });
+      }
+      res.json(results[0]); // Send the first result (assuming id is unique)
+    });
+  } catch (error) {
+    console.error('Error fetching pharmacy details:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
 module.exports = {
   signup,
   loginUser,
@@ -244,4 +282,6 @@ module.exports = {
   logoutUser,
   verify,
   refresh,
+  getAllPharmacies,
+  getPharmacyById
 };
