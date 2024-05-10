@@ -257,7 +257,7 @@ const getPharmacyById = async (req, res) => {
   try {
     const { id } = req.params;
     // Fetch pharmacy details from the database based on the id
-    const query = "SELECT * FROM pharmacies WHERE id = ?"; // Example: Using Mongoose to query MongoDB
+    const query = "SELECT * FROM pharmacies WHERE id = ?"; 
     db.query(query, [id], (err, results) => {
       if (err) {
         console.error('Error fetching pharmacy details:', err);
@@ -272,6 +272,48 @@ const getPharmacyById = async (req, res) => {
     console.error('Error fetching pharmacy details:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+};
+
+
+const submitLicense = async (req, res) => {
+  const token = req.headers["x-access-token"];
+
+  if (!token) {
+    return res.status(401).send({ message: "No token provided." });
+  }
+
+  jwt.verify(token, "pharmacy", async (err, decoded) => {
+    if (err) {
+      return res.status(500).send({ message: "Failed to authenticate token." });
+    }
+
+    // Get the user's id
+    const userId = decoded.id;
+
+    // Get the license details from the request body
+    const { licenseId, issueDate, expiryDate, license } = req.body;
+
+    // Define the status as 'PENDING'
+    const status = 'PENDING';
+
+    // Define the SQL query
+    const query = `
+      INSERT INTO license (licenseId, issueDate, expiryDate, license, status, userId)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    // Define the values
+    const values = [licenseId, issueDate, expiryDate, license, status, userId];
+
+    // Execute the query
+    db.query(query, values, (err, result) => {
+      if (err) {
+        console.error('Error executing MySQL query: ', err);
+        return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+      }
+      res.status(200).send({ message: 'License submitted successfully.' });
+    });
+  });
 };
 
 const getUserById = async (req, res) => {
@@ -305,5 +347,6 @@ module.exports = {
   refresh,
   getAllPharmacies,
   getPharmacyById,
+  submitLicense,
   getUserById
 };

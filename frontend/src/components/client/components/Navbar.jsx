@@ -27,8 +27,8 @@ function Navbar() {
     {/* <nav className="bg-white border-gray-200 text-black dark:bg-gray-900"> */} 
       <nav className="border-gray-200 bg-gray-900 text-white">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img
@@ -39,7 +39,7 @@ function Navbar() {
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
               Pharmacy
             </span>
-          </a>
+          </Link>
           {user.email ? (
             
             <div className="flex items-center space-x-6 rtl:space-x-reverse">

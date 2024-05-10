@@ -3,11 +3,11 @@ const runMigrations = (pool) => {
   // Get a connection from the pool
   pool.getConnection((err, connection) => {
     if (err) {
-      console.error('Error getting connection from pool:', err);
+      console.error("Error getting connection from pool:", err);
       return;
     }
-    
-    console.log('Connected to MySQL database');
+
+    console.log("Connected to MySQL database");
     // Create Roles Table
     const createTableQueryRoles = `
       CREATE TABLE IF NOT EXISTS roles (
@@ -18,11 +18,11 @@ const runMigrations = (pool) => {
 
     connection.query(createTableQueryRoles, (err, result) => {
       if (err) {
-        console.error('Error creating roles table:', err);
+        console.error("Error creating roles table:", err);
         connection.release(); // Release the connection back to the pool
         return;
       }
-      console.log('Roles Table created successfully');
+      console.log("Roles Table created successfully");
 
       // Create Users Table
       const createTableQueryUsers = `
@@ -42,40 +42,45 @@ const runMigrations = (pool) => {
 
       connection.query(createTableQueryUsers, (err, result) => {
         if (err) {
-          console.error('Error creating users table:', err);
+          console.error("Error creating users table:", err);
           connection.release(); // Release the connection back to the pool
           return;
         }
-        console.log('Users Table created successfully');
+        console.log("Users Table created successfully");
 
         // Insert initial roles if necessary
-        connection.query('SELECT COUNT(*) AS roleCount FROM roles', (err, rows) => {
-          if (err) {
-            console.error('Error counting roles:', err);
-            connection.release(); // Release the connection back to the pool
-            return;
-          }
-
-          const roleCount = rows[0].roleCount;
-          if (roleCount < 3) {
-            const rolesToInsert = ['superadmin', 'admin', 'user'];
-            const insertRoleQuery = 'INSERT INTO roles (role) VALUES ?';
-            const roleValues = rolesToInsert.map(role => [role]);
-
-            connection.query(insertRoleQuery, [roleValues], (err, result) => {
-              if (err) {
-                console.error('Error inserting roles:', err);
-                connection.release(); // Release the connection back to the pool
-                return;
-              }
-              console.log('Roles inserted successfully');
+        connection.query(
+          "SELECT COUNT(*) AS roleCount FROM roles",
+          (err, rows) => {
+            if (err) {
+              console.error("Error counting roles:", err);
               connection.release(); // Release the connection back to the pool
-            });
-          } else {
-            console.log('Roles table already contains 3 roles. No new roles inserted.');
-            connection.release(); // Release the connection back to the pool
+              return;
+            }
+
+            const roleCount = rows[0].roleCount;
+            if (roleCount < 3) {
+              const rolesToInsert = ["superadmin", "admin", "user"];
+              const insertRoleQuery = "INSERT INTO roles (role) VALUES ?";
+              const roleValues = rolesToInsert.map((role) => [role]);
+
+              connection.query(insertRoleQuery, [roleValues], (err, result) => {
+                if (err) {
+                  console.error("Error inserting roles:", err);
+                  connection.release(); // Release the connection back to the pool
+                  return;
+                }
+                console.log("Roles inserted successfully");
+                connection.release(); // Release the connection back to the pool
+              });
+            } else {
+              console.log(
+                "Roles table already contains 3 roles. No new roles inserted."
+              );
+              connection.release(); // Release the connection back to the pool
+            }
           }
-        });
+        );
       });
     });
 
@@ -92,11 +97,11 @@ const runMigrations = (pool) => {
 
     connection.query(createTableQueryPharmacies, (err, result) => {
       if (err) {
-        console.error('Error creating pharmacies table:', err);
+        console.error("Error creating pharmacies table:", err);
         connection.release(); // Release the connection back to the pool
         return;
       }
-      console.log('Pharmacies Table created successfully');
+      console.log("Pharmacies Table created successfully");
     });
 
     // Create Products Table
@@ -113,13 +118,33 @@ const runMigrations = (pool) => {
 
     connection.query(createTableQueryProducts, (err, result) => {
       if (err) {
-        console.error('Error creating products table:', err);
+        console.error("Error creating products table:", err);
         connection.release(); // Release the connection back to the pool
         return;
       }
-      console.log('Products Table created successfully');
+      console.log("Products Table created successfully");
     });
 
+    const createTableQueryLicense = `
+    CREATE TABLE IF NOT EXISTS license (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      licenseId INT(10) UNIQUE,
+      issueDate DATE NOT NULL,
+      expiryDate DATE NOT NULL,
+      license VARCHAR(255),
+      status ENUM('PENDING', 'APPROVED', 'DECLINED') DEFAULT 'PENDING',
+      userId INT NOT NULL UNIQUE,
+      FOREIGN KEY (userId) REFERENCES users(id)
+  );`;
+
+    connection.query(createTableQueryLicense, (err, result) => {
+      if (err) {
+        console.error("Error creating license table:", err);
+        connection.release(); // Release the connection back to the pool
+        return;
+      }
+      console.log("License Table created successfully");
+    });
   });
 };
 
