@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom"; // Import useParams to access URL parameters
-import Navbar from "./Navbar";
-import Footer from "../pages/Footer";
 
 function PharmacyDetails() {
   const { id } = useParams(); // Access the pharmacy id from URL parameter
@@ -33,7 +31,7 @@ function PharmacyDetails() {
 
   return (
     <>
-      <Navbar />
+ 
 
       <section className="min-h-screen bg-cover bg-blue-400 mb-10 pt-16">
 
@@ -59,7 +57,6 @@ function PharmacyDetails() {
         
       </section>
 
-      <Footer />
     </>
   );
 }

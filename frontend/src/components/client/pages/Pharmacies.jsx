@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import Navbar from "../components/Navbar";
 import PharmacyCard from "../components/PharmacyCard"; // Import PharmacyCard component
-import Footer from "./Footer";
 
 function Pharmacies() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -37,7 +35,7 @@ function Pharmacies() {
 
   return (
     <>
-      <Navbar />
+   
 
       <section className="min-h-screen bg-cover">
         <div className="flex flex-col min-h-screen bg-blue-400">
@@ -50,7 +48,6 @@ function Pharmacies() {
         </div>
       </section>
 
-      <Footer />
     </>
   );
 }
