@@ -10,7 +10,6 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
   const [error, setError] = useState(null); // State for handling errors
 
   const modalRef = useRef(null);
-  const contentRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,21 +52,6 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
   const handleClose = () => {
     onClose();
   };
-
-  // useEffect(() => {
-  //   const handleOutsideClick = (e) => {
-  //     if (isOpen && modalRef.current && !modalRef.current.contains(e.target) && contentRef.current && !contentRef.current.contains(e.target)) {
-  //       onClose();
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleOutsideClick);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleOutsideClick);
-  //   };
-  // }, [isOpen, onClose]);
-
 
   useEffect(() => {
     const handleOutsideClick = (e) => {

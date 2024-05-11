@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 
 function DeleteRoleModal({ isOpen, onClose, roleId}) { //userId
   const modalRef = useRef(null);
-  const contentRef = useRef(null);
 
   const handleDeleteRole = async () => {
     try {
@@ -35,21 +34,6 @@ function DeleteRoleModal({ isOpen, onClose, roleId}) { //userId
       // You can handle the error in the UI, display a notification, etc.
     }
   };
-  
-
-  // useEffect(() => {
-  //   const handleOutsideClick = (e) => {
-  //     if (isOpen && modalRef.current && !modalRef.current.contains(e.target) && contentRef.current && !contentRef.current.contains(e.target)) {
-  //       onClose();
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleOutsideClick);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleOutsideClick);
-  //   };
-  // }, [isOpen, onClose]);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
