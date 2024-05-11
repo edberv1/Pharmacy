@@ -10,8 +10,8 @@ function UserTable() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);

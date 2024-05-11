@@ -37,16 +37,17 @@ function Pharmacies() {
     <>
    
 
-      <section className="min-h-screen bg-cover">
-        <div className="flex flex-col min-h-screen bg-blue-400">
-          <div className="container flex flex-col flex-1 px-6 py-12 mx-auto">
-            {/* Map over pharmacies array and render PharmacyCard for each */}
-            {pharmacies.map((pharmacy) => (
-              <PharmacyCard key={pharmacy.id} id={pharmacy.id} name={pharmacy.name} location={pharmacy.location} />
-            ))}
-          </div>
-        </div>
-      </section>
+   <section className="min-h-screen bg-cover">
+  <div className="flex flex-col min-h-screen bg-blue-400">
+    <div className="container flex flex-wrap justify-around px-6 py-12 mx-auto">
+      {/* Map over pharmacies array and render PharmacyCard for each */}
+      {pharmacies.map((pharmacy) => (
+        <PharmacyCard key={pharmacy.id} id={pharmacy.id} name={pharmacy.name} location={pharmacy.location} />
+      ))}
+    </div>
+  </div>
+</section>
+
 
     </>
   );

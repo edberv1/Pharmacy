@@ -55,7 +55,7 @@ function PharmacyTable() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": "Bearer " + localStorage.getItem("token")
+              Authorization: "Bearer " + localStorage.getItem("token"),
             },
           }
         );
@@ -294,10 +294,8 @@ function PharmacyTable() {
                       {pharmacy.id}
                     </th>
                     <td className="px-4 py-3">{pharmacy.name}</td>
-
                     <td className="px-4 py-3">{pharmacy.location}</td>
                     <td className="px-4 py-3">{pharmacy.userId}</td>
-
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
                         <button
@@ -311,7 +309,6 @@ function PharmacyTable() {
                           <i className="fa-solid fa-pen-to-square pr-2"></i>
                           Edit
                         </button>
-
                         <DeletePharmacyModal
                           isOpen={pharmacyIdToDelete === pharmacy.id}
                           onClose={closeDeleteModal}

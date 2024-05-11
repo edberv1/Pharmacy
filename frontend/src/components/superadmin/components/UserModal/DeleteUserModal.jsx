@@ -37,19 +37,39 @@ function DeleteUserModal({ isOpen, onClose, userId}) {
   };
   
 
+  // useEffect(() => {
+  //   const handleOutsideClick = (e) => {
+  //     if (isOpen && modalRef.current && !modalRef.current.contains(e.target) && contentRef.current && !contentRef.current.contains(e.target)) {
+  //       onClose();
+  //     }
+  //   };
+
+  //   document.addEventListener("mousedown", handleOutsideClick);
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleOutsideClick);
+  //   };
+  // }, [isOpen, onClose]);
+
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (isOpen && modalRef.current && !modalRef.current.contains(e.target) && contentRef.current && !contentRef.current.contains(e.target)) {
+      if (
+        isOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target)
+      ) {
         onClose();
       }
     };
-
+  
     document.addEventListener("mousedown", handleOutsideClick);
-
+  
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen, onClose]);
+
+  
 
   if (!isOpen) {
     return null;
