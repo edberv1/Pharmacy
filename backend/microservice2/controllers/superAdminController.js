@@ -627,6 +627,56 @@ const approveUser = async (req, res) => {
   });
 };
 
+const declineUser = (req, res) => {
+  const { userId, licenseId } = req.body;
+
+  if (!userId || !licenseId) {
+    return res.status(400).send("User ID and License ID are required");
+  }
+
+  const deleteLicenseQuery = "DELETE FROM license WHERE licenseId = ?";
+
+  // Fetch the user's email
+  const selectUserQuery = "SELECT email FROM users WHERE id = ?";
+  db.query(selectUserQuery, [userId], function(error, userResult) {
+    if (error) {
+      console.error("Error executing MySQL query: ", error);
+      return res.status(500).send("Internal Server Error: " + error.message);
+    }
+    if (userResult.length > 0) {
+      const userEmail = userResult[0].email;
+
+      // Send the email
+      var mailOptions = {
+        from: "your-email@gmail.com",
+        to: userEmail,
+        subject: "Request Declined",
+        text: `Hello, your request has been declined. Please check you information again and send another request.`,
+      };
+
+      mailer.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+
+      db.query(deleteLicenseQuery, [licenseId], function(error, result) {
+        if (error) {
+          console.error("Error executing MySQL query: ", error);
+          return res.status(500).send("Internal Server Error: " + error.message);
+        }
+        res.send({
+          message: "User declined successfully"
+        });
+      });
+    } else {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+  });
+};
 
 
 
@@ -652,5 +702,6 @@ module.exports = {
   getDailyRegistrations,
   getDailyLogins,
   fetchPendingLicenses,
-  approveUser
+  approveUser,
+  declineUser
 };

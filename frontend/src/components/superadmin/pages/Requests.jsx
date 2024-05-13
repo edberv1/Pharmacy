@@ -58,6 +58,33 @@ function Requests() {
     }
   };
 
+  const handleDecline = async (userId, licenseId, fetchLicenses) => {
+    try {
+      console.log(JSON.stringify({ userId, licenseId }));
+      const response = await fetchWithTokenRefresh(
+        "http://localhost:8081/superAdmin/declineUser",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({ userId, licenseId }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data.message); // Log the success message
+
+      // Refresh the licenses
+      fetchLicenses();
+    } catch (error) {
+      console.error("Error declining user: ", error);
+    }
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return `${date.getDate()}/${date.getMonth() + 1}/${date
@@ -147,6 +174,19 @@ function Requests() {
                         }
                       >
                         Approve
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() =>
+                          handleDecline(
+                            license.userId,
+                            license.licenseId,
+                            fetchLicenses
+                          )
+                        }
+                      >
+                        Decline
                       </button>
                     </td>
                   </tr>

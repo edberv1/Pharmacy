@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
-const {getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth, fetchPendingLicenses, approveUser} = require('../controllers/superAdminController');
+const {getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth, fetchPendingLicenses, approveUser,declineUser} = require('../controllers/superAdminController');
 
 
 router.get('/superadmin',  authMiddleware);
@@ -32,6 +32,7 @@ router.get('/getDailyRegistrations', authMiddleware, getDailyRegistrations)
 router.get('/getDailyLogins', authMiddleware, getDailyLogins)
 router.get('/fetchPendingLicenses', authMiddleware, fetchPendingLicenses)
 router.post('/approveUser',  authMiddleware, approveUser);
+router.post('/declineUser',  authMiddleware, declineUser);
 
 
 
