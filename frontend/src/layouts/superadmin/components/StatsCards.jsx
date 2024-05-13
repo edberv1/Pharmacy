@@ -6,6 +6,8 @@ function StatsCards() {
   const [adminGrowth, setAdminGrowth] = useState(0);
   const [pharmacyCount, setPharmacyCount] = useState(0);
   const [pharmacyGrowth, setPharmacyGrowth] = useState(0);
+  const [productsCount, setProductsCount] = useState(0);
+  const [productsGrowth, setProductsGrowth] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -96,10 +98,34 @@ function StatsCards() {
       }
     };
 
+    const getProductsCountAndGrowth = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8081/superAdmin/getProductGrowth",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProductsCount(data.totalProducts);
+        setProductsGrowth(data.growth);
+      } catch (error) {
+        console.error("Error getting PharmacyCount and Growth: ", error);
+      }
+    };
+
     fetchUsers();
     getGrowth();
     getAdminGrowth();
     getPharmacyCountAndGrowth();
+    getProductsCountAndGrowth();
   }, []);
   const adminCount = users.filter((user) => user.roleId === 2).length;
 
@@ -137,7 +163,7 @@ function StatsCards() {
                 ></i>{" "}
                 {Math.abs(growth).toFixed(2)}%{" "}
               </span>
-              <span className="whitespace-nowrap"> Since last week </span>
+              <span className="whitespace-nowrap"> Since yesterday </span>
             </p>
           </div>
         </div>
@@ -149,7 +175,7 @@ function StatsCards() {
             <div className="flex flex-wrap">
               <div className="relative w-full pr-4 max-w-full flex-grow flex-1">
                 <h5 className="text-white uppercase font-bold text-xs">
-                  Admins
+                  Admins (Pharmacists)
                 </h5>
                 <span className="font-semibold text-xl text-white">
                   {adminCount}
@@ -174,7 +200,7 @@ function StatsCards() {
                 ></i>{" "}
                 {Math.abs(adminGrowth).toFixed(2)}%{" "}
               </span>
-              <span className="whitespace-nowrap"> Since last week </span>
+              <span className="whitespace-nowrap"> Since yesterday </span>
             </p>
           </div>
         </div>
@@ -215,7 +241,7 @@ function StatsCards() {
                 ></i>{" "}
                 {Math.abs(pharmacyGrowth).toFixed(2)}%{" "}
               </span>
-              <span className="whitespace-nowrap"> Since last week </span>
+              <span className="whitespace-nowrap"> Since yesterday </span>
             </p>
           </div>
         </div>
@@ -230,7 +256,7 @@ function StatsCards() {
                   Products
                 </h5>
                 <span className="font-semibold text-xl text-white">
-                  51.02%{" "}
+                {productsCount}
                 </span>
               </div>
               <div className="relative w-auto pl-4 flex-initial">
@@ -240,10 +266,23 @@ function StatsCards() {
               </div>
             </div>
             <p className="text-sm text-white mt-4">
-              <span className="text-emerald-500 mr-2">
-                <i className="fas fa-arrow-up"></i> 12%{" "}
+            <span
+                className={
+                  productsGrowth >= 0
+                    ? "text-green-500 mr-2"
+                    : "text-red-500 mr-2"
+                }
+              >
+                <i
+                  className={
+                    productsGrowth >= 0
+                      ? "fas fa-arrow-up"
+                      : "fas fa-arrow-down"
+                  }
+                ></i>{" "}
+                {Math.abs(productsGrowth).toFixed(2)}%{" "}
               </span>
-              <span className="whitespace-nowrap"> Since last mounth </span>
+              <span className="whitespace-nowrap"> Since yesterday </span>
             </p>
           </div>
         </div>

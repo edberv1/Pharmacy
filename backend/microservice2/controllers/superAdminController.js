@@ -417,9 +417,9 @@ const getUserGrowth = async (req, res) => {
     } else {
       const totalUsers = res1[0].total;
 
-      // Get the number of users created in the last month
+      // Get the number of users created in the last day
       db.query(
-        "SELECT COUNT(*) as newUsers FROM users WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 WEEK)",
+        "SELECT COUNT(*) as newUsers FROM users WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)",
         function (err, res2) {
           if (err) {
             res
@@ -451,7 +451,7 @@ const getAdminGrowth = async (req, res) => {
 
       // Get the number of admins created in the last week
       db.query(
-        "SELECT COUNT(*) as newAdmins FROM users WHERE roleId = 2 AND created_at > DATE_SUB(NOW(), INTERVAL 1 WEEK)",
+        "SELECT COUNT(*) as newAdmins FROM users WHERE roleId = 2 AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)",
         function (err, res2) {
           if (err) {
             res
@@ -483,7 +483,7 @@ const getPharmacyCountAndGrowth = async (req, res) => {
 
       // Get the number of pharmacies created in the last week
       db.query(
-        "SELECT COUNT(*) as newPharmacies FROM pharmacies WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 WEEK)",
+        "SELECT COUNT(*) as newPharmacies FROM pharmacies WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)",
         function (err, res2) {
           if (err) {
             res
@@ -507,8 +507,8 @@ const getDailyRegistrations = async (req, res) => {
   try {
     let promises = [];
     for(let i = 6; i >= 0; i--) {
-      const startOfDay = moment().subtract(i, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss');
-      const endOfDay = moment().subtract(i, 'days').endOf('day').format('YYYY-MM-DD HH:mm:ss');
+      const startOfDay = moment().subtract(i, 'days').startOf('day').format('YYYY/MM/DD HH:mm:ss');
+      const endOfDay = moment().subtract(i, 'days').endOf('day').format('YYYY/MM/DD HH:mm:ss');
 
       const query = `
         SELECT COUNT(*) as count 
@@ -581,7 +581,7 @@ const deleteOldLogins = () => {
 
 
 // Run deleteOldLogins every day at 00:00
-cron.schedule('46 00 * * *', deleteOldLogins);
+cron.schedule('00 00 * * *', deleteOldLogins);
 
 
 const fetchPendingLicenses = async (req, res) => {
@@ -709,7 +709,37 @@ const declineUser = (req, res) => {
 };
 
 
+const getProductGrowth = async (req, res) => {
+  // Get the total number of pharmacies
+  db.query("SELECT COUNT(*) as total FROM products", function (err, res1) {
+    if (err) {
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    } else {
+      const totalProducts = res1[0].total;
 
+      // Get the number of pharmacies created in the last week
+      db.query(
+        "SELECT COUNT(*) as newProducts FROM products WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)",
+        function (err, res2) {
+          if (err) {
+            res
+              .status(500)
+              .json({ error: "Internal Server Error", details: err.message });
+          } else {
+            const newProducts = res2[0].newProducts;
+
+            // Calculate the growth percentage
+            const growth = (newProducts / totalProducts) * 100;
+
+            res.json({ totalProducts, growth });
+          }
+        }
+      );
+    }
+  });
+};
 
 
 module.exports = {
@@ -734,5 +764,6 @@ module.exports = {
   fetchPendingLicenses,
   approveUser,
   declineUser,
-  deleteOldLogins
+  deleteOldLogins,
+  getProductGrowth
 };

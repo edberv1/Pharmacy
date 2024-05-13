@@ -48,6 +48,14 @@ function Sidebar() {
           <span className="mx-2 text-sm font-medium">Statistics</span>
         </Link>
 
+        
+      </div>
+
+      <div className="space-y-3 ">
+        <label className="px-3 text-xs text-gray-500 uppercase dark:text-gray-400">
+          content
+        </label>
+        
         <Link to="/superadmin/users"
           className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
           href="#"
@@ -64,12 +72,6 @@ function Sidebar() {
 
           <span className="mx-2 text-sm font-medium">Users</span>
         </Link>
-      </div>
-
-      <div className="space-y-3 ">
-        <label className="px-3 text-xs text-gray-500 uppercase dark:text-gray-400">
-          content
-        </label>
 
         <Link to="/superadmin/pharmacies"
           className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
