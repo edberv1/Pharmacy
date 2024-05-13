@@ -8,7 +8,11 @@ let User = function(user){
     this.email = user.email;
     this.password = bcrypt.hashSync(user.password, 10); // Hash the password
     this.roleId = 3 ;
+    this.verified = false;
+    this.created_at = new Date();
+    this.refreshToken = "";
 };
+
 
 User.addUser = function(newUser, result) {
     db.query("SELECT * FROM users WHERE email = ?", newUser.email, function(err, res) {
@@ -35,6 +39,81 @@ User.addUser = function(newUser, result) {
     });
 };
 
+User.updateRefreshToken = function(userId, refreshToken, result) {
+    db.query("UPDATE users SET refreshToken = ? WHERE id = ?", [refreshToken, userId], function(err, res) {
+        if(err) {
+            console.log('Database error: ', err); // Log the error message
+            result(err, null);
+        }
+        else {
+            console.log('Database response: ', res); // Log the database response
+            result(null, res);
+        }
+    });
+};
+
+
+User.getUserById = function(userId, result) {
+    db.query("SELECT * FROM users WHERE id = ?", userId, function(err, res) {
+        if(err) {
+            result(err, null);
+        }
+        else {
+            result(null, res);
+        }
+    });
+};
+
+User.verifyUser = function(userId, result) {
+    db.query("UPDATE users SET verified = 1 WHERE id = ?", [userId], function(err, res) {
+        if(err) {
+            console.log('Database error: ', err); // Log the error message
+            result(err, null);
+        }
+        else {
+            console.log('Database response: ', res); // Log the database response
+            result(null, res);
+        }
+    });
+};
+
+
+User.logoutUser = function(refreshToken, result) {
+    db.query("UPDATE users SET refreshToken = NULL WHERE refreshToken = ?", refreshToken, function(err, res) {
+        if(err) {
+            console.log('Database error: ', err); // Log the error message
+            result(err, null);
+        }
+        else {
+            console.log('Database response: ', res); // Log the database response
+            result(null, res);
+        }
+    });
+};
+
+
+User.login = function(email, password, result) {
+    db.query("SELECT * FROM users WHERE email = ?", email, function(err, res) {
+        if(err) {
+            result(err, null);
+        }
+        else if(res.length) {
+            const user = res[0];
+            if (bcrypt.compareSync(password, user.password)) {
+                if (user.verified) {
+                    result(null, user);
+                } else {
+                    result(new Error('Email not verified'), null);
+                }
+            } else {
+                result(new Error('Invalid password'), null);
+            }
+        }
+        else {
+            result(new Error('User not found'), null);
+        }
+    });
+};
 
 
 module.exports= User;

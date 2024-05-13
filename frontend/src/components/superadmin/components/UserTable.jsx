@@ -3,22 +3,22 @@ import { useEffect, useState } from "react";
 import CreateUserModal from "./UserModal/CreateUserModal";
 import DeleteUserModal from "./UserModal/DeleteUserModal";
 import EditUserModal from "./UserModal/EditUserModal";
+import Pagination from "./Pagination";
+import fetchWithTokenRefresh from "../../../../utils/fetchWithTokenRefresh";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchInput, setSearchInput] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedRole, setSelectedRole] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for dropdown visibility
   const [roles, setRoles] = useState([]); // State to store fetched roles
-
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -49,14 +49,13 @@ function UserTable() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
+        const response = await fetchWithTokenRefresh(
           "http://localhost:8081/superAdmin/getAllUsers",
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "x-access-token": token,
+              "Authorization": "Bearer " + localStorage.getItem("token")
             },
           }
         );
@@ -70,21 +69,19 @@ function UserTable() {
         console.error("Error fetching users: ", error);
       }
     };
-
+  
     const fetchRoles = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No token found.");
-        }
-        
-        const response = await fetch("http://localhost:8081/superAdmin/getAllRoles", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": token,
-          },
-        });
+        const response = await fetchWithTokenRefresh(
+          "http://localhost:8081/superAdmin/getAllRoles",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+          }
+        );
   
         if (!response.ok) {
           const errorMessage = await response.text();
@@ -98,43 +95,46 @@ function UserTable() {
         // setError("Failed to fetch roles ids.");
       }
     };
-
+  
     fetchUsers();
     fetchRoles();
   }, []);
+  
 
-  const roleOptions = roles && roles.length > 0 ? roles.map((role, index) => (
-    <button
-      className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
-      role="menuitem"
-      onClick={() => setSelectedRole(role)}
-      key={role.id} // Assuming role.id is unique
-      value={role.id} // Assuming role.id is the value you want to assign
-    >
-      {role.role} {/* Assuming role.name contains the display name */}
-    </button>
-  )) : null;
-  
-  
+  const roleOptions =
+    roles && roles.length > 0
+      ? roles.map((role, index) => (
+          <button
+            className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+            role="menuitem"
+            onClick={() => setSelectedRole(role)}
+            key={role.id} // Assuming role.id is unique
+            value={role.id} // Assuming role.id is the value you want to assign
+          >
+            {role.role} {/* Assuming role.name contains the display name */}
+          </button>
+        ))
+      : null;
 
   useEffect(() => {
     // Filter users based on search input and selected role
     let filtered = users.filter((user) =>
-      `${user.firstname} ${user.lastname}`.toLowerCase().includes(searchInput.toLowerCase())
+      `${user.firstname} ${user.lastname} ${user.email} ${user.id}`
+        .toLowerCase()
+        .includes(searchInput.toLowerCase())
     );
-    
+
     if (selectedRole !== null) {
       // If a role is selected, filter users based on the selected role ID
       filtered = filtered.filter((user) => user.roleId === selectedRole.id); // Assuming selectedRole is an object with an 'id' field
     }
-    
+
     setFilteredUsers(filtered);
   }, [searchInput, users, selectedRole]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -143,7 +143,7 @@ function UserTable() {
         setIsDropdownOpen(false);
       }
     };
-  
+
     // Add event listener when dropdown is open
     if (isDropdownOpen) {
       document.body.addEventListener("click", handleOutsideClick);
@@ -151,33 +151,31 @@ function UserTable() {
       // Remove event listener when dropdown is closed
       document.body.removeEventListener("click", handleOutsideClick);
     }
-  
+
     // Clean up event listener on component unmount
     return () => {
       document.body.removeEventListener("click", handleOutsideClick);
     };
   }, [isDropdownOpen]);
-  
-  
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
 
   const handleShowAll = () => {
     setSelectedRole(null);
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > Math.ceil(users.length / itemsPerPage)) return;
+    setCurrentPage(newPage);
+  };
+
+  const usersToShow = filteredUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <>
-      <div className="mx-auto max-w-screen-xl mr-4 rounded-xl pb-32 pt-2 bg-gray-200  px-4 lg:px-12">
-        <div className=" rounded-sm flex " ><h1 className="text-3xl font-semibold ">Users</h1></div>
-        <hr className="size-1 flex w-full mb-4 bg-gray-800 rounded-full " />
-        <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+      <div className="mx-auto max-w-screen-xl pt-16">
+        <div className="bg-white dark:bg-gray-900 relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
               <form className="flex items-center">
@@ -186,7 +184,7 @@ function UserTable() {
                 </label>
                 <div className="relative w-full">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <i className="fa-solid text-white fa-magnifying-glass"></i>
+                    <i className="fa-solid text-white fa-magnifying-glass"></i>
                   </div>
                   <input
                     type="text"
@@ -201,16 +199,16 @@ function UserTable() {
               </form>
             </div>
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                      <button
-                        type="button"
-                        id="create-user-button"
-                        onClick={openModal}
-                        className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
-                      >
-                        <i className="fa-solid fa-user-plus pr-2"> </i>
-                        Create User
-                      </button>
-                      <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />
+              <button
+                type="button"
+                id="create-user-button"
+                onClick={openModal}
+                className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+              >
+                <i className="fa-solid fa-user-plus pr-2"> </i>
+                Create User
+              </button>
+              <CreateUserModal isOpen={isModalOpen} onClose={closeModal} />
               <div className="relative">
                 <button
                   id="filterDropdownButton"
@@ -237,7 +235,12 @@ function UserTable() {
                     isDropdownOpen ? "" : "hidden"
                   } origin-top-right absolute  right-0 mt-2 w-auto rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5`}
                 >
-                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="filterDropdownButton">
+                  <div
+                    className="py-1"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="filterDropdownButton"
+                  >
                     <button
                       onClick={handleShowAll}
                       className="block px-4 py-2 text-sm  w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
@@ -245,8 +248,8 @@ function UserTable() {
                     >
                       Show All
                     </button>
-               
-                        {roleOptions}
+
+                    {roleOptions}
                   </div>
                 </div>
               </div>
@@ -266,6 +269,9 @@ function UserTable() {
                     Email
                   </th>
                   <th scope="col" className="px-4 py-3">
+                    Verified
+                  </th>
+                  <th scope="col" className="px-4 py-3">
                     Role
                   </th>
                   <th scope="col" className="px-4 py-3 flex justify-center">
@@ -274,7 +280,7 @@ function UserTable() {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((user) => (
+                {usersToShow.map((user) => (
                   <tr className="border-b dark:border-gray-700" key={user.id}>
                     <th
                       scope="row"
@@ -287,13 +293,19 @@ function UserTable() {
                     </td>
                     <td className="px-4 py-3">{user.email}</td>
                     <td className="px-4 py-3">
-                      {user.roleId ? (
-                        roles.find(role => role.id === user.roleId)?.role || 'Unknown'
+                      {user.verified === 1 ? (
+                        <span style={{ color: "green" }}>✔️</span>
                       ) : (
-                        'No Role Assigned'
+                        <span style={{ color: "red" }}>❌</span>
                       )}
                     </td>
 
+                    <td className="px-4 py-3">
+                      {user.roleId
+                        ? roles.find((role) => role.id === user.roleId)?.role ||
+                          "Unknown"
+                        : "No Role Assigned"}
+                    </td>
 
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">
@@ -338,63 +350,11 @@ function UserTable() {
               </tbody>
             </table>
           </div>
-          <nav className="flex justify-center my-4">
-            <ul className="flex items-center space-x-2">
-              <li>
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  <span className="sr-only">Previous</span>
-                  <svg
-                    className="w-5 h-5"
-                    aria-hidden="true"
-                    fillRule="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </li>
-              {[...Array(Math.ceil(filteredUsers.length / itemsPerPage)).keys()].map((number) => (
-                <li key={number}>
-                  <button
-                    onClick={() => handlePageChange(number + 1)}
-                    className={`flex items-center justify-center text-sm py-2 px-3 leading-tight ${currentPage === number + 1 ? 'text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white' : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'}`}
-                  >
-                    {number + 1}
-                  </button>
-                </li>
-              ))}
-              <li>
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                >
-                  <span className="sr-only">Next</span>
-                  <svg
-                    className="w-5 h-5"
-                    aria-hidden="true"
-                    fillRule="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10l-3.293-3.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </li>
-            </ul>
-          </nav>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(users.length / itemsPerPage)}
+            handlePageChange={handlePageChange}
+          />
         </div>
       </div>
     </>

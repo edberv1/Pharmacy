@@ -3,20 +3,16 @@ import { useEffect, useRef } from "react";
 
 function DeletePharmacyModal({ isOpen, onClose, pharmacyId}) { //userId
   const modalRef = useRef(null);
-  const contentRef = useRef(null);
 
   const handleDeletePharmacy = async () => {
     try {
-        const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found.");
-      }
+
       // Make a DELETE request to your backend endpoint to delete the user
       const response = await fetch(`http://localhost:8081/superAdmin/deletePharmacy/${pharmacyId}`, {  //userId
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "x-access-token": token, 
+          "Authorization": "Bearer " + localStorage.getItem("token")
         },
       });
   
@@ -39,21 +35,25 @@ function DeletePharmacyModal({ isOpen, onClose, pharmacyId}) { //userId
       // You can handle the error in the UI, display a notification, etc.
     }
   };
-  
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (isOpen && modalRef.current && !modalRef.current.contains(e.target) && contentRef.current && !contentRef.current.contains(e.target)) {
+      if (
+        isOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target)
+      ) {
         onClose();
       }
     };
-
+  
     document.addEventListener("mousedown", handleOutsideClick);
-
+  
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen, onClose]);
+
 
   if (!isOpen) {
     return null;

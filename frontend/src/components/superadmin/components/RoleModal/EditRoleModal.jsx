@@ -9,7 +9,6 @@ function EditRoleModal({ isOpen, onClose, role }) {
   const [error, setError] = useState(null); // State for handling errors
 
   const modalRef = useRef(null);
-  const contentRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,12 +19,6 @@ function EditRoleModal({ isOpen, onClose, role }) {
     e.preventDefault();
     // Here you can add your logic to update a role
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found.");
-      }
-
       // Make HTTP PUT request to update role with token included in headers
       const response = await fetch(
         `http://localhost:8081/superAdmin/editRole/${role.id}`, //user.id
@@ -33,7 +26,7 @@ function EditRoleModal({ isOpen, onClose, role }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "x-access-token": token, // Include the token in the headers
+            "Authorization": "Bearer " + localStorage.getItem("token")
           },
           body: JSON.stringify(formData),
         }
@@ -61,17 +54,22 @@ function EditRoleModal({ isOpen, onClose, role }) {
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (isOpen && modalRef.current && !modalRef.current.contains(e.target) && contentRef.current && !contentRef.current.contains(e.target)) {
+      if (
+        isOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target)
+      ) {
         onClose();
       }
     };
-
+  
     document.addEventListener("mousedown", handleOutsideClick);
-
+  
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen, onClose]);
+  
 
   if (!isOpen) {
     return null;

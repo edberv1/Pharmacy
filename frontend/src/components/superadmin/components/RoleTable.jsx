@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import CreateRoleModal from "./RoleModal/CreateRoleModal";
 import EditRoleModal from "./RoleModal/EditRoleModal";
 import DeleteRoleModal from "./RoleModal/DeleteRoleModal";
+import Pagination from "./Pagination";
 
 function RoleTable() {
   const [roles, setRoles] = useState([]);
@@ -13,10 +14,10 @@ function RoleTable() {
   const [roleIdToDelete, setRoleIdToDelete] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rolesPerPage] = useState(3);
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -47,14 +48,13 @@ function RoleTable() {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const token = localStorage.getItem("token");
         const response = await fetch(
           "http://localhost:8081/superAdmin/getAllRoles",
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "x-access-token": token,
+              "Authorization": "Bearer " + localStorage.getItem("token")
             },
           }
         );
@@ -72,15 +72,26 @@ function RoleTable() {
     fetchRoles();
   }, []);
 
+  // useEffect(() => {
+  //   // Filter roles based on search query
+  //   const filtered = roles.filter((role) =>
+  //     role.role.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+
+  //   setFilteredRoles(filtered);
+  // }, [searchQuery, roles]);
+
   useEffect(() => {
     // Filter roles based on search query
-    const filtered = roles.filter((role) =>
-      role.role.toLowerCase().includes(searchQuery.toLowerCase())
+    const filtered = roles.filter(
+      (role) =>
+        role.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        role.id.toString().toLowerCase().includes(searchQuery.toLowerCase())
     );
-  
+
     setFilteredRoles(filtered);
   }, [searchQuery, roles]);
-  
+
   useEffect(() => {
     // Filter roles based on selected role name
     let filtered = [];
@@ -91,7 +102,6 @@ function RoleTable() {
     }
     setFilteredRoles(filtered);
   }, [selectedFilter, roles]);
-  
 
   const handleFilterChange = (filter) => {
     setSelectedFilter(filter);
@@ -113,32 +123,31 @@ function RoleTable() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
-  
 
-  const roleOptions = roles && roles.length > 0 ? roles.map((role, index) => (
-    <button
-      className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
-      role="menuitem"
-      onClick={() => handleFilterChange(role.role)} // Update this line
-      key={role.id} // Assuming role.id is unique
-      value={role.id} // Assuming role.id is the value you want to assign
-    >
-      {role.role} {/* Assuming role.name contains the display name */}
-    </button>
-  )) : null;
+  const roleOptions =
+    roles && roles.length > 0
+      ? roles.map((role, index) => (
+          <button
+            className="block px-4 py-2 text-sm w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+            role="menuitem"
+            onClick={() => handleFilterChange(role.role)} // Update this line
+            key={role.id} // Assuming role.id is unique
+            value={role.id} // Assuming role.id is the value you want to assign
+          >
+            {role.role} {/* Assuming role.name contains the display name */}
+          </button>
+        ))
+      : null;
 
-  const indexOfLastRole = currentPage * rolesPerPage;
-  const indexOfFirstRole = indexOfLastRole - rolesPerPage;
-  const currentRoles = filteredRoles.slice(indexOfFirstRole, indexOfLastRole);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > Math.ceil(roles.length / itemsPerPage)) return;
+    setCurrentPage(newPage);
+  };
 
   return (
     <>
-      <div className="mx-auto max-w-screen-xl px-4 pb-32 pt-2 mr-4 rounded-xl bg-gray-200 lg:px-12">
-      <div className=" rounded-sm flex " ><h1 className="text-3xl font-semibold ">Roles</h1></div>
-        <hr className="size-1 flex w-full mb-4 bg-gray-800 rounded-full " />
-        <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+      <div className="mx-auto max-w-screen-xl pt-16">
+        <div className="bg-white dark:bg-gray-900 relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
             <div className="w-full md:w-1/2">
               <form className="flex items-center">
@@ -147,7 +156,7 @@ function RoleTable() {
                 </label>
                 <div className="relative w-full">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <i className="fa-solid text-white fa-magnifying-glass"></i>
+                    <i className="fa-solid text-white fa-magnifying-glass"></i>
                   </div>
                   <input
                     type="text"
@@ -193,7 +202,10 @@ function RoleTable() {
                   </svg>
                 </button>
                 {isFilterDropdownOpen && (
-                  <div ref={dropdownRef} className="origin-top-right absolute  right-0 mt-2 w-auto rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5">
+                  <div
+                    ref={dropdownRef}
+                    className="origin-top-right absolute  right-0 mt-2 w-auto rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5"
+                  >
                     <div
                       className="py-1"
                       role="menu"
@@ -230,98 +242,68 @@ function RoleTable() {
                 </tr>
               </thead>
               <tbody>
-                {currentRoles.map((role) => (
-                  <tr className="border-b dark:border-gray-700" key={role.id}>
-                    <th
-                      scope="row"
-                      className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      {role.id}
-                    </th>
-                    <td className="px-4 py-3">{role.role}</td>
+                {filteredRoles
+                  .slice(
+                    (currentPage - 1) * itemsPerPage,
+                    currentPage * itemsPerPage
+                  )
+                  .map((role) => (
+                    <tr className="border-b dark:border-gray-700" key={role.id}>
+                      <th
+                        scope="row"
+                        className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                      >
+                        {role.id}
+                      </th>
+                      <td className="px-4 py-3">{role.role}</td>
 
-                    <td className="px-4 py-3 flex items-center justify-evenly">
-                      <div className="flex items-center space-x-4">
-                        <button
-                          type="button"
-                          onClick={() => openEditModal(role)}
-                          data-drawer-target="drawer-update-product"
-                          data-drawer-show="drawer-update-product"
-                          aria-controls="drawer-update-product"
-                          className="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        >
-                          <i className="fa-solid fa-pen-to-square pr-2"></i>
-                          Edit
-                        </button>
-                        {isEditModalOpen && selectedRole && (
-                          <EditRoleModal
-                            isOpen={isEditModalOpen}
-                            onClose={closeEditModal}
-                            role={selectedRole}
+                      <td className="px-4 py-3 flex items-center justify-evenly">
+                        <div className="flex items-center space-x-4">
+                          <button
+                            type="button"
+                            onClick={() => openEditModal(role)}
+                            data-drawer-target="drawer-update-product"
+                            data-drawer-show="drawer-update-product"
+                            aria-controls="drawer-update-product"
+                            className="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                          >
+                            <i className="fa-solid fa-pen-to-square pr-2"></i>
+                            Edit
+                          </button>
+                          {isEditModalOpen && selectedRole && (
+                            <EditRoleModal
+                              isOpen={isEditModalOpen}
+                              onClose={closeEditModal}
+                              role={selectedRole}
+                            />
+                          )}
+                          <DeleteRoleModal
+                            isOpen={roleIdToDelete === role.id}
+                            onClose={closeDeleteModal}
+                            roleId={role.id}
                           />
-                        )}
-                        <DeleteRoleModal
-                          isOpen={roleIdToDelete === role.id}
-                          onClose={closeDeleteModal}
-                          roleId={role.id}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => openDeleteModal(role.id)}
-                          data-modal-target="delete-modal"
-                          data-modal-toggle="delete-modal"
-                          className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
-                        >
-                          <i className="fa-solid fa-trash pr-2"></i>
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          <button
+                            type="button"
+                            onClick={() => openDeleteModal(role.id)}
+                            data-modal-target="delete-modal"
+                            data-modal-toggle="delete-modal"
+                            className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+                          >
+                            <i className="fa-solid fa-trash pr-2"></i>
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
-          <nav
-            className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
-            aria-label="Table navigation"
-          >
-            <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-              Showing{" "}
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {indexOfFirstRole + 1}
-              </span>{" "}
-              to{" "}
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {indexOfLastRole > filteredRoles.length
-                  ? filteredRoles.length
-                  : indexOfLastRole}
-              </span>{" "}
-              of{" "}
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {filteredRoles.length}
-              </span>{" "}
-              entries
-            </span>
-            <ul className="inline-flex items-stretch -space-x-px">
-              {currentPage > 1 && (
-                <button
-                  onClick={() => paginate(currentPage - 1)}
-                  className="px-3 py-2 bg-gray-200 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-l-md hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none"
-                >
-                  Previous
-                </button>
-              )}
-              {currentRoles.length === rolesPerPage && (
-                <button
-                  onClick={() => paginate(currentPage + 1)}
-                  className="px-3 py-2 bg-gray-200 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-300 dark:hover:bg-gray-700 focus:outline-none"
-                >
-                  Next
-                </button>
-              )}
-            </ul>
-          </nav>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(filteredRoles.length / itemsPerPage)}
+            handlePageChange={handlePageChange}
+          />
         </div>
       </div>
     </>

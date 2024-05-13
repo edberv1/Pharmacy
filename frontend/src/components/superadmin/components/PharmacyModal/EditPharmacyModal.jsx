@@ -10,7 +10,6 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
   const [error, setError] = useState(null); // State for handling errors
 
   const modalRef = useRef(null);
-  const contentRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,12 +20,6 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
     e.preventDefault();
     // Here you can add your logic to update a pharmacy
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found.");
-      }
-
       // Make HTTP PUT request to update pharmacy with token included in headers
       const response = await fetch(
         `http://localhost:8081/superAdmin/editPharmacy/${pharmacy.id}`, //pharmacy.id
@@ -34,7 +27,7 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "x-access-token": token, // Include the token in the headers
+            "Authorization": "Bearer " + localStorage.getItem("token")
           },
           body: JSON.stringify(formData),
         }
@@ -62,18 +55,23 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (isOpen && modalRef.current && !modalRef.current.contains(e.target) && contentRef.current && !contentRef.current.contains(e.target)) {
+      if (
+        isOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target)
+      ) {
         onClose();
       }
     };
-
+  
     document.addEventListener("mousedown", handleOutsideClick);
-
+  
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen, onClose]);
 
+  
   if (!isOpen) {
     return null;
   }

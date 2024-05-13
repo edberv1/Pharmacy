@@ -7,12 +7,12 @@ function EditUserModal({ isOpen, onClose, user }) {
     lastname: user.lastname,
     email: user.email,
     roleId: user.roleId.toString(),
+    verified: user.verified.toString(), // Add this line
   });
 
   const [error, setError] = useState(null); // State for handling errors
 
   const modalRef = useRef(null);
-  const contentRef = useRef(null);
   const [roles, setRoles] = useState([]);
 
   const handleChange = (e) => {
@@ -24,12 +24,6 @@ function EditUserModal({ isOpen, onClose, user }) {
     e.preventDefault();
     // Here you can add your logic to update a user
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found.");
-      }
-
       // Make HTTP PUT request to update user with token included in headers
       const response = await fetch(
         `http://localhost:8081/superAdmin/editUser/${user.id}`, //userId
@@ -37,7 +31,7 @@ function EditUserModal({ isOpen, onClose, user }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "x-access-token": token, // Include the token in the headers
+            "Authorization": "Bearer " + localStorage.getItem("token")
           },
           body: JSON.stringify(formData),
         }
@@ -62,24 +56,22 @@ function EditUserModal({ isOpen, onClose, user }) {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No token found.");
-        }
-  
-        const response = await fetch("http://localhost:8081/superAdmin/getAllRoles", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": token,
-          },
-        });
-  
+        const response = await fetch(
+          "http://localhost:8081/superAdmin/getAllRoles",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+          }
+        );
+
         if (!response.ok) {
           const errorMessage = await response.text();
           throw new Error(errorMessage);
         }
-  
+
         const data = await response.json();
         setRoles(data); // Assuming the backend returns an array of user objects with 'id' and 'name' fields
       } catch (error) {
@@ -90,11 +82,14 @@ function EditUserModal({ isOpen, onClose, user }) {
     fetchRoles();
   }, []);
 
-  const roleOptions = roles && roles.length > 0 ? roles.map((role) => (
-    <option key={role.id} value={role.id}>
-      {role.role} 
-    </option>
-  )) : null;
+  const roleOptions =
+    roles && roles.length > 0
+      ? roles.map((role) => (
+          <option key={role.id} value={role.id}>
+            {role.role}
+          </option>
+        ))
+      : null;
 
   const handleClose = () => {
     onClose();
@@ -102,18 +97,23 @@ function EditUserModal({ isOpen, onClose, user }) {
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (isOpen && modalRef.current && !modalRef.current.contains(e.target) && contentRef.current && !contentRef.current.contains(e.target)) {
+      if (
+        isOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(e.target)
+      ) {
         onClose();
       }
     };
-
+  
     document.addEventListener("mousedown", handleOutsideClick);
-
+  
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen, onClose]);
 
+  
   if (!isOpen) {
     return null;
   }
@@ -181,6 +181,25 @@ function EditUserModal({ isOpen, onClose, user }) {
               required
             />
           </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              Verified
+            </label>
+            <select
+              name="verified"
+              value={formData.verified}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            >
+              <option value="" disabled>
+                Select Verification Status
+              </option>
+              <option value="1">Verified</option>
+              <option value="0">Not Verified</option>
+            </select>
+          </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Role
@@ -192,7 +211,9 @@ function EditUserModal({ isOpen, onClose, user }) {
               className="mt-1 p-2 w-full border rounded-md"
               required
             >
-              <option value="" disabled>Select Role</option>
+              <option value="" disabled>
+                Select Role
+              </option>
               {roleOptions}
             </select>
           </div>
@@ -216,6 +237,6 @@ function EditUserModal({ isOpen, onClose, user }) {
       </div>
     </div>
   );
-} 
+}
 
 export default EditUserModal;
