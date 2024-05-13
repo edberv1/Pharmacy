@@ -27,7 +27,6 @@ function Requests() {
     }
   };
 
-
   useEffect(() => {
     fetchLicenses();
   }, []);
@@ -138,14 +137,17 @@ function Requests() {
                     </td>
                     <td className="px-4 py-3">{license.status}</td>
                     <td className="px-4 py-3">
-                    <button
-  onClick={() =>
-    handleApprove(license.userId, license.licenseId, fetchLicenses)
-  }
->
-  Approve
-</button>
-
+                      <button
+                        onClick={() =>
+                          handleApprove(
+                            license.userId,
+                            license.licenseId,
+                            fetchLicenses
+                          )
+                        }
+                      >
+                        Approve
+                      </button>
                     </td>
                   </tr>
                 ))}

@@ -3,16 +3,7 @@ const db = require("../db.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-const nodemailer = require("nodemailer");
-
-// Create a transporter
-var transport = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "vuciternaedber@gmail.com",
-    pass: "ueor hiyi ckyj qtos",
-  },
-});
+const mailer = require("../services/mailer.js");
 
 const signup = (req, res) => {
   let newUser = new User(req.body);
@@ -62,7 +53,7 @@ const signup = (req, res) => {
         text: `Hello, please verify your account by clicking the link: ${verificationLink}`,
       };
 
-      transport.sendMail(mailOptions, function (error, info) {
+      mailer.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error);
         } else {

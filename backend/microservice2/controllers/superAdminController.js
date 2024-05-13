@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const db = require("../db.js");
 const moment = require('moment');
 require("dotenv").config();
+const mailer = require("../services/mailer.js");
 
 // =======================================USERS=======================================
 
@@ -569,7 +570,7 @@ const fetchPendingLicenses = async (req, res) => {
 };
 
 const approveUser = async (req, res) => {
-const { userId, licenseId } = req.body;
+  const { userId, licenseId } = req.body;
 
   if (!userId || !licenseId) {
     return res.status(400).send("User ID and License ID are required");
@@ -578,18 +579,58 @@ const { userId, licenseId } = req.body;
   const updateLicenseQuery = "UPDATE license SET status = 'APPROVED' WHERE licenseId = ?";
   const updateUserQuery = "UPDATE users SET roleId = 2 WHERE id = ?";
 
-  try {
-    await db.query(updateLicenseQuery, [licenseId]);
-    await db.query(updateUserQuery, [userId]);
+  // Fetch the user's email
+  const selectUserQuery = "SELECT email FROM users WHERE id = ?";
+  db.query(selectUserQuery, [userId], function(error, userResult) {
+    if (error) {
+      console.error("Error executing MySQL query: ", error);
+      return res.status(500).send("Internal Server Error: " + error.message);
+    }
+    if (userResult.length > 0) {
+      const userEmail = userResult[0].email;
 
-    res.send({
-      message: "User approved successfully"
-    });
-  } catch (error) {
-    console.error("Error executing MySQL query: ", error);
-    return res.status(500).send("Internal Server Error: " + error.message);
-  }
+      // Send the email
+      var mailOptions = {
+        from: "your-email@gmail.com",
+        to: userEmail,
+        subject: "Request Approval",
+        text: `Hello, your request has been approved. Now you can create your pharmacies.`,
+      };
+
+      mailer.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+
+      db.query(updateLicenseQuery, [licenseId], function(error, result) {
+        if (error) {
+          console.error("Error executing MySQL query: ", error);
+          return res.status(500).send("Internal Server Error: " + error.message);
+        }
+        db.query(updateUserQuery, [userId], function(error, result) {
+          if (error) {
+            console.error("Error executing MySQL query: ", error);
+            return res.status(500).send("Internal Server Error: " + error.message);
+          }
+          res.send({
+            message: "User approved successfully"
+          });
+        });
+      });
+    } else {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+  });
 };
+
+
+
+
+
 
 module.exports = {
   getAllUsers,
