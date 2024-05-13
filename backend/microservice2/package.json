@@ -22,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "nodemon": "^3.1.0",
+    "selenium": "^2.20.0",
     "selenium-webdriver": "^4.20.0",
     "validator": "^13.11.0"
   },
