@@ -4,6 +4,7 @@ const db = require("../db.js");
 const moment = require('moment');
 require("dotenv").config();
 const mailer = require("../services/mailer.js");
+const cron = require('node-cron');
 
 // =======================================USERS=======================================
 
@@ -504,7 +505,7 @@ const getPharmacyCountAndGrowth = async (req, res) => {
 
 const getDailyRegistrations = async (req, res) => {
   try {
-    let registrations = [];
+    let promises = [];
     for(let i = 6; i >= 0; i--) {
       const startOfDay = moment().subtract(i, 'days').startOf('day').format('YYYY-MM-DD HH:mm:ss');
       const endOfDay = moment().subtract(i, 'days').endOf('day').format('YYYY-MM-DD HH:mm:ss');
@@ -514,34 +515,43 @@ const getDailyRegistrations = async (req, res) => {
         FROM users 
         WHERE created_at BETWEEN ? AND ?`;
 
-      db.query(query, [startOfDay, endOfDay], (err, results) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).send('Server Error');
-        }
+      // Wrap db.query in a new Promise
+      let promise = new Promise((resolve, reject) => {
+        db.query(query, [startOfDay, endOfDay], (err, results) => {
+          if (err) {
+            console.error(err);
+            reject('Server Error');
+          }
 
-        registrations.push({
-          day: `Day ${6 - i + 1}`,
-          registrations: results[0].count
+          resolve({
+            day: startOfDay.split(' ')[0], // Return the date instead of 'Day X'
+            registrations: results[0].count
+          });
         });
-
-        if (i === 0) {
-          res.json(registrations);
-          console.log(registrations);
-        }
       });
+
+      promises.push(promise);
     }
+
+    // Use Promise.all to wait for all queries to complete
+    let registrations = await Promise.all(promises);
+
+    res.json(registrations);
+    console.log(registrations);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
   }
 };
 
+
+
 const getDailyLogins = async (req, res) => {
   const query = `
-    SELECT DATE(login_time) as day, COUNT(*) as logins
+    SELECT DATE_FORMAT(DATE(login_time), '%Y/%m/%d') as day, COUNT(*) as logins
     FROM logins
-    GROUP BY DATE(login_time)
+    WHERE login_time >= DATE(NOW()) - INTERVAL 6 DAY
+    GROUP BY day
     ORDER BY day ASC
   `;
 
@@ -553,6 +563,26 @@ const getDailyLogins = async (req, res) => {
     res.json(result);
   });
 };
+
+const deleteOldLogins = () => {
+  const query = `
+    DELETE FROM logins
+    WHERE login_time < DATE_SUB(NOW(), INTERVAL 7 DAY)
+  `;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Error deleting old logins', err);
+    } else {
+      console.log('Old logins deleted');
+    }
+  });
+};
+
+
+// Run deleteOldLogins every day at 00:00
+cron.schedule('46 00 * * *', deleteOldLogins);
+
 
 const fetchPendingLicenses = async (req, res) => {
   const selectQuery = "SELECT license.licenseId, license.userId, license.issueDate, license.expiryDate, license.license, license.status, users.firstname, users.lastname, users.email FROM license INNER JOIN users ON license.userId = users.id WHERE license.status = 'PENDING'";
@@ -703,5 +733,6 @@ module.exports = {
   getDailyLogins,
   fetchPendingLicenses,
   approveUser,
-  declineUser
+  declineUser,
+  deleteOldLogins
 };

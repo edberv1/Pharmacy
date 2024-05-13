@@ -24,8 +24,8 @@ const WeeklyRegistrationsChart = () => {
         setData([
           {
             id: "Daily registrations",
-            data: fetchedData.map((item, index) => ({
-              x: `Day ${index + 1}`,
+            data: fetchedData.map((item) => ({
+              x: item.day, // Use the actual date here
               y: item.registrations,
             })),
           },
@@ -49,12 +49,12 @@ const WeeklyRegistrationsChart = () => {
           zoomin: false, // This will hide the zoom in icon
           zoomout: false, // This will hide the zoom out icon
           pan: false, // This will hide the pan icon
-          reset: true, // This will hide the reset icon
+          reset: false, // This will hide the reset icon
         },
       },
     },
     xaxis: {
-      categories: data[0]?.data?.map((item) => item.x), // Add optional chaining here
+      categories: data[0]?.data?.map((item) => item.x), // Use the actual dates here
     },
     yaxis: {
       title: {

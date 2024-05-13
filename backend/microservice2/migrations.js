@@ -150,8 +150,8 @@ const runMigrations = (pool) => {
     const createTableQueryLogins = `
     CREATE TABLE IF NOT EXISTS logins (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT NOT NULL,
-      FOREIGN KEY (user_id) REFERENCES users(id),
+      userId INT NOT NULL,
+      FOREIGN KEY (userId) REFERENCES users(id),
       login_time DATETIME DEFAULT CURRENT_TIMESTAMP
     )`;
     

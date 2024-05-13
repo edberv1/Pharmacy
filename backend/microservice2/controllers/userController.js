@@ -148,7 +148,7 @@ const loginUser = async (req, res) => {
       user.refreshToken = refreshToken;
 
       // Insert a row into the user_logins table
-      const loginQuery = "INSERT INTO logins (user_id) VALUES (?)";
+      const loginQuery = "INSERT INTO logins (userId) VALUES (?)";
       db.query(loginQuery, [user.id], (err, result) => {
         if (err) {
           console.error("Error inserting into logins", err);
