@@ -39,7 +39,7 @@ function DeleteRoleModal({ isOpen, onClose, roleId}) { //userId
     const handleOutsideClick = (e) => {
       if (
         isOpen &&
-        modalRef.current &&
+        !modalRef.current &&
         !modalRef.current.contains(e.target)
       ) {
         onClose();

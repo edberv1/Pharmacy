@@ -56,7 +56,7 @@ function EditRoleModal({ isOpen, onClose, role }) {
     const handleOutsideClick = (e) => {
       if (
         isOpen &&
-        modalRef.current &&
+        !modalRef.current &&
         !modalRef.current.contains(e.target)
       ) {
         onClose();

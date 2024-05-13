@@ -99,7 +99,7 @@ function EditUserModal({ isOpen, onClose, user }) {
     const handleOutsideClick = (e) => {
       if (
         isOpen &&
-        modalRef.current &&
+        !modalRef.current &&
         !modalRef.current.contains(e.target)
       ) {
         onClose();

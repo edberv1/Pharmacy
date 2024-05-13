@@ -40,7 +40,7 @@ function DeletePharmacyModal({ isOpen, onClose, pharmacyId}) { //userId
     const handleOutsideClick = (e) => {
       if (
         isOpen &&
-        modalRef.current &&
+        !modalRef.current &&
         !modalRef.current.contains(e.target)
       ) {
         onClose();
