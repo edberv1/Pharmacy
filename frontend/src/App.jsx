@@ -1,25 +1,25 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Admin from "./components/admin/Admin";
-import Client from "./components/client/Client";
-import SuperAdmin from "./components/superadmin/SuperAdmin";
-import NotFound from "./components/NotFound";
-import SignUp from "./components/client/pages/SignUp";
-import Login from "./components/client/pages/Login";
+import Admin from "./layouts/admin/Admin";
+import Client from "./layouts/client/Client";
+import SuperAdmin from "./layouts/superadmin/SuperAdmin";
+import NotFound from "./layouts/NotFound";
+import SignUp from "./layouts/client/pages/SignUp";
+import Login from "./layouts/client/pages/Login";
 import withRole from "./routes/WithRole";
-import Users from "./components/superadmin/pages/Users";
-import Roles from "./components/superadmin/pages/Roles";
-import Profile from "./components/client/pages/Profile";
-import Pharmacies from "./components/admin/pages/Pharmacies";
-import Products from "./components/admin/pages/Products";
-import ProfileAdmin from "./components/admin/pages/Profile";
-import Requests from "./components/superadmin/pages/Requests";
-import Statistics from "./components/superadmin/pages/Statistics";
-import PharmacyForm from "./components/client/pages/PharmacyForm";
-import Home from "./components/client/pages/Home";
+import Users from "./layouts/superadmin/pages/Users";
+import Roles from "./layouts/superadmin/pages/Roles";
+import Profile from "./layouts/client/pages/Profile";
+import Pharmacies from "./layouts/admin/pages/Pharmacies";
+import Products from "./layouts/admin/pages/Products";
+import ProfileAdmin from "./layouts/admin/pages/Profile";
+import Requests from "./layouts/superadmin/pages/Requests";
+import Statistics from "./layouts/superadmin/pages/Statistics";
+import PharmacyForm from "./layouts/client/pages/PharmacyForm";
+import Home from "./layouts/client/pages/Home";
 
-import AboutUsClient from "./components/client/pages/AboutUs";
-import ClientPharmacies from "./components/client/pages/Pharmacies";
-import PharmacyDetails from "./components/client/components/PharmacyDetails";
+import AboutUsClient from "./layouts/client/pages/AboutUs";
+import ClientPharmacies from "./layouts/client/pages/Pharmacies";
+import PharmacyDetails from "./layouts/client/components/PharmacyDetails";
 
 function App() {
   const AdminRoute = withRole(Admin, "admin");
