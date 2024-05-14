@@ -248,23 +248,22 @@ const getPharmacyById = async (req, res) => {
   try {
     const { id } = req.params;
     // Fetch pharmacy details from the database based on the id
-    const query = "SELECT * FROM pharmacies WHERE id = ?"; 
+    const query = "SELECT * FROM pharmacies WHERE id = ?";
     db.query(query, [id], (err, results) => {
       if (err) {
-        console.error('Error fetching pharmacy details:', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching pharmacy details:", err);
+        return res.status(500).json({ error: "Internal server error" });
       }
       if (!results || results.length === 0) {
-        return res.status(404).json({ error: 'Pharmacy not found' });
+        return res.status(404).json({ error: "Pharmacy not found" });
       }
       res.json(results[0]); // Send the first result (assuming id is unique)
     });
   } catch (error) {
-    console.error('Error fetching pharmacy details:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching pharmacy details:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 const submitLicense = async (req, res) => {
   const token = req.headers["x-access-token"];
@@ -285,7 +284,7 @@ const submitLicense = async (req, res) => {
     const { licenseId, issueDate, expiryDate, license } = req.body;
 
     // Define the status as 'PENDING'
-    const status = 'PENDING';
+    const status = "PENDING";
 
     // Define the SQL query
     const query = `
@@ -299,10 +298,12 @@ const submitLicense = async (req, res) => {
     // Execute the query
     db.query(query, values, (err, result) => {
       if (err) {
-        console.error('Error executing MySQL query: ', err);
-        return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+        console.error("Error executing MySQL query: ", err);
+        return res
+          .status(500)
+          .json({ error: "Internal Server Error", details: err.message });
       }
-      res.status(200).send({ message: 'License submitted successfully.' });
+      res.status(200).send({ message: "License submitted successfully." });
     });
   });
 };
@@ -314,20 +315,19 @@ const getUserById = async (req, res) => {
     const query = "SELECT * FROM users WHERE id = ?"; // Example: Using Mongoose to query MongoDB
     db.query(query, [id], (err, results) => {
       if (err) {
-        console.error('Error fetching pharmacy details:', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error("Error fetching pharmacy details:", err);
+        return res.status(500).json({ error: "Internal server error" });
       }
       if (!results || results.length === 0) {
-        return res.status(404).json({ error: 'Pharmacy not found' });
+        return res.status(404).json({ error: "Pharmacy not found" });
       }
       res.json(results[0]); // Send the first result (assuming id is unique)
     });
   } catch (error) {
-    console.error('Error fetching user details:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 module.exports = {
   signup,
@@ -339,5 +339,5 @@ module.exports = {
   getAllPharmacies,
   getPharmacyById,
   submitLicense,
-  getUserById
+  getUserById,
 };
