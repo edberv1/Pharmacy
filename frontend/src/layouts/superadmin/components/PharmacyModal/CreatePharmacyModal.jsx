@@ -75,7 +75,7 @@ function CreatePharmacyModal({ isOpen, onClose}) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:8081/superAdmin/getAllUserIds", {
+        const response = await fetch("http://localhost:8081/superAdmin/getAllAdminUserIds", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

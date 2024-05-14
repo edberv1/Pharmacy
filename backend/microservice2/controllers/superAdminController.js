@@ -407,6 +407,26 @@ const deletePharmacy = async (req, res) => {
   });
 };
 
+const getAllAdminUserIds = async (req, res) => {
+  const query = "SELECT id, firstname FROM users WHERE roleId = 2"; // Fetching id and firstname of admin users
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res.status(500).send("Internal Server Error: " + err.message);
+    }
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "No admin users found" });
+    }
+
+    res.json(results);
+  });
+};
+
+
+//==========================================STATISTICS====================================
+
 const getUserGrowth = async (req, res) => {
   // Get the total number of users
   db.query("SELECT COUNT(*) as total FROM users", function (err, res1) {
@@ -599,6 +619,7 @@ const fetchPendingLicenses = async (req, res) => {
   });
 };
 
+//===============================================REQUESTS===================================//
 const approveUser = async (req, res) => {
   const { userId, licenseId } = req.body;
 
@@ -754,6 +775,7 @@ module.exports = {
   getAllPharmacies,
   createPharmacy,
   getAllUserIds,
+  getAllAdminUserIds,
   deletePharmacy,
   editPharmacy,
   getUserGrowth,

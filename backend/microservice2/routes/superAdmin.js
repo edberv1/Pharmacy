@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
-const {deleteOldLogins, getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies ,createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth, fetchPendingLicenses, approveUser,declineUser, getProductGrowth} = require('../controllers/superAdminController');
+const {deleteOldLogins, getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies, getAllAdminUserIds, createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth, fetchPendingLicenses, approveUser,declineUser, getProductGrowth} = require('../controllers/superAdminController');
 
 
 router.get('/superadmin',  authMiddleware);
@@ -13,6 +13,7 @@ router.delete('/deleteUser/:id', authMiddleware, deleteUser);
 router.put('/editUser/:id',  authMiddleware, editUser);
 
 router.get('/getAllUserIds',  authMiddleware, getAllUserIds);
+router.get('/getAllAdminUserIds',  authMiddleware, getAllAdminUserIds);
 
 //=====================================ROLES=====================================
 router.get('/getAllRoles',  authMiddleware, getAllRoles);
@@ -25,16 +26,21 @@ router.get("/getAllPharmacies",  authMiddleware, getAllPharmacies);
 router.post('/createPharmacy',  authMiddleware, createPharmacy);
 router.delete('/deletePharmacy/:id', authMiddleware, deletePharmacy); 
 router.put('/editPharmacy/:id',  authMiddleware, editPharmacy);
+
+
+//==================================STATISTICS=======================================
 router.get('/getUserGrowth', authMiddleware, getUserGrowth);
 router.get('/getAdminGrowth', authMiddleware, getAdminGrowth);
 router.get('/getPharmacyCountAndGrowth', authMiddleware, getPharmacyCountAndGrowth)
 router.get('/getDailyRegistrations', authMiddleware, getDailyRegistrations)
 router.get('/getDailyLogins', authMiddleware, getDailyLogins)
 router.get('/fetchPendingLicenses', authMiddleware, fetchPendingLicenses)
+router.get('/getProductGrowth', authMiddleware, getProductGrowth)
+router.get('/deleteOldLogins', deleteOldLogins);
+
+//====================================REQUESTS========================================
 router.post('/approveUser',  authMiddleware, approveUser);
 router.post('/declineUser',  authMiddleware, declineUser);
-router.get('/deleteOldLogins', deleteOldLogins);
-router.get('/getProductGrowth', authMiddleware, getProductGrowth)
 
 
 
