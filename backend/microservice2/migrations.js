@@ -105,10 +105,11 @@ const runMigrations = (pool) => {
           CREATE TABLE IF NOT EXISTS products (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
+            description VARCHAR(255) NOT NULL,
             produced VARCHAR(255) NOT NULL,
+            price DECIMAL(10, 2) NOT NULL,
             pharmacyId INT NOT NULL,
             FOREIGN KEY (pharmacyId) REFERENCES pharmacies(id) ON DELETE CASCADE,
-            stock INT NOT NULL DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
           )
         `;
