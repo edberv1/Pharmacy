@@ -782,9 +782,7 @@ const downloadLicense = (req, res) => {
       console.log("License object:", license);
 
       let filePath = path.normalize(license.license); // Normalize the file path
-const absoluteFilePath = path.join(__dirname, "..", filePath);
-
-
+      const absoluteFilePath = path.join(__dirname, "..", filePath);
 
       if (!fs.existsSync(absoluteFilePath)) {
         console.error(`File not found at path: ${absoluteFilePath}`);
@@ -801,10 +799,6 @@ const absoluteFilePath = path.join(__dirname, "..", filePath);
         .send({ message: "Internal Server Error", error: error.message });
     });
 };
-
-
-
-
 
 module.exports = {
   getAllUsers,
