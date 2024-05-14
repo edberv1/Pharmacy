@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
-const {deleteOldLogins, getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies, getAllAdminUserIds, createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth, fetchPendingLicenses, approveUser,declineUser, getProductGrowth, downloadLicense} = require('../controllers/superAdminController');
+const {deleteOldLogins, getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies, getAllAdminUserIds, createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth, fetchPendingLicenses, approveUser,declineUser, getProductGrowth, downloadLicense, generateExcel, generatePharmacies} = require('../controllers/superAdminController');
 
 
 router.get('/superadmin',  authMiddleware);
@@ -11,6 +11,10 @@ router.get('/getAllUsers',  authMiddleware, getAllUsers);
 router.post('/createUser',  authMiddleware, createUser);
 router.delete('/deleteUser/:id', authMiddleware, deleteUser); 
 router.put('/editUser/:id',  authMiddleware, editUser);
+router.get('/generateExcel',  authMiddleware, generateExcel);
+router.get('/generatePharmacies',  authMiddleware, generatePharmacies);
+
+
 
 router.get('/getAllUserIds',  authMiddleware, getAllUserIds);
 router.get('/getAllAdminUserIds',  authMiddleware, getAllAdminUserIds);

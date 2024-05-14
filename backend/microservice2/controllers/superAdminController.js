@@ -7,6 +7,7 @@ const mailer = require("../services/mailer.js");
 const cron = require("node-cron");
 const path = require("path");
 const fs = require("fs");
+const ExcelJS = require("exceljs");
 
 // =======================================USERS=======================================
 
@@ -820,6 +821,149 @@ const downloadLicense = (req, res) => {
     });
 };
 
+const generateExcel = async (req, res) => {
+  const query =
+    "SELECT * FROM users";
+  db.query(query, async (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+    if (!results || results.length === 0) {
+      console.log("No users found in database.");
+      return res.status(404).json({ error: "No users found" });
+    }
+
+    // Convert RowDataPacket objects to plain JavaScript objects
+    let users = results.map((row) => {
+      return {
+        id: row.id,
+        firstname: row.firstname,
+        lastname: row.lastname,
+        email: row.email,
+        roleId: row.roleId,
+        verified: row.verified,
+        created_at: row.created_at,
+      };
+    });
+    console.log("Converted user data: ", users); // Log the converted user data
+
+    // Create a new workbook and worksheet
+    let workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet("Users");
+
+    // Define the headers
+    let headers = [
+      "id",
+      "firstname",
+      "lastname",
+      "email",
+      "roleId",
+      "verified",
+      "created_at",
+    ];
+
+    // Add the headers to the worksheet
+    headers.forEach((header, index) => {
+      worksheet.getCell(1, index + 1).value = header;
+    });
+
+    // Add the user data to the worksheet
+    users.forEach((user, rowIndex) => {
+      headers.forEach((header, columnIndex) => {
+        worksheet.getCell(rowIndex + 2, columnIndex + 1).value = user[header];
+      });
+    });
+
+    // Write to a buffer
+    let buffer = await workbook.xlsx.writeBuffer();
+
+    // Set headers
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Disposition", "attachment; filename=Users.xlsx");
+
+    // Send the buffer
+    res.send(buffer);
+  });
+};
+
+const generatePharmacies = async (req, res) => {
+    const query =
+      "SELECT pharmacies.id, pharmacies.name, pharmacies.location, pharmacies.created_at, users.firstname, users.lastname, users.email FROM pharmacies INNER JOIN users ON pharmacies.userId = users.id";
+    db.query(query, async (err, results) => {
+      if (err) {
+        console.error("Error executing MySQL query: ", err);
+        return res
+          .status(500)
+          .json({ error: "Internal Server Error", details: err.message });
+      }
+      if (!results || results.length === 0) {
+        console.log("No pharmacies found in database.");
+        return res.status(404).json({ error: "No pharmacies found" });
+      }
+  
+      // Convert RowDataPacket objects to plain JavaScript objects
+      let pharmacies = results.map((row) => {
+        return {
+          id: row.id,
+          name: row.name,
+          firstname: row.firstname,
+          lastname: row.lastname,
+          email: row.email,
+          location: row.location,
+          created_at: row.created_at,  
+        };
+      });
+      console.log("Converted pharmacy data: ", pharmacies); // Log the converted pharmacy data
+  
+      // Create a new workbook and worksheet
+      let workbook = new ExcelJS.Workbook();
+      let worksheet = workbook.addWorksheet("Pharmacies");
+  
+      // Define the headers
+      let headers = [
+        "id",
+        "name",
+        "firstname",
+        "lastname",
+        "email",
+        "location",
+        "created_at",  
+      ];
+  
+      // Add the headers to the worksheet
+      headers.forEach((header, index) => {
+        worksheet.getCell(1, index + 1).value = header;
+      });
+  
+      // Add the pharmacy data to the worksheet
+      pharmacies.forEach((pharmacy, rowIndex) => {
+        headers.forEach((header, columnIndex) => {
+          worksheet.getCell(rowIndex + 2, columnIndex + 1).value = pharmacy[header];
+        });
+      });
+  
+      // Write to a buffer
+      let buffer = await workbook.xlsx.writeBuffer();
+  
+      // Set headers
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader("Content-Disposition", "attachment; filename=Pharmacies.xlsx");
+  
+      // Send the buffer
+      res.send(buffer);
+    });
+  };
+  
+
 module.exports = {
   getAllUsers,
   createUser,
@@ -845,5 +989,7 @@ module.exports = {
   declineUser,
   deleteOldLogins,
   getProductGrowth,
-  downloadLicense
+  downloadLicense,
+  generateExcel,
+  generatePharmacies
 };

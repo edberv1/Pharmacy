@@ -4,6 +4,7 @@ import CreatePharmacyModal from "./PharmacyModal/CreatePharmacyModal";
 import DeletePharmacyModal from "./PharmacyModal/DeletePharmacyModal";
 import EditPharmacyModal from "./PharmacyModal/EditPharmacyModal";
 import Pagination from "./Pagination";
+import fetchWithTokenRefresh from "../../../../utils/fetchWithTokenRefresh";
 
 function PharmacyTable() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -133,6 +134,31 @@ function PharmacyTable() {
     currentPage * itemsPerPage
   );
 
+  const downloadPharmaciesExcel = async () => {
+    try {
+      const response = await fetchWithTokenRefresh(
+        "http://localhost:8081/superAdmin/generatePharmacies",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const blob = await response.blob();
+      let url = window.URL.createObjectURL(blob);
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = "Pharmacies.xlsx";
+      a.click();
+    } catch (error) {
+      console.error("Error downloading pharmacies Excel: ", error);
+    }
+  };
+
   return (
     <>
       <div className="mx-auto max-w-screen-xl pt-16 ">
@@ -172,6 +198,15 @@ function PharmacyTable() {
               </form>
             </div>
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+            <button
+          onClick={downloadPharmaciesExcel}
+          type="button"
+          id="generate-excel"
+          className="flex items-center justify-center text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:outline-none dark:focus:ring-yellow-800"
+        >
+          <i className="fa-solid fa-download pr-2"></i>
+          Generate Excel
+        </button>
               <button
                 type="button"
                 onClick={openModal}

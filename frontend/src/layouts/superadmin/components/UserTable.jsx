@@ -55,7 +55,7 @@ function UserTable() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": "Bearer " + localStorage.getItem("token")
+              Authorization: "Bearer " + localStorage.getItem("token"),
             },
           }
         );
@@ -69,7 +69,7 @@ function UserTable() {
         console.error("Error fetching users: ", error);
       }
     };
-  
+
     const fetchRoles = async () => {
       try {
         const response = await fetchWithTokenRefresh(
@@ -78,16 +78,16 @@ function UserTable() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": "Bearer " + localStorage.getItem("token")
+              Authorization: "Bearer " + localStorage.getItem("token"),
             },
           }
         );
-  
+
         if (!response.ok) {
           const errorMessage = await response.text();
           throw new Error(errorMessage);
         }
-  
+
         const dataRoles = await response.json();
         setRoles(dataRoles); // Assuming the backend returns an array of user objects with 'id' and 'name' fields
       } catch (error) {
@@ -95,11 +95,10 @@ function UserTable() {
         // setError("Failed to fetch roles ids.");
       }
     };
-  
+
     fetchUsers();
     fetchRoles();
   }, []);
-  
 
   const roleOptions =
     roles && roles.length > 0
@@ -172,6 +171,31 @@ function UserTable() {
     currentPage * itemsPerPage
   );
 
+  const downloadUsersExcel = async () => {
+    try {
+      const response = await fetchWithTokenRefresh(
+        "http://localhost:8081/superAdmin/generateExcel",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const blob = await response.blob();
+      let url = window.URL.createObjectURL(blob);
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = "Users.xlsx";
+      a.click();
+    } catch (error) {
+      console.error("Error downloading users Excel: ", error);
+    }
+  };
+
   return (
     <>
       <div className="mx-auto max-w-screen-xl pt-16">
@@ -199,6 +223,15 @@ function UserTable() {
               </form>
             </div>
             <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+            <button
+          onClick={downloadUsersExcel}
+          type="button"
+          id="generate-excel"
+          className="flex items-center justify-center text-white bg-yellow-700 hover:bg-yellow-800 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 focus:outline-none dark:focus:ring-yellow-800"
+        >
+          <i className="fa-solid fa-download pr-2"></i>
+          Generate Excel
+        </button>
               <button
                 type="button"
                 id="create-user-button"
