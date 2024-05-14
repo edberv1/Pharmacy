@@ -155,7 +155,15 @@ function Requests() {
                       {license.firstname} {license.lastname}
                     </td>
                     <td className="px-4 py-3">{license.email}</td>
-                    <td className="px-4 py-3">{license.license}</td>
+                    <td className="px-4 py-3">
+                      <a
+                        href={`http://localhost:8081/superAdmin/downloadLicense/${license.id}`} // Use license.id, not license.licenseId
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View License
+                      </a>
+                    </td>
                     <td className="px-4 py-3">
                       {formatDate(license.issueDate)}
                     </td>

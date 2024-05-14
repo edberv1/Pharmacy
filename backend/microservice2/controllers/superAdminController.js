@@ -5,6 +5,8 @@ const moment = require("moment");
 require("dotenv").config();
 const mailer = require("../services/mailer.js");
 const cron = require("node-cron");
+const path = require("path");
+const fs = require("fs");
 
 // =======================================USERS=======================================
 
@@ -608,7 +610,7 @@ cron.schedule("00 00 * * *", deleteOldLogins);
 
 const fetchPendingLicenses = async (req, res) => {
   const selectQuery =
-    "SELECT license.licenseId, license.userId, license.issueDate, license.expiryDate, license.license, license.status, users.firstname, users.lastname, users.email FROM license INNER JOIN users ON license.userId = users.id WHERE license.status = 'PENDING'";
+    "SELECT license.id, license.licenseId, license.userId, license.issueDate, license.expiryDate, license.license, license.status, users.firstname, users.lastname, users.email FROM license INNER JOIN users ON license.userId = users.id WHERE license.status = 'PENDING'";
 
   db.query(selectQuery, (selectErr, result) => {
     if (selectErr) {
@@ -773,6 +775,51 @@ const getProductGrowth = async (req, res) => {
   });
 };
 
+const downloadLicense = (req, res) => {
+  const id = req.params.id;
+  const query = "SELECT license FROM license WHERE id = ?";
+
+  // Wrap db.query in a new Promise
+  let promise = new Promise((resolve, reject) => {
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error(err);
+        reject("Server Error");
+      }
+
+      resolve(results);
+    });
+  });
+
+  promise
+    .then((result) => {
+      if (!result || result.length === 0) {
+        console.error(`No license found with ID: ${id}`);
+        return res.status(404).send({ message: "License not found." });
+      }
+
+      const license = result[0];
+      console.log("License object:", license);
+
+      let filePath = path.normalize(license.license); // Normalize the file path
+      const absoluteFilePath = path.join(__dirname, "..", filePath);
+
+      if (!fs.existsSync(absoluteFilePath)) {
+        console.error(`File not found at path: ${absoluteFilePath}`);
+        return res.status(404).send({ message: "File not found." });
+      }
+
+      // Send the file as a response
+      res.sendFile(absoluteFilePath);
+    })
+    .catch((error) => {
+      console.error(`Error in downloadLicense function: ${error.message}`);
+      res
+        .status(500)
+        .send({ message: "Internal Server Error", error: error.message });
+    });
+};
+
 module.exports = {
   getAllUsers,
   createUser,
@@ -798,4 +845,5 @@ module.exports = {
   declineUser,
   deleteOldLogins,
   getProductGrowth,
+  downloadLicense
 };

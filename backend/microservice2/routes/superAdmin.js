@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
-const {deleteOldLogins, getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies, getAllAdminUserIds, createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth, fetchPendingLicenses, approveUser,declineUser, getProductGrowth} = require('../controllers/superAdminController');
+const {deleteOldLogins, getDailyLogins, getDailyRegistrations, getPharmacyCountAndGrowth, getAllUsers, createUser, deleteUser, editUser, getAllRoles, createRole, deleteRole, editRole , getAllPharmacies, getAllAdminUserIds, createPharmacy, getAllUserIds, deletePharmacy, editPharmacy, getUserGrowth, getAdminGrowth, fetchPendingLicenses, approveUser,declineUser, getProductGrowth, downloadLicense} = require('../controllers/superAdminController');
 
 
 router.get('/superadmin',  authMiddleware);
@@ -41,6 +41,7 @@ router.get('/deleteOldLogins', deleteOldLogins);
 //====================================REQUESTS========================================
 router.post('/approveUser',  authMiddleware, approveUser);
 router.post('/declineUser',  authMiddleware, declineUser);
+router.get('/downloadLicense/:id', downloadLicense);
 
 
 

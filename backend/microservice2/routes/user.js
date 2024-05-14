@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { signup, loginUser, getLoginUser, logoutUser, verify, refresh, getAllPharmacies, getPharmacyById, getUserById, submitLicense} = require('../controllers/userController');
+const upload = require('../services/fileUpload');
 
 router.post('/signup', signup);
 router.post('/login', loginUser);
@@ -11,7 +12,7 @@ router.get('/refresh', refresh)
 router.get('getUserById/:id', getUserById)
 router.get('/getAllPharmacies' , getAllPharmacies)
 router.get('/pharmacies/:id', getPharmacyById);
-router.post('/submitLicense', submitLicense)
+router.post('/submitLicense', upload, submitLicense);
 
 module.exports = router;
 

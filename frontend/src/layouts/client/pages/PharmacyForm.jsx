@@ -9,18 +9,21 @@ function PharmacyForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Create a new FormData instance
+    const formData = new FormData();
+
+    // Append the form data
+    formData.append("licenseId", licenseId);
+    formData.append("issueDate", issueDate);
+    formData.append("expiryDate", expiryDate);
+    formData.append("license", license); // This should be the actual File object, not just the file name
+
     const response = await fetch("http://localhost:8081/users/submitLicense", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         "x-access-token": localStorage.getItem("token"), // assuming the token is stored in localStorage
       },
-      body: JSON.stringify({
-        licenseId,
-        issueDate,
-        expiryDate,
-        license,
-      }),
+      body: formData, // Send the FormData object, not a JSON string
     });
 
     const data = await response.json();
@@ -36,7 +39,7 @@ function PharmacyForm() {
       className="max-w-md mx-auto bg-white p-8 border border-gray-300 mt-20 rounded-lg shadow-md transition-opacity duration-300"
     >
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {/* ... */}
+        <label>LICENSE ID</label>
         <input
           type="number"
           name="licenseId"
@@ -53,7 +56,7 @@ function PharmacyForm() {
             setLicenseId(e.target.value);
           }}
         />
-        {/* ... */}
+        <label htmlFor="">LICENSE FILE</label>
         <input
           type="file"
           name="license"
@@ -61,10 +64,10 @@ function PharmacyForm() {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
           accept=".pdf"
           onChange={(e) => {
-            setLicense(e.target.files[0].name);
+            setLicense(e.target.files[0]); // This should be the actual File object, not just the file name
           }}
         />
-        {/* ... */}
+        <label htmlFor="">LICENSE ISSUED DATE</label> 
         <input
           type="date"
           name="issueDate"
@@ -75,7 +78,7 @@ function PharmacyForm() {
             setIssueDate(e.target.value);
           }}
         />
-        {/* ... */}
+        <label htmlFor="">LICENSE EXPIRY DATE</label> 
         <input
           type="date"
           name="expiryDate"
