@@ -1,10 +1,12 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const db = require("../db.js");
-const moment = require('moment');
+const moment = require("moment");
 require("dotenv").config();
 const mailer = require("../services/mailer.js");
-const cron = require('node-cron');
+const cron = require("node-cron");
+const path = require("path");
+const fs = require("fs");
 
 // =======================================USERS=======================================
 
@@ -223,8 +225,6 @@ const editRole = async (req, res) => {
     if (checkResults.length === 0) {
       return res.status(404).send("Role not found");
     }
-    ;
-
     try {
       // Update the role details
       const updateQuery = `
@@ -441,34 +441,37 @@ const getUserGrowth = async (req, res) => {
 
 const getAdminGrowth = async (req, res) => {
   // Get the total number of admins
-  db.query("SELECT COUNT(*) as total FROM users WHERE roleId = 2", function (err, res1) {
-    if (err) {
-      res
-        .status(500)
-        .json({ error: "Internal Server Error", details: err.message });
-    } else {
-      const totalAdmins = res1[0].total;
+  db.query(
+    "SELECT COUNT(*) as total FROM users WHERE roleId = 2",
+    function (err, res1) {
+      if (err) {
+        res
+          .status(500)
+          .json({ error: "Internal Server Error", details: err.message });
+      } else {
+        const totalAdmins = res1[0].total;
 
-      // Get the number of admins created in the last week
-      db.query(
-        "SELECT COUNT(*) as newAdmins FROM users WHERE roleId = 2 AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)",
-        function (err, res2) {
-          if (err) {
-            res
-              .status(500)
-              .json({ error: "Internal Server Error", details: err.message });
-          } else {
-            const newAdmins = res2[0].newAdmins;
+        // Get the number of admins created in the last week
+        db.query(
+          "SELECT COUNT(*) as newAdmins FROM users WHERE roleId = 2 AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)",
+          function (err, res2) {
+            if (err) {
+              res
+                .status(500)
+                .json({ error: "Internal Server Error", details: err.message });
+            } else {
+              const newAdmins = res2[0].newAdmins;
 
-            // Calculate the growth percentage
-            const growth = (newAdmins / totalAdmins) * 100;
+              // Calculate the growth percentage
+              const growth = (newAdmins / totalAdmins) * 100;
 
-            res.json({ growth });
+              res.json({ growth });
+            }
           }
-        }
-      );
+        );
+      }
     }
-  });
+  );
 };
 
 const getPharmacyCountAndGrowth = async (req, res) => {
@@ -506,9 +509,15 @@ const getPharmacyCountAndGrowth = async (req, res) => {
 const getDailyRegistrations = async (req, res) => {
   try {
     let promises = [];
-    for(let i = 6; i >= 0; i--) {
-      const startOfDay = moment().subtract(i, 'days').startOf('day').format('YYYY/MM/DD HH:mm:ss');
-      const endOfDay = moment().subtract(i, 'days').endOf('day').format('YYYY/MM/DD HH:mm:ss');
+    for (let i = 6; i >= 0; i--) {
+      const startOfDay = moment()
+        .subtract(i, "days")
+        .startOf("day")
+        .format("YYYY/MM/DD HH:mm:ss");
+      const endOfDay = moment()
+        .subtract(i, "days")
+        .endOf("day")
+        .format("YYYY/MM/DD HH:mm:ss");
 
       const query = `
         SELECT COUNT(*) as count 
@@ -520,12 +529,12 @@ const getDailyRegistrations = async (req, res) => {
         db.query(query, [startOfDay, endOfDay], (err, results) => {
           if (err) {
             console.error(err);
-            reject('Server Error');
+            reject("Server Error");
           }
 
           resolve({
-            day: startOfDay.split(' ')[0], // Return the date instead of 'Day X'
-            registrations: results[0].count
+            day: startOfDay.split(" ")[0], // Return the date instead of 'Day X'
+            registrations: results[0].count,
           });
         });
       });
@@ -540,11 +549,9 @@ const getDailyRegistrations = async (req, res) => {
     console.log(registrations);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 };
-
-
 
 const getDailyLogins = async (req, res) => {
   const query = `
@@ -572,30 +579,31 @@ const deleteOldLogins = () => {
 
   db.query(query, (err, result) => {
     if (err) {
-      console.error('Error deleting old logins', err);
+      console.error("Error deleting old logins", err);
     } else {
-      console.log('Old logins deleted');
+      console.log("Old logins deleted");
     }
   });
 };
 
-
 // Run deleteOldLogins every day at 00:00
-cron.schedule('00 00 * * *', deleteOldLogins);
-
+cron.schedule("00 00 * * *", deleteOldLogins);
 
 const fetchPendingLicenses = async (req, res) => {
-  const selectQuery = "SELECT license.licenseId, license.userId, license.issueDate, license.expiryDate, license.license, license.status, users.firstname, users.lastname, users.email FROM license INNER JOIN users ON license.userId = users.id WHERE license.status = 'PENDING'";
+  const selectQuery =
+    "SELECT license.id, license.licenseId, license.userId, license.issueDate, license.expiryDate, license.license, license.status, users.firstname, users.lastname, users.email FROM license INNER JOIN users ON license.userId = users.id WHERE license.status = 'PENDING'";
 
   db.query(selectQuery, (selectErr, result) => {
-      if (selectErr) {
-          console.error("Error executing MySQL query: ", selectErr);
-          return res.status(500).send("Internal Server Error: " + selectErr.message);
-      }
-      res.send({
-          message: "Fetched pending licenses successfully",
-          data: result
-      });
+    if (selectErr) {
+      console.error("Error executing MySQL query: ", selectErr);
+      return res
+        .status(500)
+        .send("Internal Server Error: " + selectErr.message);
+    }
+    res.send({
+      message: "Fetched pending licenses successfully",
+      data: result,
+    });
   });
 };
 
@@ -606,12 +614,13 @@ const approveUser = async (req, res) => {
     return res.status(400).send("User ID and License ID are required");
   }
 
-  const updateLicenseQuery = "UPDATE license SET status = 'APPROVED' WHERE licenseId = ?";
+  const updateLicenseQuery =
+    "UPDATE license SET status = 'APPROVED' WHERE licenseId = ?";
   const updateUserQuery = "UPDATE users SET roleId = 2 WHERE id = ?";
 
   // Fetch the user's email
   const selectUserQuery = "SELECT email FROM users WHERE id = ?";
-  db.query(selectUserQuery, [userId], function(error, userResult) {
+  db.query(selectUserQuery, [userId], function (error, userResult) {
     if (error) {
       console.error("Error executing MySQL query: ", error);
       return res.status(500).send("Internal Server Error: " + error.message);
@@ -635,18 +644,22 @@ const approveUser = async (req, res) => {
         }
       });
 
-      db.query(updateLicenseQuery, [licenseId], function(error, result) {
+      db.query(updateLicenseQuery, [licenseId], function (error, result) {
         if (error) {
           console.error("Error executing MySQL query: ", error);
-          return res.status(500).send("Internal Server Error: " + error.message);
+          return res
+            .status(500)
+            .send("Internal Server Error: " + error.message);
         }
-        db.query(updateUserQuery, [userId], function(error, result) {
+        db.query(updateUserQuery, [userId], function (error, result) {
           if (error) {
             console.error("Error executing MySQL query: ", error);
-            return res.status(500).send("Internal Server Error: " + error.message);
+            return res
+              .status(500)
+              .send("Internal Server Error: " + error.message);
           }
           res.send({
-            message: "User approved successfully"
+            message: "User approved successfully",
           });
         });
       });
@@ -668,7 +681,7 @@ const declineUser = (req, res) => {
 
   // Fetch the user's email
   const selectUserQuery = "SELECT email FROM users WHERE id = ?";
-  db.query(selectUserQuery, [userId], function(error, userResult) {
+  db.query(selectUserQuery, [userId], function (error, userResult) {
     if (error) {
       console.error("Error executing MySQL query: ", error);
       return res.status(500).send("Internal Server Error: " + error.message);
@@ -692,13 +705,15 @@ const declineUser = (req, res) => {
         }
       });
 
-      db.query(deleteLicenseQuery, [licenseId], function(error, result) {
+      db.query(deleteLicenseQuery, [licenseId], function (error, result) {
         if (error) {
           console.error("Error executing MySQL query: ", error);
-          return res.status(500).send("Internal Server Error: " + error.message);
+          return res
+            .status(500)
+            .send("Internal Server Error: " + error.message);
         }
         res.send({
-          message: "User declined successfully"
+          message: "User declined successfully",
         });
       });
     } else {
@@ -707,7 +722,6 @@ const declineUser = (req, res) => {
     }
   });
 };
-
 
 const getProductGrowth = async (req, res) => {
   // Get the total number of pharmacies
@@ -741,6 +755,56 @@ const getProductGrowth = async (req, res) => {
   });
 };
 
+const downloadLicense = (req, res) => {
+  const id = req.params.id;
+  const query = "SELECT license FROM license WHERE id = ?";
+
+  // Wrap db.query in a new Promise
+  let promise = new Promise((resolve, reject) => {
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error(err);
+        reject("Server Error");
+      }
+
+      resolve(results);
+    });
+  });
+
+  promise
+    .then((result) => {
+      if (!result || result.length === 0) {
+        console.error(`No license found with ID: ${id}`);
+        return res.status(404).send({ message: "License not found." });
+      }
+
+      const license = result[0];
+      console.log("License object:", license);
+
+      let filePath = path.normalize(license.license); // Normalize the file path
+const absoluteFilePath = path.join(__dirname, "..", filePath);
+
+
+
+      if (!fs.existsSync(absoluteFilePath)) {
+        console.error(`File not found at path: ${absoluteFilePath}`);
+        return res.status(404).send({ message: "File not found." });
+      }
+
+      // Send the file as a response
+      res.sendFile(absoluteFilePath);
+    })
+    .catch((error) => {
+      console.error(`Error in downloadLicense function: ${error.message}`);
+      res
+        .status(500)
+        .send({ message: "Internal Server Error", error: error.message });
+    });
+};
+
+
+
+
 
 module.exports = {
   getAllUsers,
@@ -765,5 +829,6 @@ module.exports = {
   approveUser,
   declineUser,
   deleteOldLogins,
-  getProductGrowth
+  getProductGrowth,
+  downloadLicense,
 };

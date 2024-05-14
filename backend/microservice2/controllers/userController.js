@@ -282,7 +282,8 @@ const submitLicense = async (req, res) => {
     const userId = decoded.id;
 
     // Get the license details from the request body
-    const { licenseId, issueDate, expiryDate, license } = req.body;
+    const { licenseId, issueDate, expiryDate } = req.body;
+    const licensePath = req.file.path; // This is the path of the uploaded file on your server
 
     // Define the status as 'PENDING'
     const status = 'PENDING';
@@ -294,7 +295,7 @@ const submitLicense = async (req, res) => {
     `;
 
     // Define the values
-    const values = [licenseId, issueDate, expiryDate, license, status, userId];
+    const values = [licenseId, issueDate, expiryDate, licensePath, status, userId]; // Use licensePath instead of license
 
     // Execute the query
     db.query(query, values, (err, result) => {
@@ -306,6 +307,9 @@ const submitLicense = async (req, res) => {
     });
   });
 };
+
+
+
 
 const getUserById = async (req, res) => {
   try {
@@ -339,5 +343,5 @@ module.exports = {
   getAllPharmacies,
   getPharmacyById,
   submitLicense,
-  getUserById
+  getUserById,
 };
