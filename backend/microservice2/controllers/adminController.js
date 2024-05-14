@@ -195,4 +195,48 @@ const updateUserProfile = (req, res) => {
     });
   };
 
-module.exports = {getUserProfile, updateUserProfile, changePassword, getAllProducts, getPharmaciesForUser, createProduct, editProduct, deleteProduct};
+
+const getPharmacyById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Fetch pharmacy details from the database based on the id
+    const query = "SELECT * FROM pharmacies WHERE id = ?"; 
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error('Error fetching pharmacy details:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+      if (!results || results.length === 0) {
+        return res.status(404).json({ error: 'Pharmacy not found' });
+      }
+      res.json(results[0]); // Send the first result (assuming id is unique)
+    });
+  } catch (error) {
+    console.error('Error fetching pharmacy details:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const getPharmacyProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Fetch products associated with the pharmacy ID from the database
+    const query = "SELECT * FROM products WHERE pharmacyId = ?"; 
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error('Error fetching products:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+      if (!results || results.length === 0) {
+        return res.status(404).json({ error: 'Products not found for this pharmacy' });
+      }
+      res.json(results); // Send the products
+    });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+module.exports = {getUserProfile, updateUserProfile, changePassword, getAllProducts, getPharmaciesForUser, createProduct, editProduct, deleteProduct , getPharmacyById, getPharmacyProducts};

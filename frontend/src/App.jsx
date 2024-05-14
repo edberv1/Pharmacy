@@ -21,6 +21,9 @@ import AboutUsClient from "./layouts/client/pages/AboutUs";
 import ClientPharmacies from "./layouts/client/pages/Pharmacies";
 import PharmacyDetails from "./layouts/client/components/PharmacyDetails";
 
+import MyPharmacyDetails from "./layouts/admin/components/MyPharmacyDetails";
+import MyPharmacies from "./layouts/admin/pages/MyPharmacies"; 
+
 function App() {
   const AdminRoute = withRole(Admin, "admin");
   const SuperAdminRoute = withRole(SuperAdmin, "superadmin");
@@ -32,7 +35,9 @@ function App() {
   const RequestsRoute = withRole(Requests, "superadmin");
   const StatisticsRoute = withRole(Statistics, "superadmin");
 
-  
+  const MyPharmaciesRoute = withRole(MyPharmacies, "admin");
+  const MyPharmacyDetailsRoute = withRole(MyPharmacyDetails , "admin");
+
   return (
     <Router>
       <Routes>
@@ -54,6 +59,10 @@ function App() {
         <Route path="admin/*" element={<AdminRoute />}>
           <Route path="profileAdmin" element={<ProfileAdminRoute />} />
           <Route path="products" element={<ProductsRoute />} />
+
+          <Route path="myPharmacies" element={<MyPharmaciesRoute />} />
+          <Route path="myPharmacies/:id" element={<MyPharmacyDetailsRoute />} /> 
+
         </Route>
 
         {/* Admin Routes */}
