@@ -35,7 +35,8 @@ const runMigrations = (pool) => {
           FOREIGN KEY (roleId) REFERENCES roles(id),
           refreshToken VARCHAR(255),
           verified BOOLEAN DEFAULT 0,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          resetToken VARCHAR(255),
         )
       `;
 
