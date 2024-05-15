@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
-
-function CreatePharmacyAdminModal({ isOpen, onClose}) {
+import Locations from "../../../../../utils/Locations"; 
+function CreatePharmacyAdminModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
     location: "",
@@ -19,11 +19,14 @@ function CreatePharmacyAdminModal({ isOpen, onClose}) {
     setFormSubmitted(false);
   };
 
+  const handleLocationChange = (location) => {
+    setFormData((prevData) => ({ ...prevData, location }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Here you can add your logic to create a user
     try {
-
       // Make HTTP POST request to create user with token included in headers
       const response = await fetch(
         "http://localhost:8081/admin/createPharmacy",
@@ -31,7 +34,7 @@ function CreatePharmacyAdminModal({ isOpen, onClose}) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("token")
+            Authorization: "Bearer " + localStorage.getItem("token"),
           },
           body: JSON.stringify(formData),
         }
@@ -45,7 +48,7 @@ function CreatePharmacyAdminModal({ isOpen, onClose}) {
       }
 
       const data = await response.json();
-  
+
       console.log(data); // Log the response if needed
       onClose();
       setFormSubmitted(true); // Set form submission status to true
@@ -129,20 +132,11 @@ function CreatePharmacyAdminModal({ isOpen, onClose}) {
             <label className="block text-sm font-medium text-gray-600">
               Location
             </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
-              required
-            />
+            <Locations value={formData.location} onChange={handleLocationChange} />
           </div>
 
-          
-
           {error && <div className="text-red-500 mt-2">{error}</div>}
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4">
             <button
               type="button"
               onClick={handleClose}
