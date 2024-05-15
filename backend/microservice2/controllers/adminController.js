@@ -195,6 +195,7 @@ const updateUserProfile = (req, res) => {
     });
   };
 
+  //============================================ADMIN PHARMACIES METHODS==============================
 
 const getPharmacyById = async (req, res) => {
   try {
@@ -238,5 +239,32 @@ const getPharmacyProducts = async (req, res) => {
   }
 };
 
+const createPharmacy = async (req, res) => {
+  const { name, location } = req.body;
+  const userId = req.userId; // Assuming you have userId in the request
 
-module.exports = {getUserProfile, updateUserProfile, changePassword, getAllProducts, getPharmaciesForUser, createProduct, editProduct, deleteProduct , getPharmacyById, getPharmacyProducts};
+  // Perform validation
+  if (!name || !location) {
+    return res.status(400).send("Name and location are required");
+  }
+
+  // Insert pharmacy
+  const insertQuery =
+    "INSERT INTO pharmacies (name, location, userId) VALUES (?, ?, ?)";
+  db.query(insertQuery, [name, location, userId], (insertErr, result) => {
+    if (insertErr) {
+      console.error("Error executing MySQL query: ", insertErr);
+      return res
+        .status(500)
+        .send("Internal Server Error: " + insertErr.message);
+    }
+    res.send({
+      message: "Pharmacy created successfully",
+      pharmacyId: result.insertId,
+    });
+  });
+};
+
+
+
+module.exports = {getUserProfile, updateUserProfile, changePassword, getAllProducts, getPharmaciesForUser, createProduct, editProduct, deleteProduct , getPharmacyById, getPharmacyProducts, createPharmacy};

@@ -239,7 +239,7 @@ function PharmacyTable() {
                 <div
                   className={`${
                     isDropdownOpen ? "" : "hidden"
-                  } origin-top-right absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5`}
+                  } origin-top-right absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5`}
                 >
                   <div
                     className="py-1"
@@ -265,7 +265,7 @@ function PharmacyTable() {
                       .map((location, index) => (
                         <button
                           key={index}
-                          onClick={() => selectedPharmacyLocation(location)}
+                          onClick={() => setSelectedPharmacyLocation(location)}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
                           role="menuitem"
                         >
