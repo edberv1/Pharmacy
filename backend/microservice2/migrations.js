@@ -129,7 +129,7 @@ const runMigrations = (pool) => {
         const createTableQueryLicense = `
           CREATE TABLE IF NOT EXISTS license (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            licenseId INT(10) UNIQUE,
+            licenseId BIGINT(10) UNIQUE,
             issueDate DATE NOT NULL,
             expiryDate DATE NOT NULL,
             license VARCHAR(255),
