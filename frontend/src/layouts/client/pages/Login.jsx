@@ -14,12 +14,12 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-  
+
     fetch("http://localhost:8081/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token")
+        Authorization: "Bearer " + localStorage.getItem("token"),
       },
       body: JSON.stringify({ email, password }),
       credentials: "include", // Ensure cookies are sent
@@ -36,10 +36,10 @@ function Login() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         localStorage.setItem("email", data.email);
-  
+
         // Update user state
         setUser({ email: data.email, role: data.role });
-  
+
         // Navigate based on role
         switch (data.role) {
           case "superadmin":
@@ -57,11 +57,6 @@ function Login() {
         setError(error.message || "An error occurred. Please try again."); // Update error state with the error message from the backend
       });
   };
-  
-  
-  
-  
-  
 
   return (
     <div className="flex items-center justify-center h-screen">
@@ -117,10 +112,7 @@ function Login() {
               </div>
             </div>
 
-            {error && (
-                    <div className="text-red-500 mt-2">{error}</div>
-                    )}
-
+            {error && <div className="text-red-500 mt-2">{error}</div>}
 
             <div className="mt-6">
               <span className="block w-full rounded-md shadow-sm">
@@ -137,6 +129,9 @@ function Login() {
               </span>
             </div>
           </form>
+          <button className="text-blue-500 hover:underline cursor-pointer pl-1 hover:font-semibold" onClick={() => navigate("/password-reset-request")}>
+            Forgot Password?
+          </button>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const mailer = require("../services/mailer.js");
+const crypto = require("crypto");
 
 const signup = (req, res) => {
   let newUser = new User(req.body);
@@ -337,6 +338,72 @@ const getUserById = async (req, res) => {
   }
 };
 
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+
+  // Generate a unique, expirable token
+  const token = crypto.randomBytes(20).toString("hex");
+
+  // Associate the token with the user's account in your database
+  const query = "UPDATE users SET resetToken = ? WHERE email = ?";
+  const values = [token, email];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      return res.status(500).send({ message: "Database error." });
+    }
+
+    const mailOptions = {
+      from: "no-reply@gmail.com",
+      to: email,
+      subject: "Password Reset",
+      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process:\n\nhttp://localhost:3000/password-reset-form?token=${token}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n Remember this is a one time use link`,
+    };
+
+    mailer.sendMail(mailOptions, (error, response) => {
+      if (error) {
+        console.error("Email Error:", error.message);
+        res.status(500).send("Email error.");
+      } else {
+        res.status(200).send("Password reset email sent.");
+      }
+    });
+  });
+};
+
+const resetPassword = async (req, res) => {
+  const { password, token } = req.body;
+
+  // Verify the token
+  const query = "SELECT * FROM users WHERE resetToken = ?";
+  const values = [token];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      return res.status(500).send({ message: "Database error." });
+    }
+
+    if (result.length === 0) {
+      return res.status(401).send({ message: "Invalid token." });
+    }
+
+    // If valid, securely hash the new password
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    // Update the password in the database
+    const updateQuery = "UPDATE users SET password = ?, resetToken = NULL WHERE resetToken = ?";
+    const updateValues = [hashedPassword, token];
+
+    db.query(updateQuery, updateValues, (err, result) => {
+      if (err) {
+        return res.status(500).send({ message: "Database error." });
+      }
+
+      res.status(200).send("Password reset successful.");
+    });
+  });
+};
+
 module.exports = {
   signup,
   loginUser,
@@ -348,4 +415,6 @@ module.exports = {
   getPharmacyById,
   submitLicense,
   getUserById,
+  requestPasswordReset,
+  resetPassword,
 };

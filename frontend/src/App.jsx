@@ -23,6 +23,8 @@ import PharmacyDetails from "./layouts/client/components/PharmacyDetails";
 
 import MyPharmacyDetails from "./layouts/admin/components/MyPharmacyDetails";
 import MyPharmacies from "./layouts/admin/pages/MyPharmacies"; 
+import PasswordResetRequest from "./layouts/client/components/PasswordResetRequest";
+import PasswordResetForm from "./layouts/client/components/PasswordResetForm";
 
 function App() {
   const AdminRoute = withRole(Admin, "admin");
@@ -52,6 +54,8 @@ function App() {
           <Route path="/pharmacies" element={<ClientPharmacies />} />
           <Route path="/aboutUs" element={<AboutUsClient />} />
           <Route path="/pharmacies/:id" element={<PharmacyDetails />} />
+          <Route path="/password-reset-request" element={<PasswordResetRequest />} />
+          <Route path="/password-reset-form" element={<PasswordResetForm />} />
 
         </Route>
 
