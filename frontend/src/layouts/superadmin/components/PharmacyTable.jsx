@@ -291,8 +291,8 @@ function PharmacyTable() {
                   <th scope="col" className="px-4 py-3">
                     Location
                   </th>
-                  <th scope="col" className="px-4 py-3">
-                    ID
+                  <th scope="col" className=" py-3">
+                    User ID
                   </th>
                   <th scope="col" className="px-4 py-3 flex justify-center">
                     Actions
