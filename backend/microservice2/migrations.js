@@ -86,6 +86,7 @@ const runMigrations = (pool) => {
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             location VARCHAR(255) NOT NULL,
+            street VARCHAR(255) NOT NULL,
             userId INT NOT NULL,
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP

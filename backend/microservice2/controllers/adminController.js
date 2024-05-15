@@ -240,18 +240,18 @@ const getPharmacyProducts = async (req, res) => {
 };
 
 const createPharmacy = async (req, res) => {
-  const { name, location } = req.body;
+  const { name, location, street } = req.body;
   const userId = req.userId; // Assuming you have userId in the request
 
   // Perform validation
-  if (!name || !location) {
-    return res.status(400).send("Name and location are required");
+  if (!name || !location || !street) {
+    return res.status(400).send("All fields are required");
   }
 
   // Insert pharmacy
   const insertQuery =
-    "INSERT INTO pharmacies (name, location, userId) VALUES (?, ?, ?)";
-  db.query(insertQuery, [name, location, userId], (insertErr, result) => {
+    "INSERT INTO pharmacies (name, location, street, userId) VALUES (?, ?, ?, ?)";
+  db.query(insertQuery, [name, location, street, userId], (insertErr, result) => {
     if (insertErr) {
       console.error("Error executing MySQL query: ", insertErr);
       return res

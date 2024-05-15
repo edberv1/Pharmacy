@@ -291,6 +291,9 @@ function PharmacyTable() {
                   <th scope="col" className="px-4 py-3">
                     Location
                   </th>
+                  <th scope="col" className="px-4 py-3">
+                    Street
+                  </th>
                   <th scope="col" className=" py-3">
                     User ID
                   </th>
@@ -313,6 +316,7 @@ function PharmacyTable() {
                     </th>
                     <td className="px-4 py-3">{pharmacy.name}</td>
                     <td className="px-4 py-3">{pharmacy.location}</td>
+                    <td className="px-4 py-3">{pharmacy.street}</td>
                     <td className="px-4 py-3">{pharmacy.userId}</td>
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <div className="flex items-center space-x-4">

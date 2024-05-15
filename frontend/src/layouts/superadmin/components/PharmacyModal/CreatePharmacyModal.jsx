@@ -6,6 +6,7 @@ function CreatePharmacyModal({ isOpen, onClose}) {
   const [formData, setFormData] = useState({
     name: "",
     location: "",
+    street: "",
     userId: "",
   });
 
@@ -66,6 +67,7 @@ function CreatePharmacyModal({ isOpen, onClose}) {
       //   roleId : "", ???
       name: "",
       location: "",
+      street:"",
     });
     onClose();
   };
@@ -169,6 +171,20 @@ function CreatePharmacyModal({ isOpen, onClose}) {
               Location
             </label>
             <Locations value={formData.location} onChange={handleLocationChange} />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              Street
+            </label>
+            <input
+              type="text"
+              name="street"
+              value={formData.street}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
           </div>
 
           <div className="mb-4">

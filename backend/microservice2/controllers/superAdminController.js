@@ -293,17 +293,17 @@ const getAllPharmacies = async (req, res) => {
 };
 
 const createPharmacy = async (req, res) => {
-  const { name, location, userId } = req.body;
+  const { name, location, street, userId } = req.body;
 
   // Perform validation
-  if (!name || !location || !userId) {
+  if (!name || !location || !street || !userId) {
     return res.status(400).send("All fields are required");
   }
 
   // Insert pharmacy
   const insertQuery =
-    "INSERT INTO pharmacies (name, location, userId) VALUES (?, ?, ?)";
-  db.query(insertQuery, [name, location, userId], (insertErr, result) => {
+    "INSERT INTO pharmacies (name, location, street, userId) VALUES (?, ?, ?, ?)";
+  db.query(insertQuery, [name, location, street, userId], (insertErr, result) => {
     if (insertErr) {
       console.error("Error executing MySQL query: ", insertErr);
       return res
@@ -336,7 +336,7 @@ const getAllUserIds = async (req, res) => {
 
 const editPharmacy = async (req, res) => {
   const pharmacyId = req.params.id;
-  const { name, location } = req.body;
+  const { name, location, street } = req.body;
 
   // Perform validation
   if (!name || !location) {
@@ -361,10 +361,10 @@ const editPharmacy = async (req, res) => {
       // Update the pharmacy details
       const updateQuery = `
         UPDATE pharmacies 
-        SET name = ? , location = ? 
+        SET name = ? , location = ?, street = ?
         WHERE id = ?`;
 
-      const queryParams = [name, location, pharmacyId];
+      const queryParams = [name, location, street, pharmacyId];
 
       await db.query(updateQuery, queryParams);
 

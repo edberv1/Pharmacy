@@ -195,7 +195,7 @@ function MyPharmacies() {
           <div className="flex flex-col min-h-screen">
             <div className="container flex flex-wrap justify-around px-6 pt-14 mx-auto">
               {filteredPharmacies.map((pharmacy) => (
-                <MyPharmacyCard key={pharmacy.id} id={pharmacy.id} name={pharmacy.name} location={pharmacy.location}/>               
+                <MyPharmacyCard key={pharmacy.id} id={pharmacy.id} name={pharmacy.name} location={pharmacy.location} street={pharmacy.street}/>               
               ))}
             </div>
           </div>

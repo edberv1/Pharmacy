@@ -5,6 +5,7 @@ function CreatePharmacyAdminModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
     location: "",
+    street:"",
     userId: "",
   });
 
@@ -134,6 +135,24 @@ function CreatePharmacyAdminModal({ isOpen, onClose }) {
             </label>
             <Locations value={formData.location} onChange={handleLocationChange} />
           </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              Street
+            </label>
+            <input
+              type="text"
+              name="street"
+              value={formData.street}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
+          </div>
+
+          
+
+
 
           {error && <div className="text-red-500 mt-2">{error}</div>}
           <div className="flex justify-end mt-4">

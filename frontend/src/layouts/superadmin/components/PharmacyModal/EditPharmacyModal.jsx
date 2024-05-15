@@ -6,6 +6,7 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
   const [formData, setFormData] = useState({
     name: pharmacy.name,
     location: pharmacy.location,
+    street: pharmacy.street,
   });
 
   const [error, setError] = useState(null); // State for handling errors
@@ -126,6 +127,20 @@ function EditPharmacyModal({ isOpen, onClose, pharmacy }) {
               Location
             </label>
             <Locations value={formData.location} onChange={handleLocationChange} />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+                Street
+            </label>
+            <input
+              type="text"
+              name="street"
+              value={formData.street}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
           </div>
 
 
