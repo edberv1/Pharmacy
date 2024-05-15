@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
+import Locations from "../../../../../utils/Locations";
 
 function CreatePharmacyModal({ isOpen, onClose}) {
   const [formData, setFormData] = useState({
@@ -18,6 +19,10 @@ function CreatePharmacyModal({ isOpen, onClose}) {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
     setFormSubmitted(false);
+  };
+
+  const handleLocationChange = (location) => {
+    setFormData((prevData) => ({ ...prevData, location }));
   };
 
   const handleSubmit = async (e) => {
@@ -163,14 +168,7 @@ function CreatePharmacyModal({ isOpen, onClose}) {
             <label className="block text-sm font-medium text-gray-600">
               Location
             </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
-              required
-            />
+            <Locations value={formData.location} onChange={handleLocationChange} />
           </div>
 
           <div className="mb-4">
