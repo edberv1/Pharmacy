@@ -120,17 +120,17 @@ const updateUserProfile = (req, res) => {
   
 
   const createProduct = async (req, res) => {
-    const { name, produced, pharmacyId, stock } = req.body;
+    const { name, description ,produced, price ,pharmacyId, stock } = req.body;
   
     // Perform validation
-    if (!name || !produced || !pharmacyId || !stock) {
+    if (!name || !description || !produced || !price || !pharmacyId || !stock) {
       return res.status(400).send("All fields are required");
     }
   
     // Insert pharmacy
     const insertQuery =
-      "INSERT INTO products (name, produced, pharmacyId, stock) VALUES (?, ?, ?, ?)";
-    db.query(insertQuery, [name, produced, pharmacyId, stock], (insertErr, result) => {
+      "INSERT INTO products (name, description ,produced, price , pharmacyId, stock) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(insertQuery, [name, description, produced, price, pharmacyId, stock], (insertErr, result) => {
       if (insertErr) {
         console.error("Error executing MySQL query: ", insertErr);
         return res
@@ -146,16 +146,16 @@ const updateUserProfile = (req, res) => {
 
   const editProduct = async (req, res) => {
     const productId = req.params.id;
-    const { name, produced, pharmacyId, stock } = req.body;
+    const { name, description , produced, price, pharmacyId, stock } = req.body;  
   
     try {
       // Update the product details
       const updateQuery = `
         UPDATE products 
-        SET name = ?, produced = ?, pharmacyId = ?, stock = ?
+        SET name = ?, description=?, produced = ?, price=?, pharmacyId = ?, stock = ?
         WHERE id = ?`;
   
-      const queryParams = [name, produced, pharmacyId, stock, productId];
+      const queryParams = [name, description, produced, price, pharmacyId, stock, productId];
   
       await db.query(updateQuery, queryParams);
   

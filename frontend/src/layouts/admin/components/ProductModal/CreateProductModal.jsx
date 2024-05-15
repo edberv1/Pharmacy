@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 function CreateProductModal({ isOpen, onClose, pharmacy }) {
   const [formData, setFormData] = useState({
     name: "",
+    description: "",
     produced: "",
+    price: "",
     pharmacyId: "",
     stock: "",
   });
@@ -20,7 +22,7 @@ function CreateProductModal({ isOpen, onClose, pharmacy }) {
   const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission
   const [error, setError] = useState(null); // State for handling errors
   // const [users, setUsers] = useState([]);
-  const [pharmacies, setPharmacies] = useState([]); 
+  const [pharmacies, setPharmacies] = useState([]);
 
   const modalRef = useRef(null);
 
@@ -163,6 +165,20 @@ function CreateProductModal({ isOpen, onClose, pharmacy }) {
             />
           </div>
 
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              Description
+            </label>
+            <input
+              type="text"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-600">
               Produced
@@ -171,6 +187,20 @@ function CreateProductModal({ isOpen, onClose, pharmacy }) {
               type="text"
               name="produced"
               value={formData.produced}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              Price
+            </label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
               onChange={handleChange}
               className="mt-1 p-2 w-full border rounded-md"
               required

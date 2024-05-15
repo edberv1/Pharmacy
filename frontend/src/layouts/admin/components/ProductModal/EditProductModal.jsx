@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
   const [formData, setFormData] = useState({
     name: product.name,
+    description: product.description,
     produced: product.produced,
+    price: product.price,
     pharmacyId: product.pharmacyId.toString(),
     stock: product.stock,
   });
@@ -53,7 +55,7 @@ function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
     const handleOutsideClick = (e) => {
       if (
         isOpen &&
-        modalRef.current &&
+        !modalRef.current &&
         !modalRef.current.contains(e.target)
       ) {
         onClose();
@@ -108,6 +110,21 @@ function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
               required
             />
           </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              Description
+            </label>
+            <input
+              type="text"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
+          </div>
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Produced
@@ -121,6 +138,21 @@ function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
               required
             />
           </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              Price
+            </label>
+            <input
+              type="text"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              className="mt-1 p-2 w-full border rounded-md"
+              required
+            />
+          </div>
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Stock
@@ -145,6 +177,7 @@ function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
               readOnly
             />
           </div>
+          
           {error && <div className="text-red-500 mt-2">{error}</div>}
           <div className="flex justify-end">
             <button
