@@ -36,7 +36,7 @@ const runMigrations = (pool) => {
           refreshToken VARCHAR(255),
           verified BOOLEAN DEFAULT 0,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-          resetToken VARCHAR(255),
+          resetToken VARCHAR(255)
         )
       `;
 
