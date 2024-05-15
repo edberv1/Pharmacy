@@ -230,7 +230,11 @@ function MyPharmacyDetails() {
                 <CreateProductModal
                   isOpen={isModalOpen}
                   onClose={closeModal}
-                  pharmacy={pharmacy}
+                  pharmacyId={pharmacy ? pharmacy.id : null}
+                  pharmacyName={
+                    pharmacy ? pharmacy.name : "Loading..."
+                  }
+                  
                 />
                 <div className="relative">
                   <button

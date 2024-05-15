@@ -129,7 +129,7 @@ const updateUserProfile = (req, res) => {
   
     // Insert pharmacy
     const insertQuery =
-      "INSERT INTO products (name, description ,produced, price , pharmacyId, stock) VALUES (?, ?, ?, ?, ?, ?)";
+      "INSERT INTO products (name, description, produced, price, pharmacyId, stock) VALUES (?, ?, ?, ?, ?, ?)";
     db.query(insertQuery, [name, description, produced, price, pharmacyId, stock], (insertErr, result) => {
       if (insertErr) {
         console.error("Error executing MySQL query: ", insertErr);

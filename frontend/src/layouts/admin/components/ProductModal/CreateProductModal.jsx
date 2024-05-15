@@ -1,17 +1,19 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
 
-function CreateProductModal({ isOpen, onClose, pharmacy }) {
+function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     produced: "",
     price: "",
-    pharmacyId: "",
+    pharmacyId: pharmacyId || "", // Use pharmacyId from props // Ensure correct access to pharmacyId
     stock: "",
   });
 
   const modalRef = useRef(null);
+  const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission
+  const [error, setError] = useState(null); // State for handling errors
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +22,38 @@ function CreateProductModal({ isOpen, onClose, pharmacy }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you can add your logic to create a product
+    // Add pharmacyId to the formData object
+  const updatedFormData = { ...formData, pharmacyId };
+    try {
+      // Make HTTP POST request to create user with token included in headers
+      const response = await fetch(
+        "http://localhost:8081/admin/createProduct",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify(updatedFormData),
+        }
+      );
+
+      // Check if the request was successful
+      if (!response.ok) {
+        // Handle non-200 response status
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+
+      console.log(data); // Log the response if needed
+      onClose();
+      setFormSubmitted(true); // Set form submission status to true
+    } catch (error) {
+      setError(error.message); // Set error state
+      setFormSubmitted(false); // Set form submission status to false
+    }
   };
 
   const handleClose = () => {
@@ -39,10 +72,17 @@ function CreateProductModal({ isOpen, onClose, pharmacy }) {
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    // Reload the page if form is submitted successfully
+    if (formSubmitted) {
+      window.location.reload();
+    }
+  }, [formSubmitted]);
+
   if (!isOpen) {
     return null;
   }
-
+  
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white rounded-lg w-1/2 p-6" ref={modalRef}>
@@ -144,12 +184,14 @@ function CreateProductModal({ isOpen, onClose, pharmacy }) {
               </label>
               <input
                 type="text"
-                value={pharmacy ? pharmacy.name : ""}
+                value={pharmacyName}
                 className="mt-1 p-2 w-full border rounded-md"
                 readOnly
               />
             </div>
           </div>
+
+          {error && <div className="text-red-500 mt-2">{error}</div>}
 
           <div className="flex justify-end">
             <button
