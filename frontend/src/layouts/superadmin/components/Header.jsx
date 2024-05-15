@@ -1,9 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 
 export default function Header() {
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [pendingUsers, setPendingUsers] = useState([]);
+
+  useEffect(() => {
+    // Fetch the number of pending licenses from the backend
+    fetch("http://localhost:8081/superAdmin/pendingCount", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setNotificationCount(data.count);
+      });
+
+    // Fetch the emails of the users with pending licenses
+    fetch("http://localhost:8081/superAdmin/fetchPendingLicenses", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setPendingUsers(data.data);
+      });
+  }, []);
+
   const handleLogout = () => {
     // Call the logout API
     fetch("http://localhost:8081/users/logoutUser", {
@@ -36,19 +67,54 @@ export default function Header() {
               Welcome Admin
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <button
-                type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                <BellIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
-
-              {/* Profile dropdown */}
+              {/* Notification dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <Menu.Button className="relative flex rounded-full text-sm">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">View notifications</span>
+                    <BellIcon className="h-7 w-7 text-white" aria-hidden="true" />
+                    {notificationCount > 0 && (
+                      <span
+                        className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full"
+                      >
+                        {notificationCount}
+                      </span>
+                    )}
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={React.Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    {pendingUsers.map((user, index) => (
+                      <Menu.Item key={index}>
+                        {({ active }) => (
+                          <Link
+                            to="/superadmin/requests"
+                            className={`block px-4 py-2 text-sm text-gray-700 ${
+                              active ? "bg-gray-100" : ""
+                            }`}
+                          >
+                            New Request From: {user.email}
+                          </Link>
+                        )}
+                      </Menu.Item>
+                    ))}
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+
+              {/* Profile dropdown */}
+              <Menu as="div" className="relative ml-6">
+                <div>
+                  <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     <img
@@ -68,18 +134,6 @@ export default function Header() {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <Link
-                          to="/admin/profileAdmin"
-                          className={`block px-4 py-2 text-sm text-gray-700 ${
-                            active ? "bg-gray-100" : ""
-                          }`}
-                        >
-                          Your Profile
-                        </Link>
-                      )}
-                    </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
                         <a

@@ -963,6 +963,21 @@ const generatePharmacies = async (req, res) => {
     });
   };
   
+  const pendingCount = async (req, res) => {
+    const sql = "SELECT COUNT(*) AS count FROM license WHERE status = 'PENDING'";
+  
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'An error occurred while fetching the pending licenses count.' });
+      } else {
+        res.json(result[0]);
+      }
+    });
+  };
+
+
+
 
 module.exports = {
   getAllUsers,
@@ -991,5 +1006,6 @@ module.exports = {
   getProductGrowth,
   downloadLicense,
   generateExcel,
-  generatePharmacies
+  generatePharmacies,
+  pendingCount
 };

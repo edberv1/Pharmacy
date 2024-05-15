@@ -53,6 +53,7 @@ function Requests() {
 
       // Refresh the licenses
       fetchLicenses();
+      window.location.reload();
     } catch (error) {
       console.error("Error approving user: ", error);
     }
@@ -80,6 +81,7 @@ function Requests() {
 
       // Refresh the licenses
       fetchLicenses();
+      window.location.reload();
     } catch (error) {
       console.error("Error declining user: ", error);
     }
