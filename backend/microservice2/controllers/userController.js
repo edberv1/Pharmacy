@@ -404,6 +404,47 @@ const resetPassword = async (req, res) => {
   });
 };
 
+const getProductsByUserId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = "SELECT * FROM products WHERE pharmacyId = ?";
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error("Error fetching products:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      }
+      if (!results || results.length === 0) {
+        return res.status(404).json({ error: "No products found for this user" });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getProductsByPharmacyId = async (req, res) => {
+  try {
+    const { pharmacyId, productId } = req.params;
+    const query = "SELECT * FROM products WHERE pharmacyId = ? AND id = ?";
+    db.query(query, [pharmacyId, productId], (err, results) => {
+      if (err) {
+        console.error("Error fetching product:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      }
+      if (!results || results.length === 0) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      res.json(results[0]); // Assuming only one product is found
+    });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 module.exports = {
   signup,
   loginUser,
@@ -417,4 +458,6 @@ module.exports = {
   getUserById,
   requestPasswordReset,
   resetPassword,
+  getProductsByUserId,
+  getProductsByPharmacyId,
 };
