@@ -20,6 +20,62 @@ const stripe = require("stripe")(
 //     res.json({ id: session.id });
 //   });
 
+
+const createCheckoutSession = (req, res) => {
+  const token = req.headers["x-access-token"];
+  
+  if (!token) {
+    return res.status(403).send("No token provided");
+  }
+
+  jwt.verify(token, "pharmacy", (err, decoded) => {
+    if (err) {
+      return res.status(500).send("Failed to authenticate token");
+    }
+
+    const userId = decoded.id;
+
+    // Fetch the cart items for the user
+    db.query(
+      `SELECT p.name, p.price, c.quantity
+       FROM cart c
+       JOIN products p ON c.productId = p.id
+       WHERE c.userId = ?`, [userId],
+      async (err, cartItems) => {
+        if (err) {
+          console.error('Database query error:', err);
+          return res.status(500).send("Database error");
+        }
+
+        // Format the cart items for Stripe
+        const line_items = cartItems.map(item => ({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.name,
+            },
+            unit_amount: item.price * 100, // Stripe expects the amount in cents
+          },
+          quantity: item.quantity,
+        }));
+
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items,
+          mode: 'payment',
+          success_url: 'https://example.com/success',
+          cancel_url: 'https://example.com/cancel',
+        });
+
+        res.json({ id: session.id });
+      }
+    );
+  });
+};
+
+
+
+
 const addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
@@ -81,10 +137,29 @@ const getCart = (req, res) => {
   });
 };
 
+const deleteFromCart = (req, res) => {
+  const { userId, itemId } = req.params; // Get the userId and itemId from the URL parameters
+
+  const query = "DELETE FROM cart WHERE userId = ? AND id = ?";
+  const values = [userId, itemId];
+
+  db.query(query, values, (err, results) => {
+    if (err) {
+      console.error("Error deleting item from cart:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: "Item not found in cart" });
+    }
+    res.json({ message: "Item removed from cart" });
+  });
+};
 
 
 
 module.exports = {
   addToCart,
   getCart,
+  deleteFromCart,
+  createCheckoutSession
 };
