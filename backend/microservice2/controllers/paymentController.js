@@ -56,29 +56,31 @@ const addToCart = async (req, res) => {
 };
 
 
-const getCart = async (req, res) => {
-    try {
-      const { userId } = req.params; // Get the userId from the URL parameters
+const getCart = (req, res) => {
+  const token = req.headers["x-access-token"];
   
-      const query = "SELECT * FROM cart WHERE userId = ?";
-      const values = [userId];
-      console.log(req.params.userId);
-      db.query(query, values, (err, results) => {
-        if (err) {
-          console.error("Error fetching cart items:", err);
-          return res.status(500).json({ error: "Internal server error" });
-        }
-        if (!results || results.length === 0) {
-          return res.status(404).json({ error: "Cart items not found" });
-        }
-        res.json(results); // Send all the cart items
-      });
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
-      res.status(500).json({ error: "Internal server error" });
+  if (!token) {
+    return res.status(403).send("No token provided");
+  }
+
+  jwt.verify(token, "pharmacy", (err, decoded) => {
+    if (err) {
+      return res.status(500).send("Failed to authenticate token");
     }
-  };
-  
+
+    const userId = decoded.id;
+    const query = "SELECT cart.*, products.name, products.description, products.price, products.produced FROM cart INNER JOIN products ON cart.productId = products.id WHERE cart.userId = ?";
+
+    db.query(query, [userId], (err, result) => {
+      if (err) {
+        return res.status(500).send("Database error");
+      }
+
+      res.status(200).json(result);
+    });
+  });
+};
+
 
 
 

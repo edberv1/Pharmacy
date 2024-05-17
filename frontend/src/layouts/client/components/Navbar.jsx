@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContexts";
 
-function Navbar({ openCart }) {
+function Navbar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
@@ -12,6 +12,7 @@ function Navbar({ openCart }) {
       localStorage.removeItem("token");
       localStorage.removeItem("role");
       localStorage.removeItem("email");
+      localStorage.removeItem("userId");
       navigate("/");
     }
   };
@@ -45,8 +46,9 @@ function Navbar({ openCart }) {
               <i className="fa-solid fa-hospital pr-2"></i>
               Pharmacies
             </Link>
+
             <Link
-              to={`/cart/${user.id}`}
+              to="/cart"
               className="text-md text-white dark:text-white-500 hover:underline"
             >
               <i className="fa-solid fa-hospital pr-2"></i>

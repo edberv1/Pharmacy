@@ -59,7 +59,8 @@ function App() {
           <Route path="/pharmacies/:pharmacyId/products/:productId" element={<ProductDetails />} />
           <Route path="/password-reset-request" element={<PasswordResetRequest />} />
           <Route path="/password-reset-form" element={<PasswordResetForm />} />
-          <Route path="/cart/:userId" element={<Cart />} />
+          <Route path="/cart" element={<Cart />} />
+
 
         </Route>
 

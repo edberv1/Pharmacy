@@ -1,171 +1,207 @@
-import { Fragment, useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
-import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+/* eslint-disable react/jsx-key */
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../../../contexts/UserContexts";
 
 export default function Cart() {
-  const [open, setOpen] = useState(true);
-  const { userId } = useParams();
+  const { user } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      const token = localStorage.getItem('token'); // Get the token from local storage
-      const response = await fetch(`http://localhost:8081/payment/get-cart/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': token, // Include the token in the request headers
-        },
-      });
+      const token = localStorage.getItem("token"); // Get the token from local storage
+
+      if (!user.id) {
+        alert("User ID not found");
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:8081/payment/get-cart`, // Simplified URL, as userId is derived from the token
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": token, // Include the token in the request headers
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
         setCartItems(data); // Set the cart items
+
+        // Calculate total number of items
+        const totalItems = data.length;
+        setTotalItems(totalItems);
+
+        // Calculate total price
+        const totalPrice = data.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        );
+        setTotalPrice(totalPrice);
       } else {
-        alert('An error occurred while fetching the cart items');
+        alert("An error occurred while fetching the cart items");
       }
     };
 
     fetchCartItems();
-  }, [userId]); // Empty dependency array means this effect runs once on mount
+  }, [user.id]);
 
   return (
-    <Transition.Root show={open} as={Fragment}>
-      <Dialog className="relative z-10" onClose={setOpen}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-in-out duration-500"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in-out duration-500"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-              <Transition.Child
-                as={Fragment}
-                enter="transform transition ease-in-out duration-500 sm:duration-700"
-                enterFrom="translate-x-full"
-                enterTo="translate-x-0"
-                leave="transform transition ease-in-out duration-500 sm:duration-700"
-                leaveFrom="translate-x-0"
-                leaveTo="translate-x-full"
-              >
-                <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                      <div className="flex items-start justify-between">
-                        <Dialog.Title className="text-lg font-medium text-gray-900">
-                          Shopping cart
-                        </Dialog.Title>
-                        <div className="ml-3 flex h-7 items-center">
-                          <button
-                            type="button"
-                            className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
-                            onClick={() => setOpen(false)}
-                          >
-                            <span className="absolute -inset-0.5" />
-                            <span className="sr-only">Close panel</span>
-                            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="mt-8">
-                        <div className="flow-root">
-                          <ul
-                            role="list"
-                            className="-my-6 divide-y divide-gray-200"
-                          >
-                            {cartItems.map((item) => (
-                              <li key={item.id} className="flex py-6">
-                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                  <img
-                                    src="static-image-url" // Replace with your static image URL
-                                    alt="Product"
-                                    className="h-full w-full object-cover object-center"
-                                  />
-                                </div>
-
-                                <div className="ml-4 flex flex-1 flex-col">
-                                  <div>
-                                    <div className="flex justify-between text-base font-medium text-gray-900">
-                                      <h3>
-                                        <a href={`/product/${item.productId}`}>
-                                          {item.name}
-                                        </a>
-                                      </h3>
-                                      <p className="ml-4">${item.price}</p>
-                                    </div>
-                                    <p className="mt-1 text-sm text-gray-500">
-                                      {item.color}
-                                    </p>
-                                  </div>
-                                  <div className="flex flex-1 items-end justify-between text-sm">
-                                    <p className="text-gray-500">
-                                      Qty {item.quantity}
-                                    </p>
-
-                                    <div className="flex">
-                                      <button
-                                        type="button"
-                                        className="font-medium text-indigo-600 hover:text-indigo-500"
-                                      >
-                                        Remove
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                      <div className="flex justify-between text-base font-medium text-gray-900">
-                        <p>Subtotal</p>
-                        <p>$262.00</p>
-                      </div>
-                      <p className="mt-0.5 text-sm text-gray-500">
-                        Shipping and taxes calculated at checkout.
-                      </p>
-                      <div className="mt-6">
-                        <a
-                          href="#"
-                          className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                        >
-                          Checkout
-                        </a>
-                      </div>
-                      <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-                        <p>
-                          or{" "}
-                          <button
-                            type="button"
-                            className="font-medium text-indigo-600 hover:text-indigo-500"
-                            onClick={() => setOpen(false)}
-                          >
-                            Continue Shopping
-                            <span aria-hidden="true"> &rarr;</span>
-                          </button>
-                        </p>
-                      </div>
+    <section className="relative z-10 after:contents-[''] after:absolute after:z-0 after:h-full xl:after:w-1/3 after:top-0 after:right-0 after:bg-gray-50">
+      <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto relative z-10">
+        <div className="grid grid-cols-12">
+          <div className="col-span-12 xl:col-span-8 lg:pr-8 pt-14 pb-8 lg:py-24 w-full max-xl:max-w-3xl max-xl:mx-auto">
+            <div className="flex items-center justify-between pb-8 border-b border-gray-300">
+              <h2 className="font-manrope font-bold text-3xl leading-10 text-black">
+                Shopping Cart
+              </h2>
+              <h2 className="font-manrope font-bold text-xl leading-8 text-gray-600">
+                {totalItems} Items
+              </h2>
+            </div>
+            <div className="grid grid-cols-12 mt-8 max-md:hidden pb-6 border-b border-gray-200">
+              <div className="col-span-12 md:col-span-7">
+                <p className="font-normal text-lg leading-8 text-gray-400">
+                  Product Details
+                </p>
+              </div>
+              <div className="col-span-12 md:col-span-5">
+                <div className="grid grid-cols-5">
+                  <div className="col-span-3">
+                    <p className="font-normal text-lg leading-8 text-gray-400 text-center">
+                      Quantity
+                    </p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="font-normal text-lg leading-8 text-gray-400 text-center">
+                      Total
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {cartItems.map((item) => (
+              <div className="flex flex-col min-[500px]:flex-row min-[500px]:items-center gap-5 py-6 border-b border-gray-200 group">
+                <div className="w-full md:max-w-[126px]">
+                  <img
+                    src="https://pagedone.io/asset/uploads/1701162850.png"
+                    alt="perfume bottle image"
+                    className="mx-auto"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 w-full">
+                  <div className="md:col-span-2">
+                    <div className="flex flex-col max-[500px]:items-center gap-3">
+                      <h6 className="font-semibold text-base leading-7 text-black">
+                        {item.name}
+                      </h6>
+                      <h6 className="font-normal text-base leading-7 text-gray-500">
+                        {item.produced}
+                      </h6>
+                      <h6 className="font-medium text-base leading-7 text-gray-600 transition-all duration-300 group-hover:text-indigo-600">
+                        {item.price}€
+                      </h6>
                     </div>
                   </div>
-                </Dialog.Panel>
-              </Transition.Child>
+                  <div className="flex items-center max-[500px]:justify-center h-full max-md:mt-3">
+                    <div className="flex items-center h-full">
+                      <button className="group rounded-l-xl px-5 py-[18px] border border-gray-200 flex items-center justify-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-gray-50 hover:border-gray-300 hover:shadow-gray-300 focus-within:outline-gray-300">
+                        <svg
+                          className="stroke-gray-900 transition-all duration-500 group-hover:stroke-black"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="22"
+                          height="22"
+                          viewBox="0 0 22 22"
+                          fill="none"
+                        >
+                          <path d="M16.5 11H5.5" stroke="" />
+                          <path d="M16.5 11H5.5" />
+                          <path d="M16.5 11H5.5" />
+                        </svg>
+                      </button>
+                      <input
+                        type="text"
+                        className="border-y border-gray-200 outline-none text-gray-900 font-semibold text-lg w-full max-w-[73px] min-w-[60px] placeholder:text-gray-900 py-[15px] text-center bg-transparent"
+                        placeholder={item.quantity}
+                      />
+                      <button className="group rounded-r-xl px-5 py-[18px] border border-gray-200 flex items-center justify-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-gray-50 hover:border-gray-300 hover:shadow-gray-300 focus-within:outline-gray-300">
+                        <svg
+                          className="stroke-gray-900 transition-all duration-500 group-hover:stroke-black"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="22"
+                          height="22"
+                          viewBox="0 0 22 22"
+                          fill="none"
+                        >
+                          <path d="M11 5.5V16.5M16.5 11H5.5" stroke="" />
+                          <path d="M11 5.5V16.5M16.5 11H5.5" />
+                          <path d="M11 5.5V16.5M16.5 11H5.5" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center max-[500px]:justify-center md:justify-end max-md:mt-3 h-full">
+                    <p className="font-bold text-lg leading-8 text-gray-600 text-center transition-all duration-300 group-hover:text-indigo-600">
+                      {item.price}€
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="col-span-12 xl:col-span-4 bg-gray-50 w-full max-xl:px-6 max-w-3xl xl:max-w-lg mx-auto lg:pl-8 py-24">
+            <h2 className="font-manrope font-bold text-3xl leading-10 text-black pb-8 border-b border-gray-300">
+              Order Summary
+            </h2>
+
+            <div className="flex flex-col max-w-md p-6 space-y-4">
+              {cartItems.map((item) => (
+                <ul className="flex flex-col pt-4 space-y-2">
+                  <li className="flex items-start justify-between">
+                    <h3>
+                      {item.name}
+                      <span className="text-sm dark:text-violet-400">
+                        {" "}
+                        x{item.quantity}
+                      </span>
+                    </h3>
+                    <div className="text-right">
+                      <span className="block">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </span>
+                      <span className="text-sm dark:text-gray-400">
+                      PPU ${item.price}
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+              ))}
+
+              <div className="pt-4 space-y-2">
+                <div className="space-y-6">
+                  <a href="">{totalItems} Items</a>
+                  <div className="flex justify-between">
+                    <span>Total</span>
+                    <span className="font-semibold">
+                      ${totalPrice.toFixed(2)}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="w-full py-2 font-semibold border rounded dark:bg-indigo-600 dark:text-white dark:border-violet-400"
+                  >
+                    Go to checkout
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </Dialog>
-    </Transition.Root>
+      </div>
+    </section>
   );
 }
