@@ -26,6 +26,7 @@ import MyPharmacies from "./layouts/admin/pages/MyPharmacies";
 import PasswordResetRequest from "./layouts/client/components/PasswordResetRequest";
 import PasswordResetForm from "./layouts/client/components/PasswordResetForm";
 import ProductDetails from "./layouts/client/components/ProductDetails";
+import Cart from "./layouts/client/components/Cart";
 
 function App() {
   const AdminRoute = withRole(Admin, "admin");
@@ -58,6 +59,7 @@ function App() {
           <Route path="/pharmacies/:pharmacyId/products/:productId" element={<ProductDetails />} />
           <Route path="/password-reset-request" element={<PasswordResetRequest />} />
           <Route path="/password-reset-form" element={<PasswordResetForm />} />
+          <Route path="/cart/:userId" element={<Cart />} />
 
         </Route>
 

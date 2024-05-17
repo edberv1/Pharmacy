@@ -6,6 +6,7 @@ const session = require('express-session');
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const superAdminRouter = require('./routes/superAdmin.js');
+const paymentRouter = require('./routes/payment.js')
 
 const app = express();
 app.use(
@@ -33,6 +34,7 @@ app.use(
 app.use('/users', userRouter);
 app.use('/admin', adminRouter);
 app.use('/superAdmin', superAdminRouter);
+app.use('/payment', paymentRouter);
 
 app.listen(8081, () => {
   console.log("Listening to port 8081")

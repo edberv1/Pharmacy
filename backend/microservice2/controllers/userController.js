@@ -161,6 +161,7 @@ const loginUser = async (req, res) => {
         token: accessToken,
         role: user.role,
         email: user.email,
+        userId: user.id,
       });
     });
   });
@@ -179,7 +180,7 @@ const getLoginUser = async (req, res) => {
     }
 
     // You could query your database here to get more user information if needed
-    res.send({ loggedIn: true, user: { id: decoded.id, role: decoded.role } });
+    res.send({ loggedIn: true, user: { id: decoded.id, email: decoded.email, role: decoded.role } });
   });
 };
 
