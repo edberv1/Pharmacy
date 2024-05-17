@@ -63,8 +63,8 @@ const createCheckoutSession = (req, res) => {
           payment_method_types: ['card'],
           line_items,
           mode: 'payment',
-          success_url: 'https://example.com/success',
-          cancel_url: 'https://example.com/cancel',
+          success_url: 'http://localhost:3000/',
+          cancel_url: 'http://localhost:3000/',
         });
 
         res.json({ id: session.id });

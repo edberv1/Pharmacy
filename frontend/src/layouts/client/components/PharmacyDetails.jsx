@@ -433,14 +433,6 @@ export default function Pharmacies() {
               </div>
               <div className="lg:w-3/4">
                 {products.map((product) => (
-                  <div key={product.id}>
-                    <h2>{product.name}</h2>
-                    <p>{product.description}</p>
-                    {/* Other product details... */}
-                  </div>
-                ))}
-
-                {products.map((product) => (
                   <div className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
                     <a
                       className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
