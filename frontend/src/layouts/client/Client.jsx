@@ -5,7 +5,7 @@ import Footer from "./components/Footer"; // Make sure to import your Footer com
 function Client() {
   return (
     <div className="flex flex-col h-screen justify-between">
-      <Navbar />
+      <Navbar/>
       <div className="mb-auto">
         <Outlet />
       </div>
@@ -15,3 +15,4 @@ function Client() {
 }
 
 export default Client;
+

@@ -166,8 +166,29 @@ const runMigrations = (pool) => {
             return;
           }
           console.log('Logins Table created successfully');
-          connection.release();
         });
+
+        // Create Cart Table
+        const createTableQueryCart = `
+          CREATE TABLE IF NOT EXISTS cart (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            userId INT NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+            productId INT NOT NULL,
+            FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE,
+            quantity INT NOT NULL
+          )
+        `;
+        
+        connection.query(createTableQueryCart, (err, result) => {
+          if (err) {
+            console.error('Error creating cart table:', err);
+            connection.release();
+            return;
+          }
+          console.log('Logins Table created successfully');
+        });
+
       });
     });
   });

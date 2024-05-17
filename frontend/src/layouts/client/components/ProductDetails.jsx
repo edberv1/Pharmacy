@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 const ProductDetails = () => {
   const { pharmacyId, productId } = useParams();
   const [product, setProduct] = useState(null);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -23,6 +24,24 @@ const ProductDetails = () => {
 
     fetchProductDetails();
   }, [pharmacyId, productId]);
+
+  const addToCart = async (productId, quantity) => {
+    const token = localStorage.getItem("token"); // Get the token from local storage
+    const response = await fetch("http://localhost:8081/payment/add-to-cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token, // Include the token in the request headers
+      },
+      body: JSON.stringify({ productId, quantity }),
+    });
+
+    if (response.ok) {
+      alert("Product added to cart successfully");
+    } else {
+      alert("An error occurred while adding the product to the cart");
+    }
+  };
 
   if (!product) {
     return <div>Loading product details...</div>;
@@ -125,7 +144,11 @@ const ProductDetails = () => {
                   <div className="flex items-center">
                     <span className="mr-3">Quantity</span>
                     <div className="relative">
-                      <select className="rounded border appearance-none border-gray-400 py-2 focus:outline-none focus:border-red-500 text-base pl-3 pr-10">
+                      <select
+                        className="rounded border appearance-none border-gray-400 py-2 focus:outline-none focus:border-red-500 text-base pl-3 pr-10"
+                        value={selectedQuantity}
+                        onChange={(e) => setSelectedQuantity(e.target.value)}
+                      >
                         {[...Array(Number(product.stock)).keys()].map(
                           (_, index) => (
                             <option key={index} value={index + 1}>
@@ -152,7 +175,10 @@ const ProductDetails = () => {
                 <span className="title-font font-medium text-2xl text-gray-900">
                   {product.price}€
                 </span>
-                <button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">
+                <button
+                  onClick={() => addToCart(productId, selectedQuantity)}
+                  className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded"
+                >
                   <span className="justify-center align-center pr-2">
                     Add to cart
                   </span>

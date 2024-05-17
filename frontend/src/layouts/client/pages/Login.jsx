@@ -36,9 +36,10 @@ function Login() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
         localStorage.setItem("email", data.email);
+        localStorage.setItem("userId", data.userId);
 
         // Update user state
-        setUser({ email: data.email, role: data.role });
+        setUser({ id: data.userId, email: data.email, role: data.role });
 
         // Navigate based on role
         switch (data.role) {
