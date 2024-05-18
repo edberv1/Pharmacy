@@ -1,3 +1,4 @@
+// index.js or app.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -14,7 +15,7 @@ app.use((req, res, next) => {
   console.log(req.path, req.method)
   next()
 })
-app.use('/contact', contact);
+app.use('/contact', contact)
 
 
 mongoose.connect(process.env.MONGO_URI)
@@ -24,5 +25,5 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => { console.log(err) })
 
 const server = app.listen(process.env.PORT, () => {
-  console.log(`Server listening at port ${process.env.PORT} `)
+  console.log(`Server listening at port ${process.env.PORT}`)
 })

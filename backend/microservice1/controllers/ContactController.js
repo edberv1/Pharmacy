@@ -1,10 +1,3 @@
-//controlleri post qet requestin
-
-//const const contactUs = (req, res) => {
-
-
-//module.
-
 // controllers/ContactController.js
 const Contact = require('../models/ContactModel'); // Update the path
 
@@ -33,3 +26,4 @@ const contactUs = (req, res) => {
 module.exports = {
   contactUs
 };
+

@@ -1,7 +1,6 @@
 // models/ContactModel.js
 const mongoose = require('mongoose');
 
-// Define the schema for a contact
 const contactSchema = new mongoose.Schema({
   fullName: {
     type: String,
@@ -20,10 +19,10 @@ const contactSchema = new mongoose.Schema({
     trim: true
   }
 }, {
-  timestamps: true // Automatically manage createdAt and updatedAt fields
+  timestamps: true
 });
 
-// Create the model from the schema
 const Contact = mongoose.model('Contact', contactSchema);
 
 module.exports = Contact;
+
