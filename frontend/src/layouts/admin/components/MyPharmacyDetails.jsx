@@ -6,6 +6,7 @@ import DeleteProductModal from "./ProductModal/DeleteProductModal";
 import EditProductModal from "./ProductModal/EditProductModal";
 import Pagination from "../../superadmin/components/Pagination";
 import CreateProductModal from "./ProductModal/CreateProductModal";
+import DeletePharmacyModal from "./PharmacyAdminModal/DeletePharmacyModal";
 
 function MyPharmacyDetails() {
   const { id } = useParams();
@@ -39,6 +40,16 @@ function MyPharmacyDetails() {
   const closeEditModal = () => {
     setIsEditModalOpen(false);
     setSelectedProduct(null);
+  };
+
+  const [pharmacyIdToDelete, setPharmacyIdToDelete] = useState(null);
+
+  const openPharmacyDeleteModal = (pharmacyId) => {
+    setPharmacyIdToDelete(pharmacyId);
+  };
+
+  const closePharmacyDeleteModal = () => {
+    setPharmacyIdToDelete(null);
   };
 
   const openDeleteModal = (productId) => {
@@ -166,34 +177,156 @@ function MyPharmacyDetails() {
     currentPage * itemsPerPage
   );
 
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [street, setStreet] = useState("");
+
+  const handleChangeProfile = async (event) => {
+    event.preventDefault();
+
+    try {
+      // Fetch the existing pharmacy data
+      const existingResponse = await fetchWithTokenRefresh(
+        `http://localhost:8081/admin/myPharmacies/${id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+
+      if (!existingResponse.ok) {
+        throw new Error(`HTTP error! status: ${existingResponse.status}`);
+      }
+
+      const existingData = await existingResponse.json();
+
+      // Merge the existing data with the new updates
+      const updatedPharmacyData = {
+        ...existingData,
+        name: name || existingData.name,
+        location: location || existingData.location,
+        street: street || existingData.street,
+      };
+
+      const response = await fetchWithTokenRefresh(
+        `http://localhost:8081/admin/editPharmacy/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify(updatedPharmacyData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Handle success case, maybe show a success message
+      console.log("Pharmacy details updated successfully!");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating pharmacy details:", error);
+      // Handle error case, maybe show an error message
+    }
+  };
+
   return (
     <>
-      <section className="min-h-screen bg-cover bg-blue-400 mb-10 pt-16">
-        <div className="flex place-items-center justify-center">
-          {/* Apply flexbox styles */}
-          <div className="bg-white p-8 rounded shadow-lg text-center ">
-            {/* Add background, padding, and shadow */}
-            <h2 className="text-3xl font-bold mb-4">Pharmacy Details</h2>
-            {/* Increase font size and add margin */}
-            <p className="text-lg">
-              <strong>ID:</strong> {pharmacy ? pharmacy.id : "Loading..."}
-            </p>
-            <p className="text-lg">
-              <strong>Name:</strong> {pharmacy ? pharmacy.name : "Loading..."}
-            </p>
-            <p className="text-lg">
-              <strong>Location:</strong>
-              {pharmacy ? pharmacy.location : "Loading..."}
-            </p>
-            {/* Render other pharmacy details here */}
+      <section className="min-h-full  mb-10 pt-16 bg-gradient-to-r"  style={{ backgroundColor: '#15365F' }}>
+        <form onSubmit={handleChangeProfile}>
+          <div className="flex justify-end mb-4 mr-4">
+            {pharmacy && (
+              <div className="flex justify-end mb-4 mr-4">
+                <DeletePharmacyModal
+                  isOpen={pharmacyIdToDelete === pharmacy.id}
+                  onClose={closePharmacyDeleteModal}
+                  pharmacyId={pharmacy.id}
+                />
+                <button
+                  type="button"
+                  onClick={() => openPharmacyDeleteModal(pharmacy.id)}
+                  className="flex items-center bg-red-700 text-white hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+                  >
+                   <i className="fa-solid fa-trash"></i>
+                  Delete Pharmacy
+                </button>
+              </div>
+            )}
           </div>
-        </div>
+          <div className="flex place-items-center justify-center ">
+            <div className="font-sans  bg-opacity-60 w-3/4 min-h-96 flex justify-center items-center h-full top-0 backdrop-filter backdrop-blur-lg ">
+              <div
+                className="px-6 p-2 bg-white relative justify-center items-center w-1/2 m-auto h-1/3 sm:h-1/3 md:w-1/3 md:h-1/3 lg:w-full lg:mx-5 lg:h-1/3 sm:rounded-lg filter drop-shadow-2xl"
+              >
+                <h1 className="text-xl text-gray-600 tracking-wider sm:text-md font-black">
+                  Pharmacy Details
+                </h1>
+                <h1 className="text-xl text-gray-600 tracking-wider sm:text-md font-black">
+                  <strong>ID:</strong> {pharmacy ? pharmacy.id : "Loading..."}
+                </h1>
+                <div className="mt-1 sm:mt-8">
+                  <label className="text-xl text-gray-700 sm:text-md">
+                    Name:
+                  </label>{" "}
+                  <input
+                    type="text"
+                    className="w-full h-4 sm:h-9 border-b-2 border-gray-300 focus:border-blue-300 outline-none"
+                    value={name || (pharmacy ? pharmacy.name : "Loading...")}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className="text-lg">
+                  <label className="text-xl text-gray-700 sm:text-md">
+                    Location:
+                  </label>{" "}
+                  <input
+                    type="text"
+                    className="w-full h-4 sm:h-9 border-b-2 border-gray-300 focus:border-blue-300 outline-none"
+                    value={
+                      location || (pharmacy ? pharmacy.location : "Loading...")
+                    }
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </div>
+                <div className="text-lg">
+                  <label className="text-xl text-gray-700 sm:text-md">
+                    Street:
+                  </label>{" "}
+                  <input
+                    type="text"
+                    className=" w-full h-4 sm:h-9 border-b-2 border-gray-300 focus:border-blue-300 outline-none"
+                    value={
+                      street || (pharmacy ? pharmacy.street : "Loading...")
+                    }
+                    onChange={(e) => setStreet(e.target.value)}
+                  />
+                </div>
+                {/* Add input fields for other pharmacy details if needed */}
+                <div className="flex items-center justify-end gap-x-6 mt-4">
+                  <button
+                    type="submit"
+                    className="
+                    bg-blue-600 text-gray-100 rounded-md h-8 sm:h-auto sm:rounded-lg w-20 sm:w-52 p-1 text-xs sm:text-md sm:p-3 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    Update Pharmacy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
 
-        <h2 className="text-3xl font-bold mb-4 flex justify-center py-6">
+        <h2 className="text-3xl font-bold mb-4 flex justify-center pt-10 text-white">
           Products:
         </h2>
 
-        <div className="mx-auto max-w-screen-xl pt-16">
+        <div className="mx-auto max-w-screen-xl pt-4">
           <div className="bg-white dark:bg-gray-900 relative shadow-md sm:rounded-lg overflow-hidden">
             <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
               <div className="w-full md:w-1/2">
@@ -231,10 +364,7 @@ function MyPharmacyDetails() {
                   isOpen={isModalOpen}
                   onClose={closeModal}
                   pharmacyId={pharmacy ? pharmacy.id : null}
-                  pharmacyName={
-                    pharmacy ? pharmacy.name : "Loading..."
-                  }
-                  
+                  pharmacyName={pharmacy ? pharmacy.name : "Loading..."}
                 />
                 <div className="relative">
                   <button

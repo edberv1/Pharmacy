@@ -265,6 +265,58 @@ const createPharmacy = async (req, res) => {
   });
 };
 
+const editPharmacy = async (req, res) => {
+  const { id } = req.params;
+  const { name, location, street } = req.body;
+
+  try {
+    // Update the pharmacy details
+    const updateQuery = `
+      UPDATE pharmacies 
+      SET name = ?, location = ?, street = ?
+      WHERE id = ?`;
+
+    const queryParams = [name, location, street, id];
+
+    await db.query(updateQuery, queryParams);
+
+    res.json({ message: "Pharmacy updated successfully", pharmacyId: id });
+  } catch (error) {
+    console.error("Error updating pharmacy:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const deletePharmacy = async (req, res) => {
+  const pharmacyId = req.params.id; // Assuming the user ID is passed as a route parameter
+
+  // Check if the user exists
+  const checkQuery = "SELECT * FROM pharmacies WHERE id = ?";
+  db.query(checkQuery, [pharmacyId], (checkErr, checkResults) => {
+    if (checkErr) {
+      console.error("Error executing MySQL query: ", checkErr);
+      return res.status(500).send("Internal Server Error: " + checkErr.message);
+    }
+
+    if (checkResults.length === 0) {
+      return res.status(404).send("Pharmacy not found");
+    }
+
+    // If the user exists, proceed with deletion
+    const deleteQuery = "DELETE FROM pharmacies WHERE id = ?";
+    db.query(deleteQuery, [pharmacyId], (deleteErr, result) => {
+      if (deleteErr) {
+        console.error("Error executing MySQL query: ", deleteErr);
+        return res
+          .status(500)
+          .send("Internal Server Error: " + deleteErr.message);
+      }
+      res.send({ message: "Pharmacy deleted successfully" });
+    });
+  });
+};
 
 
-module.exports = {getUserProfile, updateUserProfile, changePassword, getAllProducts, getPharmaciesForUser, createProduct, editProduct, deleteProduct , getPharmacyById, getPharmacyProducts, createPharmacy};
+
+
+module.exports = {getUserProfile, updateUserProfile, changePassword, getAllProducts, getPharmaciesForUser, createProduct, editProduct, deleteProduct , getPharmacyById, getPharmacyProducts, createPharmacy, editPharmacy, deletePharmacy};
