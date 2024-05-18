@@ -9,7 +9,7 @@ function Contact() {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/contact/contacts', {
+      const response = await fetch('http://localhost:8080/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ function Contact() {
                 <p className="mt-2 text-gray-500 dark:text-gray-400">
                   Ask us everything and we would love to hear from you
                 </p>
-                <form className="mt-6" onSubmit={handleSubmit}>
+                <form className="mt-6" onSubmit={handleContact}>
                   <div className="flex-1">
                     <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Full Name</label>
                     <input
