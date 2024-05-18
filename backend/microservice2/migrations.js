@@ -186,7 +186,7 @@ const runMigrations = (pool) => {
             connection.release();
             return;
           }
-          console.log('Logins Table created successfully');
+          console.log('Cart Table created successfully');
         });
 
       });

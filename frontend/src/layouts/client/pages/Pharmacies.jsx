@@ -14,54 +14,90 @@ import {
 import PharmacyCard from "../components/PharmacyCard";
 import Pagination from "../../superadmin/components/Pagination";
 
-const sortOptions = [
-  { name: "Most Popular", href: "#", current: true },
-  { name: "Best Rating", href: "#", current: false },
-  { name: "Newest", href: "#", current: false },
-  { name: "Oldest", href: "#", current: false },
+const locationOptions = [
+  "Deçan",
+  "Dragash",
+  "Ferizaj",
+  "Fushë Kosovë",
+  "Gjakovë",
+  "Gjilan",
+  "Gllogovc",
+  "Gracanica",
+  "Hani i Elezit",
+  "Istog",
+  "Junik",
+  "Kaçanik",
+  "Kamenicë",
+  "Klina",
+  "Klokot",
+  "Leposaviq",
+  "Lipjan",
+  "Malishevë",
+  "Mitrovicë",
+  "Novobërdë",
+  "Obiliq",
+  "Partesh",
+  "Pejë",
+  "Podujevë",
+  "Prishtinë",
+  "Prizren",
+  "Rahovec",
+  "Ranillug",
+  "Shtërpcë",
+  "Shtime",
+  "Skënderaj",
+  "Suharekë",
+  "Viti",
+  "Vushtrri",
+  "Zubin Potok",
+  "Zveçan",
 ];
-const subCategories = [
-  { name: "Private", href: "#" },
-  { name: "Public", href: "#" },
-  { name: "Close to hospital", href: "#" },
-  { name: "Something", href: "#" },
-  { name: "Something else", href: "#" },
-];
+
+// const sortOptions = [
+//   { name: "Most Popular", href: "#", current: true },
+//   { name: "Best Rating", href: "#", current: false },
+//   { name: "Newest", href: "#", current: false },
+//   { name: "Oldest", href: "#", current: false },
+// ];
+// const subCategories = [
+//   { name: "Private", href: "#" },
+//   { name: "Public", href: "#" },
+//   { name: "Close to hospital", href: "#" },
+//   { name: "Something", href: "#" },
+//   { name: "Something else", href: "#" },
+// ];
 const filters = [
-  {
-    id: "type",
-    name: "Type",
-    options: [
-      { value: "white", label: "White", checked: false },
-      { value: "beige", label: "Beige", checked: false },
-      { value: "blue", label: "Blue", checked: false },
-      { value: "brown", label: "Brown", checked: false },
-      { value: "green", label: "Green", checked: false },
-      { value: "purple", label: "Purple", checked: false },
-    ],
-  },
-  {
-    id: "category",
-    name: "Category",
-    options: [
-      { value: "new-arrivals", label: "New Arrivals", checked: false },
-      { value: "sale", label: "Sale", checked: false },
-      { value: "travel", label: "Travel", checked: true },
-      { value: "organization", label: "Organization", checked: false },
-      { value: "accessories", label: "Accessories", checked: false },
-    ],
-  },
+  // {
+  //   id: "type",
+  //   name: "Type",
+  //   options: [
+  //     { value: "white", label: "White", checked: false },
+  //     { value: "beige", label: "Beige", checked: false },
+  //     { value: "blue", label: "Blue", checked: false },
+  //     { value: "brown", label: "Brown", checked: false },
+  //     { value: "green", label: "Green", checked: false },
+  //     { value: "purple", label: "Purple", checked: false },
+  //   ],
+  // },
+  // {
+  //   id: "category",
+  //   name: "Category",
+  //   options: [
+  //     { value: "new-arrivals", label: "New Arrivals", checked: false },
+  //     { value: "sale", label: "Sale", checked: false },
+  //     { value: "travel", label: "Travel", checked: true },
+  //     { value: "organization", label: "Organization", checked: false },
+  //     { value: "accessories", label: "Accessories", checked: false },
+  //   ],
+  // },
   {
     id: "location",
     name: "Location",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
+    options: locationOptions.map((location) => ({
+      value: location,
+      label: location,
+      checked: false,
+    })),
   },
 ];
 
@@ -73,6 +109,9 @@ export default function Pharmacies() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [pharmacies, setPharmacies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const itemsPerPage = 12; // Number of pharmacies to show per page
 
   useEffect(() => {
@@ -108,11 +147,33 @@ export default function Pharmacies() {
     setCurrentPage(pageNumber);
   };
 
+  const handleLocationFilterChange = (event) => {
+    const value = event.target.value;
+    setSelectedLocations((prevState) =>
+      prevState.includes(value)
+        ? prevState.filter((location) => location !== value)
+        : [...prevState, value]
+    );
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredPharmacies = pharmacies.filter((pharmacy) => {
+    const matchesLocation = selectedLocations.length
+      ? selectedLocations.includes(pharmacy.location)
+      : true;
+    const matchesSearch =
+      pharmacy.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      pharmacy.location.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesLocation && matchesSearch;
+  });
   // Calculate the total number of pages
-  const totalPages = Math.ceil(pharmacies.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredPharmacies.length / itemsPerPage);
 
   // Get the pharmacies for the current page
-  const currentPharmacies = pharmacies.slice(
+  const currentPharmacies = filteredPharmacies.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -139,7 +200,7 @@ export default function Pharmacies() {
             </Transition.Child>
 
             <div className="fixed inset-0 z-40 flex">
-            <Transition.Child
+              <Transition.Child
                 as={Fragment}
                 enter="transition ease-in-out duration-300 transform"
                 enterFrom="translate-x-full"
@@ -150,7 +211,9 @@ export default function Pharmacies() {
               >
                 <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl">
                   <div className="flex items-center justify-between px-4">
-                    <h2 className="text-lg font-medium text-gray-900">Filters</h2>
+                    <h2 className="text-lg font-medium text-gray-900">
+                      Filters
+                    </h2>
                     <button
                       type="button"
                       className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
@@ -164,20 +227,31 @@ export default function Pharmacies() {
                   {/* Filters */}
                   <form className="mt-4 border-t border-gray-200">
                     <h3 className="sr-only">Categories</h3>
-          
 
                     {filters.map((section) => (
-                      <Disclosure as="div" key={section.id} className="border-t border-gray-200 px-4 py-6">
+                      <Disclosure
+                        as="div"
+                        key={section.id}
+                        className="border-t border-gray-200 px-4 py-6"
+                      >
                         {({ open }) => (
                           <>
                             <h3 className="-mx-2 -my-3 flow-root">
                               <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                                <span className="font-medium text-gray-900">{section.name}</span>
+                                <span className="font-medium text-gray-900">
+                                  {section.name}
+                                </span>
                                 <span className="ml-6 flex items-center">
                                   {open ? (
-                                    <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                    <MinusIcon
+                                      className="h-5 w-5"
+                                      aria-hidden="true"
+                                    />
                                   ) : (
-                                    <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                    <PlusIcon
+                                      className="h-5 w-5"
+                                      aria-hidden="true"
+                                    />
                                   )}
                                 </span>
                               </Disclosure.Button>
@@ -185,12 +259,16 @@ export default function Pharmacies() {
                             <Disclosure.Panel className="pt-6">
                               <div className="space-y-6">
                                 {section.options.map((option, optionIdx) => (
-                                  <div key={option.value} className="flex items-center">
+                                  <div
+                                    key={option.value}
+                                    className="flex items-center"
+                                  >
                                     <input
                                       id={`filter-mobile-${section.id}-${optionIdx}`}
                                       name={`${section.id}[]`}
                                       defaultValue={option.value}
                                       type="checkbox"
+                                      onChange={handleLocationFilterChange}
                                       defaultChecked={option.checked}
                                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                     />
@@ -258,6 +336,30 @@ export default function Pharmacies() {
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
                 <div>
+                  <div className="relative pl-1">
+                    <input
+                      className="appearance-none border-2 pl-10 border-gray-300 hover:border-gray-400 transition-colors rounded-md w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-purple-600 focus:border-purple-600 focus:shadow-outline"
+                      type="text"
+                      placeholder="Search..."
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                    />
+
+                    <div className="absolute left-0 inset-y-0 flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 ml-3 text-gray-400 hover:text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* <div>
                   <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
                     Sort
                     <ChevronDownIcon
@@ -265,7 +367,7 @@ export default function Pharmacies() {
                       aria-hidden="true"
                     />
                   </Menu.Button>
-                </div>
+                </div> */}
 
                 <Transition
                   as={Fragment}
@@ -278,7 +380,7 @@ export default function Pharmacies() {
                 >
                   <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
-                      {sortOptions.map((option) => (
+                      {/* {sortOptions.map((option) => (
                         <Menu.Item key={option.name}>
                           {({ active }) => (
                             <a
@@ -295,7 +397,7 @@ export default function Pharmacies() {
                             </a>
                           )}
                         </Menu.Item>
-                      ))}
+                      ))} */}
                     </div>
                   </Menu.Items>
                 </Transition>
@@ -350,7 +452,7 @@ export default function Pharmacies() {
                             </Disclosure.Button>
                           </h3>
                           <Disclosure.Panel className="pt-6">
-                            <div className="space-y-4">
+                            <div className="space-y-4 max-h-[240px] overflow-y-auto">
                               {section.options.map((option, optionIdx) => (
                                 <div
                                   key={option.value}
@@ -361,6 +463,7 @@ export default function Pharmacies() {
                                     name={`${section.id}[]`}
                                     defaultValue={option.value}
                                     type="checkbox"
+                                    onChange={handleLocationFilterChange}
                                     defaultChecked={option.checked}
                                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                   />
