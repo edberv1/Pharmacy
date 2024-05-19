@@ -1,4 +1,4 @@
-import React from 'react'
+
 
 function Contact() {
   return (
@@ -10,14 +10,10 @@ function Contact() {
                     <h1 className="text-2xl font-semibold capitalize lg:text-3xl">Ultimate design solution</h1>
 
                     <p className="max-w-xl mt-6">
-                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatem quo
-                        aliquid molestiae hic incidunt beatae placeat accusantium! Alias ex quisquam ab tempora. Ratione
-                        autem doloremque ducimus numquam doloribus, error sed.
+                    Welcome to our online pharmacy! We offer a wide range of products, including prescription medications, over-the-counter drugs, and health supplements. Enjoy a seamless shopping experience with fast, reliable delivery. For any questions or assistance, please contact us using the form available on our application. We&apos;re here to help!
                     </p>
 
-                    <button className="px-8 py-3 mt-6 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-400 focus:ring-opacity-50">
-                        get in touch
-                    </button>
+               
 
                     <div className="mt-6 md:mt-8">
                         <h3 className="text-gray-300 ">Follow us</h3>

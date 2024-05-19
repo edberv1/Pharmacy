@@ -238,7 +238,7 @@ function MyPharmacyDetails() {
 
   return (
     <>
-      <section className="min-h-full  mb-10 pt-16 bg-gradient-to-r"  style={{ backgroundColor: '#15365F' }}>
+      <section className="min-h-full  mb-10 pt-16 bg-gradient-to-r" >
         <form onSubmit={handleChangeProfile}>
           <div className="flex justify-end mb-4 mr-4">
             {pharmacy && (
@@ -251,9 +251,9 @@ function MyPharmacyDetails() {
                 <button
                   type="button"
                   onClick={() => openPharmacyDeleteModal(pharmacy.id)}
-                  className="flex items-center bg-red-700 text-white hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+                  className="flex items-center bg-red-700 text-white hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-white dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-900"
                   >
-                   <i className="fa-solid fa-trash"></i>
+                   <i className="fa-solid fa-trash pr-2"></i>
                   Delete Pharmacy
                 </button>
               </div>
@@ -326,7 +326,7 @@ function MyPharmacyDetails() {
           Products:
         </h2>
 
-        <div className="mx-auto max-w-screen-xl pt-4">
+        <div className="mx-auto max-w-screen-lg pt-4">
           <div className="bg-white dark:bg-gray-900 relative shadow-md sm:rounded-lg overflow-hidden">
             <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
               <div className="w-full md:w-1/2">
