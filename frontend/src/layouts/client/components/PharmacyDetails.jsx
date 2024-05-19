@@ -14,56 +14,49 @@ import {
 } from "@heroicons/react/20/solid";
 import Pagination from "../../superadmin/components/Pagination";
 
-const sortOptions = [
-  { name: "Most Popular", href: "#", current: true },
-  { name: "Best Rating", href: "#", current: false },
-  { name: "Newest", href: "#", current: false },
-  { name: "Oldest", href: "#", current: false },
-];
-const subCategories = [
-  { name: "Private", href: "#" },
-  { name: "Public", href: "#" },
-  { name: "Close to hospital", href: "#" },
-  { name: "Something", href: "#" },
-  { name: "Something else", href: "#" },
-];
-const filters = [
-  {
-    id: "type",
-    name: "Type",
-    options: [
-      { value: "white", label: "White", checked: false },
-      { value: "beige", label: "Beige", checked: false },
-      { value: "blue", label: "Blue", checked: false },
-      { value: "brown", label: "Brown", checked: false },
-      { value: "green", label: "Green", checked: false },
-      { value: "purple", label: "Purple", checked: false },
-    ],
-  },
-  {
-    id: "category",
-    name: "Category",
-    options: [
-      { value: "new-arrivals", label: "New Arrivals", checked: false },
-      { value: "sale", label: "Sale", checked: false },
-      { value: "travel", label: "Travel", checked: true },
-      { value: "organization", label: "Organization", checked: false },
-      { value: "accessories", label: "Accessories", checked: false },
-    ],
-  },
-  {
-    id: "location",
-    name: "Location",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
-  },
-];
+// const sortOptions = [
+//   { name: "Most Popular", href: "#", current: true },
+//   { name: "Best Rating", href: "#", current: false },
+//   { name: "Newest", href: "#", current: false },
+//   { name: "Oldest", href: "#", current: false },
+// ];
+// const subCategories = [
+//   { name: "Private", href: "#" },
+//   { name: "Public", href: "#" },
+//   { name: "Close to hospital", href: "#" },
+//   { name: "Something", href: "#" },
+//   { name: "Something else", href: "#" },
+// ];
+// const filters = [
+//   // {
+//   //   id: "type",
+//   //   name: "Type",
+//   //   options: [
+//   //     { value: "white", label: "White", checked: false },
+//   //     { value: "beige", label: "Beige", checked: false },
+//   //     { value: "blue", label: "Blue", checked: false },
+//   //     { value: "brown", label: "Brown", checked: false },
+//   //     { value: "green", label: "Green", checked: false },
+//   //     { value: "purple", label: "Purple", checked: false },
+//   //   ],
+//   // },
+//   // {
+//   //   id: "category",
+//   //   name: "Category",
+//   //   options: [
+//   //     { value: "new-arrivals", label: "New Arrivals", checked: false },
+//   //     { value: "sale", label: "Sale", checked: false },
+//   //     { value: "travel", label: "Travel", checked: true },
+//   //     { value: "organization", label: "Organization", checked: false },
+//   //     { value: "accessories", label: "Accessories", checked: false },
+//   //   ],
+//   // },
+//   {
+//     id: "name",
+//     name: "Name",
+//     options: filterOptions,
+//   },
+// ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -76,6 +69,9 @@ export default function Pharmacies() {
   const { id } = useParams(); // Access the pharmacy id from URL parameter
   const [pharmacy, setPharmacyDetails] = useState(null);
   const [products, setProducts] = useState([]);
+  const [filterOptions, setFilterOptions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  
 
   useEffect(() => {
     const fetchPharmacyDetails = async () => {
@@ -106,14 +102,42 @@ export default function Pharmacies() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setProducts(data);
+        
+        // Filter out products with duplicate names
+        const uniqueProducts = [];
+        const seenNames = new Set();
+  
+        data.forEach((product) => {
+          if (!seenNames.has(product.name)) {
+            seenNames.add(product.name);
+            uniqueProducts.push(product);
+          }
+        });
+  
+        setProducts(uniqueProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
-
+  
     fetchProducts();
   }, [id]);
+  
+
+  useEffect(() => {
+    const uniqueNames = [...new Set(products.map(product => product.name))].sort();
+    const options = uniqueNames.map(name => ({ value: name, label: name, checked: false }));
+    
+    setFilterOptions(options);
+  }, [products]);
+
+  const filters = [
+    {
+      id: "name",
+      name: "Name",
+      options: filterOptions,
+    },
+  ];
 
   if (!pharmacy) {
     return <div>Loading...</div>;
@@ -127,11 +151,37 @@ export default function Pharmacies() {
   // Calculate the total number of pages
   const totalPages = Math.ceil(products.length / itemsPerPage);
 
-  // Get the pharmacies for the current page
-  const currentPharmacies = products.slice(
+  const filteredProducts = products.filter((product) => {
+    // If no filter options are selected and no search query is entered, show all products
+    if (
+      filterOptions.every((option) => !option.checked) &&
+      searchQuery.trim() === ""
+    ) {
+      return true;
+    }
+  
+    // Check if the product name matches any selected filter option and search query
+    return (
+      (filterOptions.some(
+        (option) => option.checked && option.value === product.name
+      ) ||
+        filterOptions.every((option) => !option.checked)) &&
+      product.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
+    );
+  });
+  
+
+
+  // Get the products for the current page
+  const currentProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const clearFilters = () => {
+    setFilterOptions(filterOptions.map(option => ({ ...option, checked: false })));
+    setSearchQuery(""); // Clear the search query
+  };
 
   return (
     <div className="bg-gray-100">
@@ -308,7 +358,30 @@ export default function Pharmacies() {
 
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
-                <div>
+              <div>
+                    <div className="relative pl-1">
+                      <input
+                        className="appearance-none border-2 pl-10 border-gray-300 hover:border-gray-400 transition-colors rounded-md w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-purple-600 focus:border-purple-600 focus:shadow-outline"
+                        type="text"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+
+                      <div className="absolute left-0 inset-y-0 flex items-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 ml-3 text-gray-400 hover:text-gray-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                {/* <div>
                   <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
                     Sort
                     <ChevronDownIcon
@@ -316,7 +389,7 @@ export default function Pharmacies() {
                       aria-hidden="true"
                     />
                   </Menu.Button>
-                </div>
+                </div> */}
 
                 <Transition
                   as={Fragment}
@@ -328,7 +401,7 @@ export default function Pharmacies() {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
+                    {/* <div className="py-1">
                       {sortOptions.map((option) => (
                         <Menu.Item key={option.name}>
                           {({ active }) => (
@@ -347,7 +420,7 @@ export default function Pharmacies() {
                           )}
                         </Menu.Item>
                       ))}
-                    </div>
+                    </div> */}
                   </Menu.Items>
                 </Transition>
               </Menu>
@@ -412,6 +485,11 @@ export default function Pharmacies() {
                                     name={`${section.id}[]`}
                                     defaultValue={option.value}
                                     type="checkbox"
+                                    onChange={(e) => {
+                                      const updatedOptions = [...filterOptions];
+                                      updatedOptions[optionIdx].checked = e.target.checked;
+                                      setFilterOptions(updatedOptions);
+                                    }}
                                     defaultChecked={option.checked}
                                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                   />
@@ -432,8 +510,8 @@ export default function Pharmacies() {
                 </form>
               </div>
               <div className="lg:w-3/4">
-                {products.map((product) => (
-                  <div className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+                {currentProducts.map((product) => (
+                  <div key={`${pharmacy.id}-${product.id}`} className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
                     <a
                       className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
                       href="#"
