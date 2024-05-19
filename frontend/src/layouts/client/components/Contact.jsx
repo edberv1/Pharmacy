@@ -7,7 +7,7 @@ function Contact() {
         <div className="container flex flex-col flex-1 px-6 py-12 mx-auto">
             <div className="flex-1 lg:flex lg:items-center lg:-mx-6">
                 <div className="text-white lg:w-1/2 lg:mx-6">
-                    <h1 className="text-2xl font-semibold capitalize lg:text-3xl">Ultimate design solution</h1>
+                    <h1 className="text-2xl font-semibold capitalize lg:text-3xl">Ultimate solution</h1>
 
                     <p className="max-w-xl mt-6">
                     Welcome to our online pharmacy! We offer a wide range of products, including prescription medications, over-the-counter drugs, and health supplements. Enjoy a seamless shopping experience with fast, reliable delivery. For any questions or assistance, please contact us using the form available on our application. We&apos;re here to help!
