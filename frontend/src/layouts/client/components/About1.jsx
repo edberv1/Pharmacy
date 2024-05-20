@@ -54,7 +54,7 @@ const About1 = () => {
           <h2 className="mb-3  text-2xl font-semibold text-dark dark:text-gray-700 ">
             Make your customers happy by giving services.
           </h2>
-          <p className="mb-3 text-sm text-body-color dark:text-dark-6">
+          <p className="mb-3 text-md text-body-color dark:text-dark-6">
            
 Welcome to our pharmacy application, your trusted partner in managing and accessing healthcare solutions effortlessly. We are dedicated to transforming the way you experience pharmacy services by integrating advanced technology with personalized care. Our platform is designed to provide you with a seamless and convenient way to search for, compare, and purchase medications and healthcare products from trusted pharmacies in your area.
 
