@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useContext } from 'react';
 import { AlertContext } from '../../../contexts/AlertContext';
@@ -110,7 +111,7 @@ export default function ProfileAdmin() {
 
   };
   return (
-    <>
+    <div className="container mx-auto  max-w-6xl">
      <Alert message={message} type={type} />
       <form onSubmit={handleChangeProfile}>
         <h2 className="text-base  font-semibold leading-7 text-gray-900">
@@ -120,7 +121,7 @@ export default function ProfileAdmin() {
           Your personal information.
         </p>
 
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 ">
+        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 w-1/2">
           <div className="sm:col-span-3">
             <label
               htmlFor="first-name"
@@ -176,12 +177,12 @@ export default function ProfileAdmin() {
                 readOnly
                 value={email} // Set value to firstName
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm  ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-end gap-x-6 ">
+        <div className="flex items-center justify-end gap-x-6 w-1/2 ">
           <button
             type="submit"
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -191,7 +192,7 @@ export default function ProfileAdmin() {
         </div>
       </form>
       <form action="">
-        <div className="sm:col-span-4 pb-12">
+        <div className="sm:col-span-4 pb-12 w-1/2">
           <label
             htmlFor="password"
             className="block text-sm font-medium leading-6 text-gray-900"
@@ -211,7 +212,7 @@ export default function ProfileAdmin() {
           </div>
         </div>
 
-        <div className="sm:col-span-4  pb-12">
+        <div className="sm:col-span-4  pb-12 w-1/2">
           <label
             htmlFor="new-password"
             className="block text-sm font-medium leading-6 text-gray-900"
@@ -231,7 +232,7 @@ export default function ProfileAdmin() {
           </div>
         </div>
 
-        <div className="sm:col-span-4  border-b border-gray-900/10 pb-12">
+        <div className="sm:col-span-4  border-b border-gray-900/10 pb-12 w-1/2">
           <label
             htmlFor="confirm-password"
             className="block text-sm font-medium leading-6 text-gray-900"
@@ -251,7 +252,7 @@ export default function ProfileAdmin() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-x-6">
+        <div className="mt-6 flex items-center justify-end gap-x-6 w-1/2">
           <button
             type="button"
             onClick={handleCancel} // Add this line
@@ -271,6 +272,6 @@ export default function ProfileAdmin() {
 
         </div>
       </form>
-    </>
+    </div>
   );
 }

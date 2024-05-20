@@ -103,7 +103,7 @@ function MyPharmacies() {
         <div className="container font-light text-4xl flex flex-wrap py-6 justify-center min-h-4">
           <h1>My Pharmacies</h1>
         </div>
-        <div className="flex w-full">
+        <div className="flex pl-9 w-full">
                 <div className="relative flex w-1/3 ml-6">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <i className="fa-solid text-white fa-magnifying-glass"></i>
@@ -152,7 +152,7 @@ function MyPharmacies() {
                   >
                     <button
                       onClick={handleShowAll}
-                      className="block px-4 py-2 text-sm  w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
+                      className="block  px-4 py-2 text-sm  w-full text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-white dark:hover:bg-gray-600"
                       role="menuitem"
                     >
                       Show All
@@ -178,6 +178,7 @@ function MyPharmacies() {
                   </div>
                 </div>
               </div>
+              
               <button
                 type="button"
                 onClick={openModal}
@@ -186,6 +187,7 @@ function MyPharmacies() {
                 <i className="fa-solid fa-prescription-bottle-medical pr-2"></i>
                 Create Pharmacy
               </button>
+              
               <CreatePharmacyAdminModal isOpen={isModalOpen} onClose={closeModal} />
               
               </div>
