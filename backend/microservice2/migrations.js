@@ -109,7 +109,7 @@ const runMigrations = (pool) => {
             name VARCHAR(255) NOT NULL,
             description VARCHAR(255) NOT NULL,
             produced VARCHAR(255) NOT NULL,
-            price DECIMAL(10, 2) NOT NULL,
+            price INT NOT NULL,
             pharmacyId INT NOT NULL,
             stock INT NOT NULL,
             FOREIGN KEY (pharmacyId) REFERENCES pharmacies(id) ON DELETE CASCADE,
