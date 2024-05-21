@@ -43,7 +43,7 @@ export default function ProfileAdmin() {
 
   const handleChangeProfile = async (event) => {
     event.preventDefault();
-
+    const userId = localStorage.getItem('userId');
     try {
       const response = await fetch(
         "http://localhost:8081/admin/updateUserProfile",
@@ -56,15 +56,17 @@ export default function ProfileAdmin() {
           body: JSON.stringify({
             firstName,
             lastName,
+            userId, // Include userId here
           }),
         }
       );
-
+  
       showAlert("Profile updated successfully", "success");
     } catch (error) {
       showAlert("Error updating profile", "error");
     }
   };
+  
 
   const changePassword = async (event) => {
     event.preventDefault(); // Prevent form from refreshing the page

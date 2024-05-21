@@ -17,13 +17,13 @@ const getUserProfile = (req, res) => {
 };
 
 const updateUserProfile = (req, res) => {
-    const { firstName, lastName } = req.body;
+  const { firstName, lastName, userId } = req.body; // Assuming you're sending userId in the request body
 
   // SQL query to update the user profile
-  const sql = `UPDATE users SET firstname = ?, lastname = ?`;
+  const sql = `UPDATE users SET firstname = ?, lastname = ? WHERE id = ?`; // Add WHERE clause here
 
   // Execute the query
-  db.query(sql, [firstName, lastName], (err, result) => {
+  db.query(sql, [firstName, lastName, userId], (err, result) => { // Add userId here
     if (err) {
       console.error('Error updating user profile: ', err);
       res.status(500).json({ message: 'Server error' });
@@ -31,7 +31,8 @@ const updateUserProfile = (req, res) => {
       res.status(200).json({ message: 'User profile updated successfully' });
     }
   });
-  };
+};
+
  
   const changePassword = (req, res) => {
     const { currentPassword, newPassword } = req.body;
