@@ -168,7 +168,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
               Stocks
             </label>
             <input
-              type="text"
+              type="number"
               name="stock"
               value={formData.stock}
               onChange={handleChange}

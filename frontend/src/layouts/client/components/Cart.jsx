@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-key */
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../../contexts/UserContexts";
