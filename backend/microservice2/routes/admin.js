@@ -4,7 +4,7 @@ const authMiddleware  = require('../middlewares/authMiddleware');
 const {getUserProfile, updateUserProfile, changePassword, getAllProducts,getPharmaciesForUser, createProduct, editProduct, deleteProduct, getPharmacyById, getPharmacyProducts, createPharmacy, editPharmacy, deletePharmacy } = require('../controllers/adminController');
 
 
-router.get("/getUserProfile", authMiddleware,  getUserProfile);
+router.get("/getUserProfile", authMiddleware,  getUserProfile); 
 router.put("/updateUserProfile", authMiddleware,  updateUserProfile);
 router.post("/changePassword", authMiddleware, changePassword);
 

@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+const User = require("../models/userModel")
 const db = require("../db.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -180,7 +180,10 @@ const getLoginUser = async (req, res) => {
     }
 
     // You could query your database here to get more user information if needed
-    res.send({ loggedIn: true, user: { id: decoded.id, email: decoded.email, role: decoded.role } });
+    res.send({
+      loggedIn: true,
+      user: { id: decoded.id, email: decoded.email, role: decoded.role },
+    });
   });
 };
 
@@ -318,27 +321,6 @@ const submitLicense = async (req, res) => {
   });
 };
 
-const getUserById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    // Fetch pharmacy details from the database based on the id
-    const query = "SELECT * FROM users WHERE id = ?"; // Example: Using Mongoose to query MongoDB
-    db.query(query, [id], (err, results) => {
-      if (err) {
-        console.error("Error fetching pharmacy details:", err);
-        return res.status(500).json({ error: "Internal server error" });
-      }
-      if (!results || results.length === 0) {
-        return res.status(404).json({ error: "Pharmacy not found" });
-      }
-      res.json(results[0]); // Send the first result (assuming id is unique)
-    });
-  } catch (error) {
-    console.error("Error fetching user details:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
 const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
 
@@ -392,7 +374,8 @@ const resetPassword = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Update the password in the database
-    const updateQuery = "UPDATE users SET password = ?, resetToken = NULL WHERE resetToken = ?";
+    const updateQuery =
+      "UPDATE users SET password = ?, resetToken = NULL WHERE resetToken = ?";
     const updateValues = [hashedPassword, token];
 
     db.query(updateQuery, updateValues, (err, result) => {
@@ -415,7 +398,9 @@ const getProductsByUserId = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
       }
       if (!results || results.length === 0) {
-        return res.status(404).json({ error: "No products found for this user" });
+        return res
+          .status(404)
+          .json({ error: "No products found for this user" });
       }
       res.json(results);
     });
@@ -445,6 +430,69 @@ const getProductsByPharmacyId = async (req, res) => {
   }
 };
 
+const getUserProfileClient = (req, res) => {
+  const userId = req.userId; // assuming the userId is set in the request
+
+  User.getUserById(userId, function(err, user) {
+    if (err) {
+      res.status(500).send({ message: 'Database error.' });
+    } else if (!user) {
+      res.status(404).send({ message: 'User not found.' });
+    } else {
+      res.status(200).send(user);
+    }
+  });
+};
+
+const updateUserProfileClient = (req, res) => {
+  const { firstName, lastName, userId } = req.body; // Assuming you're sending userId in the request body
+
+  // SQL query to update the user profile
+  const sql = `UPDATE users SET firstname = ?, lastname = ? WHERE id = ?`; // Add WHERE clause here
+
+  // Execute the query
+  db.query(sql, [firstName, lastName, userId], (err, result) => { // Add userId here
+    if (err) {
+      console.error('Error updating user profile: ', err);
+      res.status(500).json({ message: 'Server error' });
+    } else {
+      res.status(200).json({ message: 'User profile updated successfully' });
+    }
+  });
+};
+
+const changePasswordClient = (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  User.getUserById(req.userId, function(err, user) {
+    if (err) {
+      res.status(500).send({ message: 'Database error.' });
+    } else if (!user) {
+      res.status(404).send({ message: 'User not found.' });
+    } else {
+      // Check if the current password is correct
+      if (bcrypt.compareSync(currentPassword, user[0].password)) { // Change this line
+        // Hash the new password
+        const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
+
+        // SQL query to update the user password
+        const sql = `UPDATE users SET password = ? WHERE id = ?`;
+
+        // Execute the query
+        db.query(sql, [hashedNewPassword, req.userId], (err, result) => {
+          if (err) {
+            console.error('Error updating user password: ', err);
+            res.status(500).json({ message: 'Server error' });
+          } else {
+            res.status(200).json({ message: 'Password updated successfully' });
+          }
+        });
+      } else {
+        res.status(403).json({ message: 'Current password is incorrect.' });
+      }
+    }
+  });
+};
 
 module.exports = {
   signup,
@@ -456,9 +504,11 @@ module.exports = {
   getAllPharmacies,
   getPharmacyById,
   submitLicense,
-  getUserById,
   requestPasswordReset,
   resetPassword,
   getProductsByUserId,
   getProductsByPharmacyId,
+  getUserProfileClient,
+  updateUserProfileClient,
+  changePasswordClient
 };

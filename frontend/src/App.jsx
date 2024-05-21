@@ -61,7 +61,6 @@ function App() {
           <Route path="/password-reset-form" element={<PasswordResetForm />} />
           <Route path="/cart" element={<Cart />} />
 
-
         </Route>
 
         {/* Admin Routes */}
