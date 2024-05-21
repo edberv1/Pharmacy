@@ -1,58 +1,71 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
 
-function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
+function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     produced: "",
     price: "",
-    pharmacyId: pharmacyId || "", // Use pharmacyId from props // Ensure correct access to pharmacyId
+    pharmacyId: pharmacyId || "",
     stock: "",
   });
+  const [image, setImage] = useState(null); // Ensure image is initialized as null
 
   const modalRef = useRef(null);
-  const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission
-  const [error, setError] = useState(null); // State for handling errors
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]); // Ensure this sets the actual File object
+    console.log("Selected file:", e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add pharmacyId to the formData object
-  const updatedFormData = { ...formData, pharmacyId };
+
+    // Create a new FormData instance
+    const data = new FormData();
+    Object.keys(formData).forEach((key) => {
+      data.append(key, formData[key]);
+    });
+    if (image) {
+      data.append('image', image); // Ensure the image is appended correctly
+    } else {
+      console.error("No image file selected");
+    }
+
+    console.log("FormData before sending:", Array.from(data.entries())); // Debugging log
+
     try {
-      // Make HTTP POST request to create user with token included in headers
       const response = await fetch(
         "http://localhost:8081/admin/createProduct",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
-          body: JSON.stringify(updatedFormData),
+          body: data, // Send the FormData instance as the request body
         }
       );
 
-      // Check if the request was successful
       if (!response.ok) {
-        // Handle non-200 response status
         const errorMessage = await response.text();
         throw new Error(errorMessage);
       }
 
-      const data = await response.json();
+      const responseData = await response.json();
 
-      console.log(data); // Log the response if needed
+      console.log(responseData);
       onClose();
-      setFormSubmitted(true); // Set form submission status to true
+      setFormSubmitted(true);
     } catch (error) {
-      setError(error.message); // Set error state
-      setFormSubmitted(false); // Set form submission status to false
+      setError(error.message);
+      setFormSubmitted(false);
     }
   };
 
@@ -73,23 +86,20 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    // Reload the page if form is submitted successfully
-    if (formSubmitted) {
-      window.location.reload();
-    }
-  }, [formSubmitted]);
+    setFormData((prevData) => ({ ...prevData, pharmacyId }));
+  }, [pharmacyId]);
 
   if (!isOpen) {
     return null;
   }
-  
+
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white rounded-lg w-1/2 p-6" ref={modalRef}>
         <div className="flex justify-end">
           <button
             onClick={handleClose}
-            className=" text-gray-500 hover:text-gray-700 focus:outline-none z-10"
+            className="text-gray-500 hover:text-gray-700 focus:outline-none z-10"
           >
             <span className="sr-only">Close</span>
             <svg
@@ -106,7 +116,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
           </button>
         </div>
         <h2 className="text-xl font-semibold mb-4">Create Product</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Name
@@ -120,7 +130,18 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
               required
             />
           </div>
-
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-600">
+              LICENSE FILE
+            </label>
+            <input
+              type="file"
+              name="image"
+              className="mt-4 mb-4 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
+              accept=".png"
+              onChange={handleImageChange}
+            />
+          </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Description
@@ -134,7 +155,6 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
               required
             />
           </div>
-
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Produced
@@ -148,7 +168,6 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
               required
             />
           </div>
-
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Price
@@ -162,7 +181,6 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
               required
             />
           </div>
-
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Stocks
@@ -176,7 +194,6 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
               required
             />
           </div>
-
           <div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-600">
@@ -190,9 +207,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName  }) {
               />
             </div>
           </div>
-
           {error && <div className="text-red-500 mt-2">{error}</div>}
-
           <div className="flex justify-end">
             <button
               type="button"

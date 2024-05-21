@@ -113,7 +113,8 @@ const runMigrations = (pool) => {
             pharmacyId INT NOT NULL,
             stock INT NOT NULL,
             FOREIGN KEY (pharmacyId) REFERENCES pharmacies(id) ON DELETE CASCADE,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            image VARCHAR(255) NOT NULL
           )
         `;
 
