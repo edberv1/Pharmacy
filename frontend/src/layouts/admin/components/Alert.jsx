@@ -22,16 +22,16 @@ const Alert = () => {
   }
 
   return (
-  
-    <div className={`absolute w-full max-w-sm overflow-hidden rounded-lg shadow-md  ${colors[type]}`}>
-      <div className="px-4 py-2 -mx-3">
-        <div className="mx-3">
-          <span className="font-semibold text-white">{type}</span>
-          <p className="text-sm text-white">{message}</p>
+    <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50">
+      <div className={`w-full max-w-sm overflow-hidden rounded-lg shadow-md ${colors[type]}`}>
+        <div className="px-4 py-2">
+          <div className="mx-3">
+            <span className="font-semibold text-white">{type}</span>
+            <p className="text-sm text-white">{message}</p>
+          </div>
         </div>
       </div>
     </div>
-   
   );
 };
 
