@@ -1,4 +1,4 @@
-const User = require("../models/userModel")
+const User = require("../models/userModel");
 const db = require("../db.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -433,11 +433,11 @@ const getProductsByPharmacyId = async (req, res) => {
 const getUserProfileClient = (req, res) => {
   const userId = req.userId; // assuming the userId is set in the request
 
-  User.getUserById(userId, function(err, user) {
+  User.getUserById(userId, function (err, user) {
     if (err) {
-      res.status(500).send({ message: 'Database error.' });
+      res.status(500).send({ message: "Database error." });
     } else if (!user) {
-      res.status(404).send({ message: 'User not found.' });
+      res.status(404).send({ message: "User not found." });
     } else {
       res.status(200).send(user);
     }
@@ -451,12 +451,13 @@ const updateUserProfileClient = (req, res) => {
   const sql = `UPDATE users SET firstname = ?, lastname = ? WHERE id = ?`; // Add WHERE clause here
 
   // Execute the query
-  db.query(sql, [firstName, lastName, userId], (err, result) => { // Add userId here
+  db.query(sql, [firstName, lastName, userId], (err, result) => {
+    // Add userId here
     if (err) {
-      console.error('Error updating user profile: ', err);
-      res.status(500).json({ message: 'Server error' });
+      console.error("Error updating user profile: ", err);
+      res.status(500).json({ message: "Server error" });
     } else {
-      res.status(200).json({ message: 'User profile updated successfully' });
+      res.status(200).json({ message: "User profile updated successfully" });
     }
   });
 };
@@ -464,14 +465,15 @@ const updateUserProfileClient = (req, res) => {
 const changePasswordClient = (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
-  User.getUserById(req.userId, function(err, user) {
+  User.getUserById(req.userId, function (err, user) {
     if (err) {
-      res.status(500).send({ message: 'Database error.' });
+      res.status(500).send({ message: "Database error." });
     } else if (!user) {
-      res.status(404).send({ message: 'User not found.' });
+      res.status(404).send({ message: "User not found." });
     } else {
       // Check if the current password is correct
-      if (bcrypt.compareSync(currentPassword, user[0].password)) { // Change this line
+      if (bcrypt.compareSync(currentPassword, user[0].password)) {
+        // Change this line
         // Hash the new password
         const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
 
@@ -481,16 +483,43 @@ const changePasswordClient = (req, res) => {
         // Execute the query
         db.query(sql, [hashedNewPassword, req.userId], (err, result) => {
           if (err) {
-            console.error('Error updating user password: ', err);
-            res.status(500).json({ message: 'Server error' });
+            console.error("Error updating user password: ", err);
+            res.status(500).json({ message: "Server error" });
           } else {
-            res.status(200).json({ message: 'Password updated successfully' });
+            res.status(200).json({ message: "Password updated successfully" });
           }
         });
       } else {
-        res.status(403).json({ message: 'Current password is incorrect.' });
+        res.status(403).json({ message: "Current password is incorrect." });
       }
     }
+  });
+};
+
+const showAllProducts = async (req, res) => {
+  const query = `
+    SELECT 
+      products.*,
+      pharmacies.name AS pharmacy_name
+    FROM 
+      products 
+    JOIN 
+      pharmacies 
+    ON 
+      products.pharmacyId = pharmacies.id 
+  `;
+  
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "No products found" });
+    }
+    res.json(results);
   });
 };
 
@@ -510,5 +539,6 @@ module.exports = {
   getProductsByPharmacyId,
   getUserProfileClient,
   updateUserProfileClient,
-  changePasswordClient
+  changePasswordClient,
+  showAllProducts,
 };

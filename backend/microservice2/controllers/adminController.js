@@ -86,6 +86,8 @@ const changePassword = (req, res) => {
 //   });
 // };
 
+
+
 const getAllProducts = async (req, res) => {
   const userId = req.userId; // Assuming you have userId in the request
   const query =
