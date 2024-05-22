@@ -22,7 +22,6 @@ router.put("/updateUserProfileClient", authMiddleware,  updateUserProfileClient)
 router.post("/changePasswordClient", authMiddleware, changePasswordClient);
 
 
-
 module.exports = router;
 
 

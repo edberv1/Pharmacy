@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
+const imageUpload = require('../services/imageUpload');
 const {getUserProfile, updateUserProfile, changePassword, getAllProducts,getPharmaciesForUser, createProduct, editProduct, deleteProduct, getPharmacyById, getPharmacyProducts, createPharmacy, editPharmacy, deletePharmacy } = require('../controllers/adminController');
 
 
@@ -9,7 +10,7 @@ router.put("/updateUserProfile", authMiddleware,  updateUserProfile);
 router.post("/changePassword", authMiddleware, changePassword);
 
 router.get("/getAllProducts", authMiddleware, getAllProducts);
-router.post("/createProduct", authMiddleware, createProduct);
+router.post("/createProduct", imageUpload, createProduct);
 router.delete('/deleteProduct/:id', authMiddleware, deleteProduct); 
 router.put('/editProduct/:id',  authMiddleware, editProduct);
 

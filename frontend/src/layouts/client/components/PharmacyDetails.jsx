@@ -14,50 +14,6 @@ import {
 } from "@heroicons/react/20/solid";
 import Pagination from "../../superadmin/components/Pagination";
 
-// const sortOptions = [
-//   { name: "Most Popular", href: "#", current: true },
-//   { name: "Best Rating", href: "#", current: false },
-//   { name: "Newest", href: "#", current: false },
-//   { name: "Oldest", href: "#", current: false },
-// ];
-// const subCategories = [
-//   { name: "Private", href: "#" },
-//   { name: "Public", href: "#" },
-//   { name: "Close to hospital", href: "#" },
-//   { name: "Something", href: "#" },
-//   { name: "Something else", href: "#" },
-// ];
-// const filters = [
-//   // {
-//   //   id: "type",
-//   //   name: "Type",
-//   //   options: [
-//   //     { value: "white", label: "White", checked: false },
-//   //     { value: "beige", label: "Beige", checked: false },
-//   //     { value: "blue", label: "Blue", checked: false },
-//   //     { value: "brown", label: "Brown", checked: false },
-//   //     { value: "green", label: "Green", checked: false },
-//   //     { value: "purple", label: "Purple", checked: false },
-//   //   ],
-//   // },
-//   // {
-//   //   id: "category",
-//   //   name: "Category",
-//   //   options: [
-//   //     { value: "new-arrivals", label: "New Arrivals", checked: false },
-//   //     { value: "sale", label: "Sale", checked: false },
-//   //     { value: "travel", label: "Travel", checked: true },
-//   //     { value: "organization", label: "Organization", checked: false },
-//   //     { value: "accessories", label: "Accessories", checked: false },
-//   //   ],
-//   // },
-//   {
-//     id: "name",
-//     name: "Name",
-//     options: filterOptions,
-//   },
-// ];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -524,7 +480,7 @@ export default function Pharmacies() {
                       )}
                       <img
                         className="object-cover"
-                        src="https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?q=80&w=2140&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        src={`http://localhost:8081/${product.image.replace("\\", "/")}`}
                         alt="product image"
                       />
                     </a>
