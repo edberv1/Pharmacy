@@ -22,7 +22,8 @@ const Alert = () => {
   }
 
   return (
-    <div className={`flex w-full max-w-sm overflow-hidden rounded-lg shadow-md ${colors[type]}`}>
+  
+    <div className={`absolute w-full max-w-sm overflow-hidden rounded-lg shadow-md  ${colors[type]}`}>
       <div className="px-4 py-2 -mx-3">
         <div className="mx-3">
           <span className="font-semibold text-white">{type}</span>
@@ -30,6 +31,7 @@ const Alert = () => {
         </div>
       </div>
     </div>
+   
   );
 };
 
