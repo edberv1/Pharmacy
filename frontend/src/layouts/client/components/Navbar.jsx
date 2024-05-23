@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContexts";
 import { Menu, Transition } from "@headlessui/react";
 
-
 function Navbar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
