@@ -1,10 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import Alert from "../Alert";
+import { AlertContext } from "../../../../contexts/AlertContext";
 
 function DeletePharmacyModal({ isOpen, onClose, pharmacyId }) {
   const modalRef = useRef(null);
-  const navigate = useNavigate();
+  const { showAlert, message, type } = useContext(AlertContext);
 
   const handleDeletePharmacy = async () => {
     try {
@@ -23,13 +26,13 @@ function DeletePharmacyModal({ isOpen, onClose, pharmacyId }) {
       }
 
       // If successful, log a success message and redirect
-      console.log("Pharmacy deleted successfully");
+      showAlert("Pharmacy Deleted successfully", "success");
       onClose();
-      navigate('/admin/myPharmacies'); // Redirect to the pharmacies page or any other route
+       
 
     } catch (error) {
       // Handle errors if the request fails
-      console.error("Error deleting Pharmacy:", error.message);
+      showAlert("Error deleting Pharmacy", "error");
       // You can handle the error in the UI, display a notification, etc.
     }
   };
@@ -58,6 +61,7 @@ function DeletePharmacyModal({ isOpen, onClose, pharmacyId }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-25 flex items-center justify-center">
+      <Alert message={message} type={type} />
       <div className="bg-opacity-50 fixed inset-0"></div>
       <div className="bg-white rounded-lg w-1/3 p-6 relative" ref={modalRef}>
         <div className="flex justify-end">

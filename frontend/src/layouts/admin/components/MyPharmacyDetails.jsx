@@ -7,6 +7,9 @@ import EditProductModal from "./ProductModal/EditProductModal";
 import Pagination from "../../superadmin/components/Pagination";
 import CreateProductModal from "./ProductModal/CreateProductModal";
 import DeletePharmacyModal from "./PharmacyAdminModal/DeletePharmacyModal";
+import Alert from "./Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
+import { useContext } from "react";
 
 function MyPharmacyDetails() {
   const { id } = useParams();
@@ -22,6 +25,7 @@ function MyPharmacyDetails() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pharmacies, setPharmacies] = useState([]);
+  const { showAlert, message, type } = useContext(AlertContext);
   const itemsPerPage = 5;
 
   const openModal = () => {
@@ -228,10 +232,11 @@ function MyPharmacyDetails() {
       }
 
       // Handle success case, maybe show a success message
-      console.log("Pharmacy details updated successfully!");
-      window.location.reload();
+      showAlert("Pharmacy updated successfully", "success");
+      
     } catch (error) {
       console.error("Error updating pharmacy details:", error);
+      showAlert("Error updating pharmacy", "error");
       // Handle error case, maybe show an error message
     }
   };
@@ -239,6 +244,7 @@ function MyPharmacyDetails() {
   return (
     <>
       <section className="min-h-full  mb-10 pt-16 bg-gradient-to-r" >
+      <Alert message={message} type={type} />
         <form onSubmit={handleChangeProfile}>
           <div className="flex justify-end mb-4 mr-4">
             {pharmacy && (

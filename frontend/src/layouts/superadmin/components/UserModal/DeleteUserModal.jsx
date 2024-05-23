@@ -1,5 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef,useContext} from "react";
+import Alert from ".././../../admin/components/Alert";
+import { AlertContext } from "../../../../contexts/AlertContext";
+
 
 function DeleteUserModal({ isOpen, onClose, userId}) {
   const modalRef = useRef(null);

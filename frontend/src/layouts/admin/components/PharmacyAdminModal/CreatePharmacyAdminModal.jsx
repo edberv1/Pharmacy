@@ -1,6 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
 import Locations from "../../../../../utils/Locations"; 
+import Alert from "../Alert";
+import { AlertContext } from "../../../../contexts/AlertContext";
+import { useContext } from "react";
 function CreatePharmacyAdminModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -11,6 +14,7 @@ function CreatePharmacyAdminModal({ isOpen, onClose }) {
 
   const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission
   const [error, setError] = useState(null); // State for handling errors
+  const { showAlert, message, type } = useContext(AlertContext);
 
   const modalRef = useRef(null);
 
@@ -25,7 +29,7 @@ function CreatePharmacyAdminModal({ isOpen, onClose }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+
     // Here you can add your logic to create a user
     try {
       // Make HTTP POST request to create user with token included in headers
@@ -51,9 +55,12 @@ function CreatePharmacyAdminModal({ isOpen, onClose }) {
       const data = await response.json();
 
       console.log(data); // Log the response if needed
+      
       onClose();
       setFormSubmitted(true); // Set form submission status to true
+      showAlert("Pharmacy Created successfully", "success");
     } catch (error) {
+      showAlert("Error creating Pharmacy", "error");
       setError(error.message); // Set error state
       setFormSubmitted(false); // Set form submission status to false
     }
@@ -93,6 +100,7 @@ function CreatePharmacyAdminModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
+      <Alert message={message} type={type} />
       <div className="bg-white rounded-lg w-1/2 p-6" ref={modalRef}>
         <div className="flex justify-end">
           <button

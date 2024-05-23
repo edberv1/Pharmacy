@@ -1,5 +1,9 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState ,useContext} from "react";
+import Alert from "../../../admin/components/Alert";
+import { AlertContext } from "../../../../contexts/AlertContext";
+
+
 
 function CreateUserModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -12,7 +16,7 @@ function CreateUserModal({ isOpen, onClose }) {
   const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission
   const [error, setError] = useState(null); // State for handling errors
   const [roles, setRoles] = useState([]);
-
+  const { showAlert, message, type } = useContext(AlertContext);
   const modalRef = useRef(null);
 
   const handleChange = (e) => {
@@ -56,8 +60,9 @@ function CreateUserModal({ isOpen, onClose }) {
       console.log(data); // Log the response if needed
       onClose();
       setFormSubmitted(true); // Set form submission status to true
+      showAlert("Profile updated successfully", "success");
     } catch (error) {
-      setError(error.message); // Set error state
+      showAlert("Error updating profile", "error"); // Set error state
     }
   };
 
@@ -131,6 +136,7 @@ function CreateUserModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
+        <Alert message={message} type={type} />
       <div className="bg-white rounded-lg w-1/2 p-6" ref={modalRef}>
         <div className="flex justify-end">
           <button

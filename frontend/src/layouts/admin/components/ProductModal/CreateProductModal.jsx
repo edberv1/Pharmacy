@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useContext } from "react";
+import Alert from "../Alert";
+import { AlertContext } from "../../../../contexts/AlertContext";
 
 function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
   const [formData, setFormData] = useState({
@@ -14,6 +17,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
   const modalRef = useRef(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [error, setError] = useState(null);
+  const { showAlert, message, type } = useContext(AlertContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,9 +67,13 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
       console.log(responseData);
       onClose();
       setFormSubmitted(true);
+      showAlert("Profile updated successfully", "success");
+      
     } catch (error) {
+      showAlert("Error updating profile", "error");
       setError(error.message);
       setFormSubmitted(false);
+      
     }
   };
 
@@ -95,6 +103,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
+      <Alert message={message} type={type} />
       <div className="bg-white rounded-lg w-1/2 p-6" ref={modalRef}>
         <div className="flex justify-end">
           <button
