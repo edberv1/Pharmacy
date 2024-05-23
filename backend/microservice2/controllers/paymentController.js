@@ -6,21 +6,6 @@ const stripe = require("stripe")(
   "sk_test_51PGhlgRsfVBiTAkfjGCSPkuyEILiiuvluSyy00j4xZF2rmm5VdAWE9CI7w4QFvmenbXfMOr73KDZla6w4UFvMRTm00hBxXzYBD"
 );
 
-// app.post('/create-checkout-session', async (req, res) => {
-//     const { line_items } = req.body;
-
-//     const session = await stripe.checkout.sessions.create({
-//       payment_method_types: ['card'],
-//       line_items,
-//       mode: 'payment',
-//       success_url: 'your-success-url',
-//       cancel_url: 'your-cancel-url',
-//     });
-
-//     res.json({ id: session.id });
-//   });
-
-
 const createCheckoutSession = (req, res) => {
   const token = req.headers["x-access-token"];
   
@@ -125,7 +110,7 @@ const getCart = (req, res) => {
     }
 
     const userId = decoded.id;
-    const query = "SELECT cart.*, products.name, products.description, products.price, products.produced FROM cart INNER JOIN products ON cart.productId = products.id WHERE cart.userId = ?";
+    const query = "SELECT cart.*, products.name, products.description, products.price, products.produced, products.image FROM cart INNER JOIN products ON cart.productId = products.id WHERE cart.userId = ?";
 
     db.query(query, [userId], (err, result) => {
       if (err) {

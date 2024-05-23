@@ -113,7 +113,7 @@ export default function Profile() {
 
   };
   return (
-    <div className="container mx-auto  max-w-6xl">
+    <div className="container mx-auto mt-28 mb-12 max-w-6xl">
      <Alert message={message} type={type} />
       <form onSubmit={handleChangeProfile}>
         <h2 className="text-base  font-semibold leading-7 text-gray-900">

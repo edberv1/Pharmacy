@@ -2,8 +2,10 @@
 /* eslint-disable react/jsx-key */
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../../contexts/UserContexts";
-import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe('pk_test_51PGhlgRsfVBiTAkf6OY5ojJFtcdSr0Xg23qkWEGv8xbkXbeyFdgPBBJRpH44eBuOdJnL1xTSKFcwYXl4MWzkZpvz00CGIpyBQd');
+import { loadStripe } from "@stripe/stripe-js";
+const stripePromise = loadStripe(
+  "pk_test_51PGhlgRsfVBiTAkf6OY5ojJFtcdSr0Xg23qkWEGv8xbkXbeyFdgPBBJRpH44eBuOdJnL1xTSKFcwYXl4MWzkZpvz00CGIpyBQd"
+);
 
 export default function Cart() {
   const { user } = useContext(UserContext);
@@ -78,25 +80,28 @@ export default function Cart() {
   const handleCheckout = async (event) => {
     // Get Stripe.js instance
     const stripe = await stripePromise;
-  
+
     // Get the token from local storage
     const token = localStorage.getItem("token");
-  
+
     // Call your backend to create the Checkout Session
-    const response = await fetch('http://localhost:8081/payment/create-checkout-session', { 
-      method: 'POST',
-      headers: {
-        "x-access-token": token, // Include the token in the request headers
-      },
-    });
-  
+    const response = await fetch(
+      "http://localhost:8081/payment/create-checkout-session",
+      {
+        method: "POST",
+        headers: {
+          "x-access-token": token, // Include the token in the request headers
+        },
+      }
+    );
+
     const session = await response.json();
-  
+
     // When the customer clicks on the button, redirect them to Checkout.
     const result = await stripe.redirectToCheckout({
       sessionId: session.id,
     });
-  
+
     if (result.error) {
       // If `redirectToCheckout` fails due to a browser or network
       // error, display the localized error message to your customer
@@ -104,9 +109,9 @@ export default function Cart() {
       alert(result.error.message);
     }
   };
-  
+
   return (
-    <section className="relative z-10 after:contents-[''] after:absolute after:z-0 after:h-full xl:after:w-1/3 after:top-0 after:right-0 after:bg-gray-50">
+    <section className="relative mt-12 z-10 after:contents-[''] after:absolute after:z-0 after:h-full xl:after:w-1/3 after:top-0 after:right-0 after:bg-gray-50">
       <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto relative z-10">
         <div className="grid grid-cols-12">
           <div className="col-span-12 xl:col-span-8 lg:pr-8 pt-14 pb-8 lg:py-24 w-full max-xl:max-w-3xl max-xl:mx-auto">
@@ -145,7 +150,7 @@ export default function Cart() {
               <div className="flex flex-col min-[500px]:flex-row min-[500px]:items-center gap-5 py-6 border-b border-gray-200 group">
                 <div className="w-full md:max-w-[126px]">
                   <img
-                    src="https://pagedone.io/asset/uploads/1701162850.png"
+                    src={`http://localhost:8081/${item.image.replace("\\", "/")}`}
                     alt="perfume bottle image"
                     className="mx-auto"
                   />
@@ -166,11 +171,9 @@ export default function Cart() {
                   </div>
                   <div className="flex items-center max-[500px]:justify-center h-full max-md:mt-3 col-span-2">
                     <div className="flex items-center h-full">
-                      <span
-                     
-                        className="border-y border-gray-200 outline-none text-gray-900 font-semibold text-lg w-full max-w-[73px] min-w-[60px] placeholder:text-gray-900 py-[15px] text-center bg-transparent"
-                        
-                      >{item.quantity} </span>
+                      <span className="border-y border-gray-200 outline-none text-gray-900 font-semibold text-lg w-full max-w-[73px] min-w-[60px] placeholder:text-gray-900 py-[15px] text-center bg-transparent">
+                        {item.quantity}{" "}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between max-[500px]:justify-center md:justify-end max-md:mt-3 h-full col-span-1">
@@ -226,12 +229,12 @@ export default function Cart() {
                     </span>
                   </div>
                   <button
-                    role="link" onClick={handleCheckout}
+                    role="link"
+                    onClick={handleCheckout}
                     className="w-full py-2 font-semibold border rounded dark:bg-indigo-600 dark:text-white dark:border-violet-400"
                   >
                     Go to checkout
                   </button>
-
                 </div>
               </div>
             </div>

@@ -1,52 +1,76 @@
-import { Link } from "react-router-dom";
-import { Button, Typography } from "@material-tailwind/react";
-
-function HeroSection() {
-
-
+import { Carousel, IconButton } from "@material-tailwind/react";
+ 
+const HeroSection = () => {
   return (
-    <>
-      <header className="bg-white p-8">
-          <div className="grid mt-16 min-h-[82vh] w-full lg:h-[54rem] md:h-[34rem] place-items-stretch bg-[url('/image/bg-hero-17.svg')] bg-center bg-contain bg-no-repeat">
-            <div className="container mx-auto px-4 text-center">
-              <Typography className="inline-flex text-xs rounded-lg border-[1.5px] border-blue-gray-50 bg-white py-1 lg:px-4 px-1 font-medium text-primary">
-                Exciting News! Introducing our latest innovation
-              </Typography>
-              <Typography
-                variant="h1"
-                color="blue-gray"
-                className="mx-auto my-6 w-full leading-snug  !text-2xl lg:max-w-3xl lg:!text-5xl"
-              >
-                Get ready to experience the digitalization of{" "}
-                <span className="text-green-500 leading-snug ">pharmacy</span>{" "}
-                and{" "}
-                <span className="leading-snug text-green-500">
-                  functionality
-                </span>
-                .
-              </Typography>
-              <Typography
-                variant="lead"
-                className="mx-auto w-full !text-gray-500 lg:text-lg text-base"
-              >
-                The time is now for it to be okay to be great. For being a
-                bright color. For standing out.
-              </Typography>
-              <div className="mt-8 grid w-full place-items-start md:justify-center">
-                <div className="mb-2 flex w-full flex-col gap-4 md:flex-row">
-                  <Button
-                    color="gray"
-                    className="w-full px-4 md:w-[12rem]"
-                  >
-                    <Link to="/pharmacyForm">Create your pharmacy</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-      </header>
-    </>
+    <Carousel
+      className="h-[50vh] transition-opacity duration-1000 ease-in-out overflow-hidden mt-20"
+      autoplay
+      loop
+      prevArrow={({ handlePrev }) => (
+        <IconButton
+          variant="text"
+          color="white"
+          size="lg"
+          onClick={handlePrev}
+          className="!absolute top-2/4 left-4 -translate-y-2/4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-6 w-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+            />
+          </svg>
+        </IconButton>
+      )}
+      nextArrow={({ handleNext }) => (
+        <IconButton
+          variant="text"
+          color="white"
+          size="lg"
+          onClick={handleNext}
+          className="!absolute top-2/4 !right-4 -translate-y-2/4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-6 w-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+            />
+          </svg>
+        </IconButton>
+      )}
+    >
+      <img
+        src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+        alt="image 1"
+        className="h-full w-full object-cover"
+      />
+      <img
+        src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
+        alt="image 2"
+        className="h-full w-full object-cover"
+      />
+      <img
+        src="https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80"
+        alt="image 3"
+        className="h-full w-full object-cover"
+      />
+    </Carousel>
   );
 }
-
 export default HeroSection;
