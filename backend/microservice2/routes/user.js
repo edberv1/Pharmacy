@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { signup, loginUser, getLoginUser, logoutUser, verify, refresh, getAllPharmacies, getPharmacyById, submitLicense, requestPasswordReset, resetPassword, getProductsByUserId, getProductsByPharmacyId, getUserProfileClient,updateUserProfileClient, changePasswordClient, showAllProducts} = require('../controllers/userController');
+const { signup, loginUser, getLoginUser, logoutUser, verify, refresh, getAllPharmacies, getPharmacyById, submitLicense, requestPasswordReset, resetPassword, getProductsByUserId, getProductsByPharmacyId, getUserProfileClient,updateUserProfileClient, changePasswordClient, showAllProducts, searchProducts} = require('../controllers/userController');
 const upload = require('../services/fileUpload');
 const authMiddleware  = require('../middlewares/authMiddleware');
 
@@ -21,6 +21,7 @@ router.get("/getUserProfileClient", authMiddleware,  getUserProfileClient);
 router.put("/updateUserProfileClient", authMiddleware,  updateUserProfileClient);
 router.post("/changePasswordClient", authMiddleware, changePasswordClient);
 router.get("/showAllProducts", showAllProducts)
+router.get('/searchProducts', searchProducts)
 
 module.exports = router;
 

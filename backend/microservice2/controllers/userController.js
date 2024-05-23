@@ -523,6 +523,15 @@ const showAllProducts = async (req, res) => {
   });
 };
 
+const searchProducts = async (req, res) => {
+  const query = req.query.query;
+  db.query('SELECT * FROM products WHERE name LIKE ?', [`%${query}%`], (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+};
+
+
 module.exports = {
   signup,
   loginUser,
@@ -541,4 +550,5 @@ module.exports = {
   updateUserProfileClient,
   changePasswordClient,
   showAllProducts,
+  searchProducts
 };
