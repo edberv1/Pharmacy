@@ -27,7 +27,6 @@ export default function Pharmacies() {
   const [products, setProducts] = useState([]);
   const [filterOptions, setFilterOptions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  
 
   useEffect(() => {
     const fetchPharmacyDetails = async () => {
@@ -58,32 +57,37 @@ export default function Pharmacies() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        
+
         // Filter out products with duplicate names
         const uniqueProducts = [];
         const seenNames = new Set();
-  
+
         data.forEach((product) => {
           if (!seenNames.has(product.name)) {
             seenNames.add(product.name);
             uniqueProducts.push(product);
           }
         });
-  
+
         setProducts(uniqueProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
-  
+
     fetchProducts();
   }, [id]);
-  
 
   useEffect(() => {
-    const uniqueNames = [...new Set(products.map(product => product.name))].sort();
-    const options = uniqueNames.map(name => ({ value: name, label: name, checked: false }));
-    
+    const uniqueNames = [
+      ...new Set(products.map((product) => product.name)),
+    ].sort();
+    const options = uniqueNames.map((name) => ({
+      value: name,
+      label: name,
+      checked: false,
+    }));
+
     setFilterOptions(options);
   }, [products]);
 
@@ -115,7 +119,7 @@ export default function Pharmacies() {
     ) {
       return true;
     }
-  
+
     // Check if the product name matches any selected filter option and search query
     return (
       (filterOptions.some(
@@ -125,8 +129,6 @@ export default function Pharmacies() {
       product.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
     );
   });
-  
-
 
   // Get the products for the current page
   const currentProducts = filteredProducts.slice(
@@ -135,12 +137,32 @@ export default function Pharmacies() {
   );
 
   const clearFilters = () => {
-    setFilterOptions(filterOptions.map(option => ({ ...option, checked: false })));
+    setFilterOptions(
+      filterOptions.map((option) => ({ ...option, checked: false }))
+    );
     setSearchQuery(""); // Clear the search query
   };
 
+  const addToCart = async (productId, quantity) => {
+    const token = localStorage.getItem("token"); // Get the token from local storage
+    const response = await fetch("http://localhost:8081/payment/add-to-cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token, // Include the token in the request headers
+      },
+      body: JSON.stringify({ productId, quantity }),
+    });
+
+    if (response.ok) {
+      alert("Product added to cart successfully");
+    } else {
+      alert("An error occurred while adding the product to the cart");
+    }
+  };
+
   return (
-    <div className="bg-gray-100">
+    <div className="bg-gray-100 mt-12">
       <div>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -314,29 +336,29 @@ export default function Pharmacies() {
 
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
-              <div>
-                    <div className="relative pl-1">
-                      <input
-                        className="appearance-none border-2 pl-10 border-gray-300 hover:border-gray-400 transition-colors rounded-md w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-purple-600 focus:border-purple-600 focus:shadow-outline"
-                        type="text"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
+                <div>
+                  <div className="relative pl-1">
+                    <input
+                      className="appearance-none border-2 pl-10 border-gray-300 hover:border-gray-400 transition-colors rounded-md w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-purple-600 focus:border-purple-600 focus:shadow-outline"
+                      type="text"
+                      placeholder="Search..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
 
-                      <div className="absolute left-0 inset-y-0 flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6 ml-3 text-gray-400 hover:text-gray-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                      </div>
+                    <div className="absolute left-0 inset-y-0 flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 ml-3 text-gray-400 hover:text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
                     </div>
                   </div>
+                </div>
                 {/* <div>
                   <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
                     Sort
@@ -443,7 +465,8 @@ export default function Pharmacies() {
                                     type="checkbox"
                                     onChange={(e) => {
                                       const updatedOptions = [...filterOptions];
-                                      updatedOptions[optionIdx].checked = e.target.checked;
+                                      updatedOptions[optionIdx].checked =
+                                        e.target.checked;
                                       setFilterOptions(updatedOptions);
                                     }}
                                     defaultChecked={option.checked}
@@ -467,7 +490,10 @@ export default function Pharmacies() {
               </div>
               <div className="lg:w-3/4">
                 {currentProducts.map((product) => (
-                  <div key={`${pharmacy.id}-${product.id}`} className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+                  <div
+                    key={`${pharmacy.id}-${product.id}`}
+                    className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md"
+                  >
                     <a
                       className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
                       href="#"
@@ -480,7 +506,10 @@ export default function Pharmacies() {
                       )}
                       <img
                         className="object-cover"
-                        src={`http://localhost:8081/${product.image.replace("\\", "/")}`}
+                        src={`http://localhost:8081/${product.image.replace(
+                          "\\",
+                          "/"
+                        )}`}
                         alt="product image"
                       />
                     </a>
@@ -502,8 +531,8 @@ export default function Pharmacies() {
                         >
                           View Product
                         </Link>
-                        <a
-                          href="#"
+                        <button
+                          onClick={() => addToCart(product.id, 1)}
                           className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
                         >
                           <svg
@@ -515,7 +544,7 @@ export default function Pharmacies() {
                           >
                             <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>

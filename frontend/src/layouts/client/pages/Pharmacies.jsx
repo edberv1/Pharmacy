@@ -179,7 +179,7 @@ export default function Pharmacies() {
   );
 
   return (
-    <div className="bg-gray-100">
+    <div className="bg-gray-100 mt-12">
       <div>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContexts";
 import { Menu, Transition } from "@headlessui/react";
 
+
 function Navbar() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
@@ -23,7 +24,8 @@ function Navbar() {
   }, [user]);
 
   return (
-    <nav className="border-gray-200 bg-gray-900 text-white">
+    <>
+    <nav className="fixed top-0 w-full z-50 bg-gray-900 text-white">
       <div className="flex flex-wrap justify-around items-center mx-auto max-w-screen-xl p-4">
         <Link
           to="/"
@@ -122,45 +124,6 @@ function Navbar() {
               </Menu>
             </div>
 
-            {/* <Link
-              to="/pharmacies"
-              className="text-md text-white dark:text-white-500 hover:underline"
-            >
-              <i className="fa-solid fa-hospital pr-2"></i>
-              Pharmacies
-            </Link>
-
-            <Link
-              to="/cart"
-              className="text-md text-white dark:text-white-500 hover:underline"
-            >
-              <i className="fa-solid fa-hospital pr-2"></i>
-              Cart
-            </Link>
-
-            <Link
-              to="/aboutUs"
-              className="text-md text-white dark:text-white-500 hover:underline"
-            >
-              <i className="fa-solid fa-regular fa-circle-info pr-2"></i>
-              About Us
-            </Link>
-
-            <Link
-              to="/profile"
-              className="text-md text-white dark:text-white-500 hover:underline"
-            >
-              <i className="fa-solid fa-user pr-2"></i>
-              Profile
-            </Link> */}
-            {/* <Link
-              to="/login"
-              onClick={handleLogout}
-              className="text-md pl-2 text-white dark:text-white-500 hover:underline"
-            >
-              <i className="fa-solid text-white fa-right-to-bracket pr-2"></i>
-              Logout
-            </Link>  */}
           </div>
         ) : (
           <div className="flex items-center w-3/4 space-x-2 rtl:space-x-reverse">
@@ -196,6 +159,8 @@ function Navbar() {
         )}
       </div>
     </nav>
+
+    </>
   );
 }
 
