@@ -29,6 +29,7 @@ import ProductDetails from "./layouts/client/components/ProductDetails";
 import Cart from "./layouts/client/components/Cart";
 import License from "./layouts/admin/pages/License";
 import StatisticsAdmin from "./layouts/admin/pages/StatisticsAdmin"
+import Contacts from "./layouts/superadmin/pages/Contacts" 
 
 function App() {
   const AdminRoute = withRole(Admin, "admin");
@@ -43,7 +44,8 @@ function App() {
   const LicenseRoute = withRole(License, "admin")
   const MyPharmaciesRoute = withRole(MyPharmacies, "admin");
   const MyPharmacyDetailsRoute = withRole(MyPharmacyDetails , "admin");
-  const StatisticsAdminRoute = withRole(StatisticsAdmin, "admin")
+  const StatisticsAdminRoute = withRole(StatisticsAdmin, "admin");
+  const ContactsRoute = withRole(Contacts, "superadmin");
 
   return (
     <Router>
@@ -88,6 +90,7 @@ function App() {
 
           <Route path="requests" element={<RequestsRoute />} />
           <Route path="statistics" element={<StatisticsRoute />} />
+          <Route path="contacts" element={<ContactsRoute />} />
         </Route>
         {/* SuperAdmin Routes */}
 

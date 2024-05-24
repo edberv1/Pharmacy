@@ -376,6 +376,26 @@ const getLocationChart = async (req, res) => {
   });
 };
 
+const getLowStock = async (req, res) => {
+  const userId = req.user.id; // Assuming you have userId in the request
+  const query =
+    "SELECT products.*, pharmacies.name as pharmacyName FROM products INNER JOIN pharmacies ON products.pharmacyId = pharmacies.id WHERE products.stock < 20 AND pharmacies.userId = ?";
+  db.query(query, userId, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "No products found" });
+    }
+    res.json(results);
+  });
+};
+
+
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
@@ -392,4 +412,5 @@ module.exports = {
   deletePharmacy,
   getLicenseInfo,
   getLocationChart,
+  getLowStock
 };

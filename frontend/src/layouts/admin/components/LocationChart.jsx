@@ -101,6 +101,7 @@ const LocationChart = () => {
   };
 
   return (
+
     <Chart
       options={chartOptions}
       series={series}
