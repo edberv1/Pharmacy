@@ -375,6 +375,22 @@ const getLicenseInfo = async (req, res) => {
   });
 };
 
+const getLocationChart = async (req, res) => {
+  const userId = req.user.id; // Get the user's ID from the request
+
+  const sql = `
+    SELECT location, COUNT(*) as count
+    FROM pharmacies
+    WHERE userId = ?
+    GROUP BY location
+  `;
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) throw err;
+    res.json(result);
+  });
+};
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
@@ -389,5 +405,6 @@ module.exports = {
   createPharmacy,
   editPharmacy,
   deletePharmacy,
-  getLicenseInfo
+  getLicenseInfo,
+  getLocationChart
 };

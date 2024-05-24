@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
 const imageUpload = require('../services/imageUpload');
-const {getUserProfile, updateUserProfile, changePassword, getAllProducts,getPharmaciesForUser, createProduct, editProduct, deleteProduct, getPharmacyById, getPharmacyProducts, createPharmacy, editPharmacy, deletePharmacy, getLicenseInfo} = require('../controllers/adminController');
+const {getUserProfile, updateUserProfile, changePassword, getAllProducts,getPharmaciesForUser, createProduct, editProduct, deleteProduct, getPharmacyById, getPharmacyProducts, createPharmacy, editPharmacy, deletePharmacy, getLicenseInfo, getLocationChart} = require('../controllers/adminController');
 
 
 router.get("/getUserProfile", authMiddleware,  getUserProfile); 
@@ -24,5 +24,5 @@ router.put("/editPharmacy/:id", authMiddleware, editPharmacy);
 router.delete('/deletePharmacy/:id', authMiddleware, deletePharmacy); 
 
 router.get('/getLicenseInfo', authMiddleware, getLicenseInfo);
-
+router.get('/getLocationChart', authMiddleware, getLocationChart)
 module.exports = router;

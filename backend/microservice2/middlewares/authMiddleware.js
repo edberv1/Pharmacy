@@ -14,7 +14,8 @@ const authMiddleware = (req, res, next) => {
     if (err) {
       return res.status(500).send({ auth: false, message: 'Failed to authenticate token: ' + err.message });
     }
-    req.userId = decoded.id;
+    // Set req.user to an object with the id property
+    req.user = { id: decoded.id };
     next();
   });
 };
