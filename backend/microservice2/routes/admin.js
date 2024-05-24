@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware  = require('../middlewares/authMiddleware');
 const imageUpload = require('../services/imageUpload');
-const {getUserProfile, updateUserProfile, changePassword, getAllProducts,getPharmaciesForUser, createProduct, editProduct, deleteProduct, getPharmacyById, getPharmacyProducts, createPharmacy, editPharmacy, deletePharmacy } = require('../controllers/adminController');
+const {getUserProfile, updateUserProfile, changePassword, getAllProducts,getPharmaciesForUser, createProduct, editProduct, deleteProduct, getPharmacyById, getPharmacyProducts, createPharmacy, editPharmacy, deletePharmacy, getLicenseInfo} = require('../controllers/adminController');
 
 
 router.get("/getUserProfile", authMiddleware,  getUserProfile); 
@@ -23,6 +23,6 @@ router.post("/createPharmacy", authMiddleware, createPharmacy);
 router.put("/editPharmacy/:id", authMiddleware, editPharmacy);
 router.delete('/deletePharmacy/:id', authMiddleware, deletePharmacy); 
 
-router.get('/');
+router.get('/getLicenseInfo', authMiddleware, getLicenseInfo);
 
 module.exports = router;

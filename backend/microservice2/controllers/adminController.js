@@ -86,8 +86,6 @@ const changePassword = (req, res) => {
 //   });
 // };
 
-
-
 const getAllProducts = async (req, res) => {
   const userId = req.userId; // Assuming you have userId in the request
   const query =
@@ -124,9 +122,9 @@ const getPharmaciesForUser = async (req, res) => {
 };
 
 const createProduct = async (req, res) => {
-  console.log('Received request to create product...');
-  console.log('Request body:', req.body);
-  console.log('Uploaded file:', req.file);
+  console.log("Received request to create product...");
+  console.log("Request body:", req.body);
+  console.log("Uploaded file:", req.file);
 
   const { name, description, produced, price, pharmacyId, stock } = req.body;
 
@@ -161,7 +159,6 @@ const createProduct = async (req, res) => {
     }
   );
 };
-
 
 const editProduct = async (req, res) => {
   const productId = req.params.id;
@@ -349,6 +346,35 @@ const deletePharmacy = async (req, res) => {
   });
 };
 
+const getLicenseInfo = async (req, res) => {
+  const userId = req.userId;
+
+  const query = `
+  SELECT users.firstname, users.lastname, users.email, license.id, license.licenseId, license.issueDate, license.expiryDate, license.license, license.status
+  FROM users
+  INNER JOIN license ON users.id = license.userId
+  WHERE users.id = ?
+`;
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+
+    if (!results || results.length === 0) {
+      return res
+        .status(404)
+        .send({ message: "No license found for this user." });
+    }
+
+    const licenseInfo = results[0];
+    res.status(200).json(licenseInfo);
+  });
+};
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
@@ -363,4 +389,5 @@ module.exports = {
   createPharmacy,
   editPharmacy,
   deletePharmacy,
+  getLicenseInfo
 };

@@ -27,6 +27,7 @@ import PasswordResetRequest from "./layouts/client/components/PasswordResetReque
 import PasswordResetForm from "./layouts/client/components/PasswordResetForm";
 import ProductDetails from "./layouts/client/components/ProductDetails";
 import Cart from "./layouts/client/components/Cart";
+import License from "./layouts/admin/pages/License";
 
 function App() {
   const AdminRoute = withRole(Admin, "admin");
@@ -38,7 +39,7 @@ function App() {
   const ProfileAdminRoute = withRole(ProfileAdmin, "admin");
   const RequestsRoute = withRole(Requests, "superadmin");
   const StatisticsRoute = withRole(Statistics, "superadmin");
-
+  const LicenseRoute = withRole(License, "admin")
   const MyPharmaciesRoute = withRole(MyPharmacies, "admin");
   const MyPharmacyDetailsRoute = withRole(MyPharmacyDetails , "admin");
 
@@ -71,6 +72,7 @@ function App() {
           <Route path="myPharmacies" element={<MyPharmaciesRoute />} />
           <Route path="myPharmacies/:id" element={<MyPharmacyDetailsRoute />} /> 
 
+          <Route path="license" element={<LicenseRoute />} />
         </Route>
 
         {/* Admin Routes */}

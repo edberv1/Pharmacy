@@ -44,10 +44,10 @@ function Login() {
         // Navigate based on role
         switch (data.role) {
           case "superadmin":
-            navigate("/superadmin");
+            navigate("/superadmin/statistics");
             break;
           case "admin":
-            navigate("/admin");
+            navigate("/admin/statistics");
             break;
           default:
             navigate("/"); // default route for other roles

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'; 
 import { Link } from 'react-router-dom';
- import defaultImage from '../assests/pharmacydemo.jpg' // Import your default image
+import defaultImage from '../assests/pharmacydemo.jpg' // Import your default image
 
 function MyPharmacyCard({ id, name, location, street, imageUrl}) {
   return (
