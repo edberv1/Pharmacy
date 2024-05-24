@@ -6,6 +6,7 @@ const HeroSection = () => {
       className="h-[50vh] transition-opacity duration-1000 ease-in-out overflow-hidden mt-20"
       autoplay
       loop
+      navigation={false}
       prevArrow={({ handlePrev }) => (
         <IconButton
           variant="text"
