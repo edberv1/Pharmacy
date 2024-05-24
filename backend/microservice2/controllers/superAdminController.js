@@ -976,7 +976,18 @@ const generatePharmacies = async (req, res) => {
     });
   };
 
-
+  const getLocationChart = async (req, res) => {
+    const sql = `
+      SELECT location, COUNT(*) as count
+      FROM pharmacies
+      GROUP BY location
+    `;
+  
+    db.query(sql, (err, result) => {
+      if (err) throw err;
+      res.json(result);
+    });
+  };
 
 
 module.exports = {
@@ -1007,5 +1018,6 @@ module.exports = {
   downloadLicense,
   generateExcel,
   generatePharmacies,
-  pendingCount
+  pendingCount,
+  getLocationChart
 };

@@ -3,7 +3,7 @@ const User = require("../models/userModel.js");
 const bcrypt = require("bcrypt");
 
 const getUserProfile = (req, res) => {
-  const userId = req.userId; // assuming the userId is set in the request
+  const userId = req.user.id; // assuming the userId is set in the request
 
   User.getUserById(userId, function (err, user) {
     if (err) {
@@ -17,8 +17,8 @@ const getUserProfile = (req, res) => {
 };
 
 const updateUserProfile = (req, res) => {
-  const { firstName, lastName, userId } = req.body; // Assuming you're sending userId in the request body
-
+  const { firstName, lastName } = req.body; // Assuming you're sending userId in the request body
+  const userId = req.user.id;
   // SQL query to update the user profile
   const sql = `UPDATE users SET firstname = ?, lastname = ? WHERE id = ?`; // Add WHERE clause here
 
@@ -36,8 +36,9 @@ const updateUserProfile = (req, res) => {
 
 const changePassword = (req, res) => {
   const { currentPassword, newPassword } = req.body;
+  const userId = req.user.id;
 
-  User.getUserById(req.userId, function (err, user) {
+  User.getUserById(userId, function (err, user) {
     if (err) {
       res.status(500).send({ message: "Database error." });
     } else if (!user) {
@@ -53,7 +54,7 @@ const changePassword = (req, res) => {
         const sql = `UPDATE users SET password = ? WHERE id = ?`;
 
         // Execute the query
-        db.query(sql, [hashedNewPassword, req.userId], (err, result) => {
+        db.query(sql, [hashedNewPassword, userId], (err, result) => {
           if (err) {
             console.error("Error updating user password: ", err);
             res.status(500).json({ message: "Server error" });
@@ -69,22 +70,6 @@ const changePassword = (req, res) => {
 };
 
 //==================================== PRODUCTS ===============================//
-
-// const getAllProducts = async (req, res) => {
-//   const query = "SELECT * FROM products";
-//   db.query(query, (err, results) => {
-//     if (err) {
-//       console.error("Error executing MySQL query: ", err);
-//       return res
-//         .status(500)
-//         .json({ error: "Internal Server Error", details: err.message });
-//     }
-//     if (!results || results.length === 0) {
-//       return res.status(404).json({ error: "No products found" });
-//     }
-//     res.json(results);
-//   });
-// };
 
 const getAllProducts = async (req, res) => {
   const userId = req.userId; // Assuming you have userId in the request
@@ -105,7 +90,7 @@ const getAllProducts = async (req, res) => {
 };
 
 const getPharmaciesForUser = async (req, res) => {
-  const userId = req.userId; // Assuming you have userId in the request
+  const userId = req.user.id; // Assuming you have userId in the request
   const query = "SELECT * FROM pharmacies WHERE userId = ?";
   db.query(query, userId, (err, results) => {
     if (err) {
@@ -267,7 +252,7 @@ const getPharmacyProducts = async (req, res) => {
 
 const createPharmacy = async (req, res) => {
   const { name, location, street } = req.body;
-  const userId = req.userId; // Assuming you have userId in the request
+  const userId = req.user.id; // Assuming you have userId in the request
 
   // Perform validation
   if (!name || !location || !street) {
@@ -347,7 +332,7 @@ const deletePharmacy = async (req, res) => {
 };
 
 const getLicenseInfo = async (req, res) => {
-  const userId = req.userId;
+  const userId = req.user.id;
 
   const query = `
   SELECT users.firstname, users.lastname, users.email, license.id, license.licenseId, license.issueDate, license.expiryDate, license.license, license.status
@@ -406,5 +391,5 @@ module.exports = {
   editPharmacy,
   deletePharmacy,
   getLicenseInfo,
-  getLocationChart
+  getLocationChart,
 };

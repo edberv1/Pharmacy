@@ -5,6 +5,7 @@ import DeletePharmacyModal from "./PharmacyModal/DeletePharmacyModal";
 import EditPharmacyModal from "./PharmacyModal/EditPharmacyModal";
 import Pagination from "./Pagination";
 import fetchWithTokenRefresh from "../../../../utils/fetchWithTokenRefresh";
+import AllLocations from "./AllLocations";
 
 function PharmacyTable() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -161,6 +162,7 @@ function PharmacyTable() {
 
   return (
     <>
+    <AllLocations/>
       <div className="mx-auto max-w-screen-xl pt-16 ">
         <div className="bg-white dark:bg-gray-900 relative shadow-md sm:rounded-lg overflow-hidden">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
