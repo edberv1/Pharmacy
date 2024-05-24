@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 
-export default function Partners() {
+export default function Section() {
   return (
     <div className="w-100 mx-auto px-6 sm:max-w-2xl md:max-w-3xl md:px-12 lg:max-w-5xl xl:max-w-7xl xl:px-32">
       <div className="text-center">
         <div className="block rounded-lg bg-[hsla(0,0%,100%,0.55)] px-6 py-12 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-[hsla(0,0%,5%,0.55)] dark:shadow-black/20 md:py-16 md:px-12 mt-[-170px] backdrop-blur-[30px]">
           <h1 className="text-white mt-2 mb-16 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl">
-            The best offer on the market <br />
-            <span className="text-gray-900">for your business</span>
+            Pharmacies business <br />
+            <span className="text-gray-900">digitalised</span>
           </h1>
           <Link 
             to="/pharmacyForm"

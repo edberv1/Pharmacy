@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContexts";
 import { Menu, Transition } from "@headlessui/react";
 
 function Navbar() {
-  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [productSuggestions, setProductSuggestions] = useState([]);
@@ -34,14 +33,26 @@ function Navbar() {
   }, [searchQuery]);
 
   const handleLogout = () => {
-    if (window.confirm("Confirm Logout?")) {
-      setUser({ email: null, posts: [] });
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
-      localStorage.removeItem("email");
-      localStorage.removeItem("userId");
-      navigate("/");
-    }
+    // Call the logout API
+    fetch("http://localhost:8081/users/logoutUser", {
+      method: "POST", // or 'DELETE'
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify({ token: localStorage.getItem("token") }), // send the token in the request body
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.auth === false && data.token === null) {
+          // Remove the token from local storage
+          localStorage.removeItem("token");
+          localStorage.removeItem("email");
+          localStorage.removeItem("role");
+          // Redirect the user to the login page (or wherever you want)
+          window.location.href = "/";
+        }
+      });
   };
 
   useEffect(() => {

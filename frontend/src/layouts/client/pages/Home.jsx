@@ -1,13 +1,13 @@
 import HeroSection from "../components/HeroSection";
 import Contact from "../components/Contact";
 import ShowProducts from "../components/ShowProducts";
-import Partners from "../components/Partners"
+import Section from "../components/Section"
 
 function Home() {
   return (
     <>
     <HeroSection/>
-    <Partners/>
+    <Section/>
     <ShowProducts />
     <Contact/>  
      </>

@@ -147,7 +147,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
               type="file"
               name="image"
               className="mt-4 mb-4 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-              accept=".png"
+              accept=".jpg,.jpeg,.png"
               onChange={handleImageChange}
             />
           </div>
