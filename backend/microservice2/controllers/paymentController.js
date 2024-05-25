@@ -79,7 +79,7 @@ const handlePaymentSuccess = async (req, res) => {
     const userId = session.metadata.userId;
 
     db.query(
-      `SELECT productId, quantity FROM cart WHERE userId = ?`, [userId],
+      `SELECT c.productId, c.quantity, p.price FROM cart c JOIN products p ON c.productId = p.id WHERE c.userId = ?`, [userId],
       async (err, cartItems) => {
         if (err) {
           console.error('Database query error:', err);
@@ -100,12 +100,33 @@ const handlePaymentSuccess = async (req, res) => {
 
         try {
           await Promise.all(productUpdates);
-          db.query(`DELETE FROM cart WHERE userId = ?`, [userId], (err, result) => {
+          db.query(`DELETE FROM cart WHERE userId = ?`, [userId], async (err, result) => {
             if (err) {
               console.error('Database query error:', err);
               return res.status(500).send("Database error");
             }
-            res.json({ received: true });
+
+            // Insert sales record
+            const salesInserts = cartItems.map(item => (
+              new Promise((resolve, reject) => {
+                db.query(
+                  `INSERT INTO sales (userId, productId, quantity, salePrice, saleDate) VALUES (?, ?, ?, ?, NOW())`,
+                  [userId, item.productId, item.quantity, item.price],
+                  (err, result) => {
+                    if (err) return reject(err);
+                    resolve(result);
+                  }
+                );
+              })
+            ));
+
+            try {
+              await Promise.all(salesInserts);
+              res.json({ received: true });
+            } catch (err) {
+              console.error('Error inserting sales record:', err);
+              res.status(500).send("Database error");
+            }
           });
         } catch (err) {
           console.error('Error updating stock:', err);
@@ -117,6 +138,7 @@ const handlePaymentSuccess = async (req, res) => {
     res.json({ received: true });
   }
 };
+
 
 const addToCart = async (req, res) => {
   try {

@@ -190,6 +190,30 @@ const runMigrations = (pool) => {
           console.log('Cart Table created successfully');
         });
 
+        // Create Cart Table
+        const createTableQuerySales = `
+          CREATE TABLE IF NOT EXISTS sales (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            userId INT NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+            productId INT NOT NULL,
+            FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE,
+            quantity INT NOT NULL,
+            salePrice INT NOT NULL,
+            saleDate DATETIME
+          )
+        `;
+        
+        connection.query(createTableQuerySales, (err, result) => {
+          if (err) {
+            console.error('Error creating sales table:', err);
+            connection.release();
+            return;
+          }
+          console.log('Sales Table created successfully');
+        });
+
+
       });
     });
   });
