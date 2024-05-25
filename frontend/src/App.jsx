@@ -30,6 +30,7 @@ import Cart from "./layouts/client/components/Cart";
 import License from "./layouts/admin/pages/License";
 import StatisticsAdmin from "./layouts/admin/pages/StatisticsAdmin"
 import Contacts from "./layouts/superadmin/pages/Contacts" 
+import Success from "./layouts/client/components/Success";
 
 function App() {
   const AdminRoute = withRole(Admin, "admin");
@@ -65,6 +66,7 @@ function App() {
           <Route path="/password-reset-request" element={<PasswordResetRequest />} />
           <Route path="/password-reset-form" element={<PasswordResetForm />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/payment-success" element={<Success />} />
 
         </Route>
 

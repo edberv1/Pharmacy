@@ -232,9 +232,12 @@ const ProductDetails = () => {
                   {product.price}€
                 </span>
                 <button
-                  onClick={() => addToCart(productId, selectedQuantity)}
-                  className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded"
-                >
+  onClick={() => {
+    console.log(`Adding product ${productId} with quantity ${selectedQuantity} to cart`);
+    addToCart(productId, selectedQuantity);
+  }}
+  className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded"
+>
                   <span className="justify-center align-center pr-2">
                     Add to cart
                   </span>
