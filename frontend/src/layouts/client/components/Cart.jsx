@@ -78,37 +78,30 @@ export default function Cart() {
   };
 
   const handleCheckout = async (event) => {
-    // Get Stripe.js instance
     const stripe = await stripePromise;
-
-    // Get the token from local storage
     const token = localStorage.getItem("token");
-
-    // Call your backend to create the Checkout Session
+  
     const response = await fetch(
       "http://localhost:8081/payment/create-checkout-session",
       {
         method: "POST",
         headers: {
-          "x-access-token": token, // Include the token in the request headers
+          "x-access-token": token,
         },
       }
     );
-
+  
     const session = await response.json();
-
-    // When the customer clicks on the button, redirect them to Checkout.
+  
     const result = await stripe.redirectToCheckout({
       sessionId: session.id,
     });
-
+  
     if (result.error) {
-      // If `redirectToCheckout` fails due to a browser or network
-      // error, display the localized error message to your customer
-      // using `result.error.message`.
       alert(result.error.message);
     }
   };
+  
 
   return (
     <section className="relative mt-12 z-10 after:contents-[''] after:absolute after:z-0 after:h-full xl:after:w-1/3 after:top-0 after:right-0 after:bg-gray-50">

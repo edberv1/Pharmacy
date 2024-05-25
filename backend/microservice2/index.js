@@ -18,7 +18,11 @@ app.use(
 );
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
+
+// Apply bodyParser.json() middleware only to specific routes
+app.use(['/users', '/admin', '/superAdmin', '/uploads'], bodyParser.json());
+
+
 app.use(
   session({
     key: "id",
@@ -36,7 +40,6 @@ app.use('/admin', adminRouter);
 app.use('/superAdmin', superAdminRouter);
 app.use('/payment', paymentRouter);
 app.use('/uploads', express.static('uploads'));
-
 
 app.listen(8081, () => {
   console.log("Listening to port 8081")
