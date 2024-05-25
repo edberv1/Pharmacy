@@ -395,6 +395,47 @@ const getLowStock = async (req, res) => {
 };
 
 
+const getStatistics = async (req, res) => {
+  const userId = req.user.id; // Assuming you have userId in the request
+
+  // Query to get the number of pharmacies
+  const query1 = 'SELECT COUNT(*) as pharmacies FROM pharmacies WHERE userId = ?';
+
+  // Query to get the balance
+  const query2 = 'SELECT SUM(price * stock) as balance FROM products WHERE pharmacyId IN (SELECT id FROM pharmacies WHERE userId = ?)';
+
+  // Query to get the number of products
+  const query3 = 'SELECT SUM(stock) as products FROM products WHERE pharmacyId IN (SELECT id FROM pharmacies WHERE userId = ?)';
+
+  db.query(query1, userId, (err, results) => {
+    if (err) {
+      console.error('Error executing MySQL query: ', err);
+      return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+    }
+
+    const pharmacies = results[0].pharmacies;
+
+    db.query(query2, userId, (err, results) => {
+      if (err) {
+        console.error('Error executing MySQL query: ', err);
+        return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+      }
+
+      const balance = results[0].balance;
+
+      db.query(query3, userId, (err, results) => {
+        if (err) {
+          console.error('Error executing MySQL query: ', err);
+          return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+        }
+
+        const products = results[0].products;
+
+        res.json({ pharmacies, balance, products });
+      });
+    });
+  });
+};
 
 module.exports = {
   getUserProfile,
@@ -412,5 +453,6 @@ module.exports = {
   deletePharmacy,
   getLicenseInfo,
   getLocationChart,
-  getLowStock
+  getLowStock,
+  getStatistics
 };

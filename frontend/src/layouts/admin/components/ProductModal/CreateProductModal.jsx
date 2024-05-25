@@ -67,13 +67,13 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
       console.log(responseData);
       onClose();
       setFormSubmitted(true);
-      showAlert("Profile updated successfully", "success");
+
+      showAlert("Product created successfully", "success");
       
     } catch (error) {
-      showAlert("Error updating profile", "error");
+      showAlert("Error creating product", "error");
       setError(error.message);
       setFormSubmitted(false);
-      
     }
   };
 
