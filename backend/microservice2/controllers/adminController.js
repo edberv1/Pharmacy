@@ -394,50 +394,60 @@ const getLowStock = async (req, res) => {
   });
 };
 
-
 const getStatistics = async (req, res) => {
   const userId = req.user.id; // Assuming you have userId in the request
 
   // Query to get the number of pharmacies
-  const query1 = 'SELECT COUNT(*) as pharmacies FROM pharmacies WHERE userId = ?';
+  const query1 =
+    "SELECT COUNT(*) as pharmacies FROM pharmacies WHERE userId = ?";
 
   // Query to get the balance
-  const query2 = 'SELECT SUM(price * stock) as balance FROM products WHERE pharmacyId IN (SELECT id FROM pharmacies WHERE userId = ?)';
+  const query2 =
+    "SELECT SUM(price * stock) as balance FROM products WHERE pharmacyId IN (SELECT id FROM pharmacies WHERE userId = ?)";
 
   // Query to get the number of products
-  const query3 = 'SELECT SUM(stock) as products FROM products WHERE pharmacyId IN (SELECT id FROM pharmacies WHERE userId = ?)';
+  const query3 =
+    "SELECT SUM(stock) as products FROM products WHERE pharmacyId IN (SELECT id FROM pharmacies WHERE userId = ?)";
 
   // Query to get the number of sales
-  const query4 = 'SELECT COUNT(*) as sales FROM sales WHERE sellerId = ?';
+  const query4 = "SELECT COUNT(*) as sales FROM sales WHERE sellerId = ?";
 
   db.query(query1, userId, (err, results) => {
     if (err) {
-      console.error('Error executing MySQL query: ', err);
-      return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
     }
 
     const pharmacies = results[0].pharmacies;
 
     db.query(query2, userId, (err, results) => {
       if (err) {
-        console.error('Error executing MySQL query: ', err);
-        return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+        console.error("Error executing MySQL query: ", err);
+        return res
+          .status(500)
+          .json({ error: "Internal Server Error", details: err.message });
       }
 
       const balance = results[0].balance;
 
       db.query(query3, userId, (err, results) => {
         if (err) {
-          console.error('Error executing MySQL query: ', err);
-          return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+          console.error("Error executing MySQL query: ", err);
+          return res
+            .status(500)
+            .json({ error: "Internal Server Error", details: err.message });
         }
 
         const products = results[0].products;
 
         db.query(query4, userId, (err, results) => {
           if (err) {
-            console.error('Error executing MySQL query: ', err);
-            return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+            console.error("Error executing MySQL query: ", err);
+            return res
+              .status(500)
+              .json({ error: "Internal Server Error", details: err.message });
           }
 
           const sales = results[0].sales;
@@ -448,6 +458,30 @@ const getStatistics = async (req, res) => {
     });
   });
 };
+
+const getSalesData = async (req, res) => {
+  const userId = req.user.id;
+  const days = req.query.days || 7;
+
+  const query = `SELECT ph.name as pharmacyName, DATE(s.saleDate) as saleDate, COUNT(*) as sales 
+                 FROM sales s 
+                 JOIN products p ON s.productId = p.id 
+                 JOIN pharmacies ph ON p.pharmacyId = ph.id 
+                 WHERE s.sellerId = ? AND s.saleDate >= NOW() - INTERVAL ? DAY
+                 GROUP BY ph.name, DATE(s.saleDate)`;
+
+  db.query(query, [userId, days], (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+
+    res.json(results);
+  });
+};
+
 
 
 module.exports = {
@@ -467,5 +501,6 @@ module.exports = {
   getLicenseInfo,
   getLocationChart,
   getLowStock,
-  getStatistics
+  getStatistics,
+  getSalesData,
 };

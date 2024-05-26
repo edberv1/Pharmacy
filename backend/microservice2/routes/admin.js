@@ -19,7 +19,8 @@ const {
   getLicenseInfo,
   getLocationChart,
   getLowStock,
-  getStatistics
+  getStatistics,
+  getSalesData
 } = require("../controllers/adminController");
 
 router.get("/getUserProfile", authMiddleware, getUserProfile);
@@ -45,4 +46,7 @@ router.get("/getLocationChart", authMiddleware, getLocationChart);
 
 router.get("/getLowStock", authMiddleware, getLowStock);
 router.get("/getStatistics", authMiddleware, getStatistics);
+router.get('/getSalesData', authMiddleware, getSalesData);
+
+
 module.exports = router;

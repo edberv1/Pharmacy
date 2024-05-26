@@ -106,7 +106,7 @@ const LocationChart = () => {
       options={chartOptions}
       series={series}
       type="donut"
-      width="50%"
+      width="100%"
       height="400"
     />
   );
