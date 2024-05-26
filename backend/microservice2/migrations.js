@@ -200,7 +200,9 @@ const runMigrations = (pool) => {
             FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE,
             quantity INT NOT NULL,
             salePrice INT NOT NULL,
-            saleDate DATETIME
+            saleDate DATETIME,
+            sellerId INT NOT NULL,
+            FOREIGN KEY(sellerId) references users(id) on DELETE CASCADE
           )
         `;
         

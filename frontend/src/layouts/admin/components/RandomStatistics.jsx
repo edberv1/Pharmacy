@@ -4,6 +4,7 @@ function RandomStatistics() {
   const [pharmacies, setPharmacies] = useState(0);
   const [balance, setBalance] = useState(0);
   const [products, setProducts] = useState(0);
+  const [sales, setSales] = useState(0);
 
   const fetchData = async () => {
     try {
@@ -24,6 +25,7 @@ function RandomStatistics() {
       setPharmacies(data.pharmacies);
       setBalance(data.balance);
       setProducts(data.products);
+      setSales(data.sales);
     } catch (error) {
       console.error("Error fetching user data: ", error);
     }
@@ -61,7 +63,7 @@ function RandomStatistics() {
           </div>
           <div>
             <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-              Balance
+              Total value
             </p>
             <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
               $ {balance.toFixed(2)}
@@ -82,6 +84,23 @@ function RandomStatistics() {
             </p>
             <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
               {products}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="min-w-0 rounded-lg shadow-xs overflow-hidden bg-white dark:bg-gray-800">
+        <div className="p-4 flex items-center">
+          <div className="p-3 rounded-full text-purple-500 dark:text-purple-100 bg-purple-100 dark:bg-purple-500 mr-4">
+            <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
+              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13h2v4h-2V5zm0 6h2v4h-2v-4z"></path>
+            </svg>
+          </div>
+          <div>
+            <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+              Orders Completed
+            </p>
+            <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+              {sales}
             </p>
           </div>
         </div>

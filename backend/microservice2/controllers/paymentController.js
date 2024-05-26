@@ -76,10 +76,10 @@ const handlePaymentSuccess = async (req, res) => {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const userId = session.metadata.userId;
+    const buyerId = session.metadata.userId;
 
     db.query(
-      `SELECT c.productId, c.quantity, p.price FROM cart c JOIN products p ON c.productId = p.id WHERE c.userId = ?`, [userId],
+      `SELECT c.productId, c.quantity, p.price, ph.userId as sellerId FROM cart c JOIN products p ON c.productId = p.id JOIN pharmacies ph ON p.pharmacyId = ph.id WHERE c.userId = ?`, [buyerId],
       async (err, cartItems) => {
         if (err) {
           console.error('Database query error:', err);
@@ -100,7 +100,7 @@ const handlePaymentSuccess = async (req, res) => {
 
         try {
           await Promise.all(productUpdates);
-          db.query(`DELETE FROM cart WHERE userId = ?`, [userId], async (err, result) => {
+          db.query(`DELETE FROM cart WHERE userId = ?`, [buyerId], async (err, result) => {
             if (err) {
               console.error('Database query error:', err);
               return res.status(500).send("Database error");
@@ -110,8 +110,8 @@ const handlePaymentSuccess = async (req, res) => {
             const salesInserts = cartItems.map(item => (
               new Promise((resolve, reject) => {
                 db.query(
-                  `INSERT INTO sales (userId, productId, quantity, salePrice, saleDate) VALUES (?, ?, ?, ?, NOW())`,
-                  [userId, item.productId, item.quantity, item.price],
+                  `INSERT INTO sales (userId, sellerId, productId, quantity, salePrice, saleDate) VALUES (?, ?, ?, ?, ?, NOW())`,
+                  [buyerId, item.sellerId, item.productId, item.quantity, item.price],
                   (err, result) => {
                     if (err) return reject(err);
                     resolve(result);
@@ -138,6 +138,7 @@ const handlePaymentSuccess = async (req, res) => {
     res.json({ received: true });
   }
 };
+
 
 
 const addToCart = async (req, res) => {

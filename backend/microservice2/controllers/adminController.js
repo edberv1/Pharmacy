@@ -407,6 +407,9 @@ const getStatistics = async (req, res) => {
   // Query to get the number of products
   const query3 = 'SELECT SUM(stock) as products FROM products WHERE pharmacyId IN (SELECT id FROM pharmacies WHERE userId = ?)';
 
+  // Query to get the number of sales
+  const query4 = 'SELECT COUNT(*) as sales FROM sales WHERE sellerId = ?';
+
   db.query(query1, userId, (err, results) => {
     if (err) {
       console.error('Error executing MySQL query: ', err);
@@ -431,11 +434,21 @@ const getStatistics = async (req, res) => {
 
         const products = results[0].products;
 
-        res.json({ pharmacies, balance, products });
+        db.query(query4, userId, (err, results) => {
+          if (err) {
+            console.error('Error executing MySQL query: ', err);
+            return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+          }
+
+          const sales = results[0].sales;
+
+          res.json({ pharmacies, balance, products, sales });
+        });
       });
     });
   });
 };
+
 
 module.exports = {
   getUserProfile,
