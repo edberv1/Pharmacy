@@ -20,7 +20,12 @@ const {
   getLocationChart,
   getLowStock,
   getStatistics,
-  getSalesData
+  getSalesData,
+  getMostSoldProduct,
+  getTotalSales,
+  getLeastSoldProduct,
+  getMostProfitableProduct
+
 } = require("../controllers/adminController");
 
 router.get("/getUserProfile", authMiddleware, getUserProfile);
@@ -48,5 +53,9 @@ router.get("/getLowStock", authMiddleware, getLowStock);
 router.get("/getStatistics", authMiddleware, getStatistics);
 router.get('/getSalesData', authMiddleware, getSalesData);
 
+router.get('/getMostSoldProduct', authMiddleware, getMostSoldProduct);
+router.get('/getTotalSales', authMiddleware, getTotalSales);
+router.get('/getLeastSoldProduct', authMiddleware, getLeastSoldProduct);
+router.get('/getMostProfitableProduct', authMiddleware, getMostProfitableProduct);
 
 module.exports = router;

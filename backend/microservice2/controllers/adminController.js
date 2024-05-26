@@ -481,8 +481,94 @@ const getSalesData = async (req, res) => {
     res.json(results);
   });
 };
+const getMostSoldProduct = async (req, res) => {
+  const userId = req.user.id; // Assuming you have userId in the request
 
+  // Query to get the product that was sold the most
+  const query = `SELECT p.name as productName, SUM(s.quantity) as quantity
+                 FROM sales s
+                 JOIN products p ON s.productId = p.id
+                 WHERE s.sellerId = ?
+                 GROUP BY p.name
+                 ORDER BY quantity DESC
+                 LIMIT 1`;
 
+  db.query(query, userId, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+
+    res.json(results[0]);
+  });
+};
+
+const getTotalSales = async (req, res) => {
+  const userId = req.user.id; // Assuming you have userId in the request
+
+  // Query to get the total sales
+  const query = `SELECT SUM(s.salePrice * s.quantity) as totalSales
+                 FROM sales s
+                 WHERE s.sellerId = ?`;
+
+  db.query(query, userId, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+
+    res.json(results[0]);
+  });
+};
+
+const getLeastSoldProduct = async (req, res) => {
+  const userId = req.user.id; // Assuming you have userId in the request
+
+  // Query to get the least sold product
+  const query = `SELECT p.name as productName, IFNULL(SUM(s.quantity), 0) as quantitySold
+                 FROM products p
+                 LEFT JOIN sales s ON p.id = s.productId AND s.sellerId = ?
+                 WHERE p.pharmacyId IN (SELECT id FROM pharmacies WHERE userId = ?)
+                 GROUP BY p.name
+                 ORDER BY quantitySold ASC
+                 LIMIT 1`;
+
+  db.query(query, [userId, userId], (err, results) => {
+    if (err) {
+      console.error('Error executing MySQL query: ', err);
+      return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+    }
+
+    res.json(results[0]);
+  });
+};
+
+const getMostProfitableProduct = async (req, res) => {
+  const userId = req.user.id; // Assuming you have userId in the request
+
+  const query = `SELECT p.name as productName, SUM(s.salePrice * s.quantity) as profit
+                 FROM sales s
+                 JOIN products p ON s.productId = p.id
+                 WHERE s.sellerId = ?
+                 GROUP BY p.name
+                 ORDER BY profit DESC
+                 LIMIT 1`;
+
+  db.query(query, userId, (err, results) => {
+    if (err) {
+      console.error("Error executing MySQL query: ", err);
+      return res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
+    }
+
+    res.json(results[0]);
+  });
+};
 
 module.exports = {
   getUserProfile,
@@ -503,4 +589,8 @@ module.exports = {
   getLowStock,
   getStatistics,
   getSalesData,
+  getMostSoldProduct,
+  getTotalSales,
+  getLeastSoldProduct,
+  getMostProfitableProduct,
 };

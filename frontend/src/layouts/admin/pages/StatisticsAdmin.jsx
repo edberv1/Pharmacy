@@ -2,24 +2,26 @@ import StatisticsCard from "../components/StatisticsCard";
 import LocationChart from "../components/LocationChart";
 import RandomStatistics from "../components/RandomStatistics";
 import SalesChart from "../components/SalesChart";
-
+import CardStatistics from "../components/CardStatistics";
 
 function StatisticsAdmin() {
   return (
     <div>
-      <RandomStatistics/>
-      <StatisticsCard />
-
-
+      <RandomStatistics />
+      <CardStatistics />
+      
       <div className="flex justify-between">
         <div className="w-1/2 p-2">
-        <LocationChart />
+          <LocationChart />
         </div>
         <div className="w-1/2 p-2">
-        <SalesChart/>
+          <SalesChart />
         </div>
       </div>
 
+      <StatisticsCard />
+
+      
     </div>
   );
 }

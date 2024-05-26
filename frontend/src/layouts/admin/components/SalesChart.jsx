@@ -62,7 +62,18 @@ function SalesChart() {
 
   const options = {
     chart: {
-      type: 'area'
+      type: 'area',
+      toolbar: {
+        tools: {
+          download: true, // This will show the download icon
+          selection: false, // This will hide the selection icon
+          zoom: false, // This will hide the zoom icon
+          zoomin: false, // This will hide the zoom in icon
+          zoomout: false, // This will hide the zoom out icon
+          pan: false, // This will hide the pan icon
+          reset: false, // This will hide the reset icon
+        },
+      },
     },
     stroke: {
       curve: 'smooth'
@@ -92,10 +103,8 @@ function SalesChart() {
   };
 
   return (
-    <div className="app">
+    <>
       <h1>Sales</h1>
-      <div className="row">
-        <div className="mixed-chart">
           <Chart
             options={options}
             series={series}
@@ -103,9 +112,7 @@ function SalesChart() {
             width="100%"
             height="400"
           />
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
 

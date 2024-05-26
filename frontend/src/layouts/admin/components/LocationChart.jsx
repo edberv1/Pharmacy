@@ -2,15 +2,12 @@ import { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 
 const LocationChart = () => {
-
-
-
   const [series, setSeries] = useState([]);
   const [labels, setLabels] = useState([]);
 
   useEffect(() => {
     // Replace with your own API endpoint
-    const url = 'http://localhost:8081/admin/getLocationChart';
+    const url = "http://localhost:8081/admin/getLocationChart";
     const options = {
       method: "GET",
       headers: {
@@ -20,24 +17,23 @@ const LocationChart = () => {
     };
 
     fetch(url, options)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then(data => {
-        const locations = data.map(item => item.location);
-        const counts = data.map(item => item.count);
+      .then((data) => {
+        const locations = data.map((item) => item.location);
+        const counts = data.map((item) => item.count);
 
         setLabels(locations);
         setSeries(counts);
       })
-      .catch(error => {
-        console.error('Error fetching data: ', error);
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
       });
   }, []);
-
 
   const chartOptions = {
     labels: labels,
@@ -101,14 +97,16 @@ const LocationChart = () => {
   };
 
   return (
-
-    <Chart
-      options={chartOptions}
-      series={series}
-      type="donut"
-      width="100%"
-      height="400"
-    />
+    <>
+      <h1>Pharmacies by location</h1>
+      <Chart
+        options={chartOptions}
+        series={series}
+        type="donut"
+        width="100%"
+        height="400"
+      />
+    </>
   );
 };
 
