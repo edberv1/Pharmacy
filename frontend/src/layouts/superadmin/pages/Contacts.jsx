@@ -3,7 +3,7 @@ import ContactChart from "../ContactChart"
 
 function Contacts() {
   return (
-    <div>
+    <div className="w-full pl-8">
       <ContactChart/>
       <ContactTable/>
     </div>

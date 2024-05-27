@@ -6,7 +6,7 @@ import ContactChart from "../ContactChart";
 
 function Statistics() {
   return (
-    <>
+    <div className="flex-col w-full pl-8">
       <StatsCards />
       <div className="flex justify-between">
         <div className="w-1/2 p-2">
@@ -27,7 +27,7 @@ function Statistics() {
       </div>
       
       
-    </>
+    </div>
   );
 }
 

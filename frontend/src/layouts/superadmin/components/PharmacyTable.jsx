@@ -161,7 +161,7 @@ function PharmacyTable() {
   };
 
   return (
-    <>
+    <div className='px-6 py-7 pl-10'>
     <AllLocations/>
       <div className="mx-auto max-w-screen-xl pt-16 ">
         <div className="bg-white dark:bg-gray-900 relative shadow-md sm:rounded-lg overflow-hidden">
@@ -369,7 +369,7 @@ function PharmacyTable() {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
