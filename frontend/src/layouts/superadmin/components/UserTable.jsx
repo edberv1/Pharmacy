@@ -98,7 +98,7 @@ function UserTable() {
 
     fetchUsers();
     fetchRoles();
-  }, []);
+  }, [users]);
 
   const roleOptions =
     roles && roles.length > 0

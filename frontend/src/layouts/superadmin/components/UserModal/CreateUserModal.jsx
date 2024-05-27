@@ -117,12 +117,12 @@ function CreateUserModal({ isOpen, onClose }) {
     };
   }, [isOpen, onClose]);
 
-  useEffect(() => {
-    // Reload the page if form is submitted successfully
-    if (formSubmitted) {
-      window.location.reload();
-    }
-  }, [formSubmitted]);
+  // useEffect(() => {
+  //   // Reload the page if form is submitted successfully
+  //   if (formSubmitted) {
+  //     window.location.reload();
+  //   }
+  // }, [formSubmitted]);
 
   const roleOptions = roles && roles.length > 0 ? roles.map((role) => (
     <option key={role.id} value={role.id}>
