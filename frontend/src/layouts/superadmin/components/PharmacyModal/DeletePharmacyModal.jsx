@@ -23,7 +23,7 @@ function DeletePharmacyModal({ isOpen, onClose, pharmacyId}) { //userId
   
       // If successful, log a success message
       console.log("Pharmacy deleted successfully");
-      window.location.reload();
+      // window.location.reload();
   
        
 
