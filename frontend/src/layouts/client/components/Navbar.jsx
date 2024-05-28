@@ -130,7 +130,7 @@ function Navbar() {
                     ))}
                   </div>
                 )}
-              </div>
+                </div>
               <div className="flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 pl-2">
                 <Link
                   to="/cart"
@@ -206,33 +206,51 @@ function Navbar() {
             </div>
           ) : (
             <div className="flex items-center w-3/4 space-x-2 rtl:space-x-reverse">
-              <div className="w-3/4">
-                <input
+              <div className="w-full relative">
+              <input
                   type="text"
-                  id="email-adress-icon"
+                  id="search"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2"
                   placeholder="Search..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
                 />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-6 w-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
               </div>
 
-              <div className="flex items-center space-x-6 rtl:space-x-reverse pl-4">
+              <div className="flex items-center w-52 pl-4">
+                <div className="w-full relative">
                 <Link
                   to="/signup"
                   className="text-md  text-white dark:text-white-500 hover:underline"
                 >
-                  <i className="fa-solid fa-user pr-2"></i>
+                  <i className="fa-solid fa-user pr-2 "></i>
                   Sign Up
                 </Link>
 
                 <span>
                   <Link
                     to="/login"
-                    className="text-md pl-2 text-white dark:text-white-500 hover:underline "
+                    className="text-md pl-7 fixed text-white dark:text-white-500 hover:underline "
                   >
                     <i className="fa-solid text-white fa-right-to-bracket pr-2"></i>
                     Login
                   </Link>
                 </span>
+                </div>
               </div>
             </div>
           )}
