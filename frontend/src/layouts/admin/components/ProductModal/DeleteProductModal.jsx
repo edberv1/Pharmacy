@@ -1,8 +1,11 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef} from "react";
+import { useEffect, useRef, useContext} from "react";
+import Alert from "../Alert";
+import { AlertContext } from "../../../../contexts/AlertContext";
 
 function DeleteProductModal({ isOpen, onClose, productId}) {
     const modalRef = useRef(null);
+    const { showAlert, message, type } = useContext(AlertContext);
 
 
     const handleDeleteProduct = async () => {
@@ -25,10 +28,12 @@ function DeleteProductModal({ isOpen, onClose, productId}) {
           console.log("Product deleted successfully");
 
            onClose();
+           showAlert("Product Deleted successfully", "success");
       
         } catch (error) {
           // Handle errors if the request fails
-          console.error("Error deleting user:", error.message);
+          console.error("Error deleting product:", error.message);
+          showAlert("Error failed to delete product", "error");
           // You can handle the error in the UI, display a notification, etc.
         }
       };
@@ -60,6 +65,7 @@ function DeleteProductModal({ isOpen, onClose, productId}) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-35 flex items-center justify-center">
+      <Alert message={message} type={type} />
       <div className="bg-opacity-35 fixed inset-0"></div>
       <div className="bg-white rounded-lg w-1/3 p-6 relative" ref={modalRef}>
         <div className="flex justify-end">

@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
+import Alert from "../Alert";
+import { AlertContext } from "../../../../contexts/AlertContext";
 
 function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
   const [formData, setFormData] = useState({
@@ -12,7 +14,7 @@ function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
   });
 
   const [error, setError] = useState(null); // State for handling errors
-
+  const { showAlert, message, type } = useContext(AlertContext);
   const modalRef = useRef(null);
 
   const handleChange = (e) => {
@@ -41,8 +43,10 @@ function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
       }
 
       onClose();
+      showAlert("Product updated successfully", "success");
     } catch (error) {
       setError(error.message);
+      showAlert("Error failed to update product", "error");
     }
   };
 
@@ -74,6 +78,7 @@ function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-35 flex items-center justify-center">
+      <Alert message={message} type={type} />
       <div className="bg-white rounded-lg w-1/2 p-6" ref={modalRef}>
         <div className="flex justify-end">
           <button
