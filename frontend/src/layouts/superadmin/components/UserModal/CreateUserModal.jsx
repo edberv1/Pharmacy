@@ -55,14 +55,14 @@ function CreateUserModal({ isOpen, onClose }) {
         const errorMessage = await response.text();
         throw new Error(errorMessage);
       }
-
+      
       const data = await response.json();
       console.log(data); // Log the response if needed
       onClose();
       setFormSubmitted(true); // Set form submission status to true
-      showAlert("Profile updated successfully", "success");
+      showAlert("Profile created successfully", "success");
     } catch (error) {
-      showAlert("Error updating profile", "error"); // Set error state
+      showAlert("Error creating profile", "error"); // Set error state
     }
   };
 
@@ -136,8 +136,9 @@ function CreateUserModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-        <Alert message={message} type={type} />
+       
       <div className="bg-white rounded-lg w-1/2 p-6" ref={modalRef}>
+      <Alert message={message} type={type} />
         <div className="flex justify-end">
           <button
             onClick={handleClose}

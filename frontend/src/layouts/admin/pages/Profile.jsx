@@ -60,7 +60,7 @@ export default function ProfileAdmin() {
           }),
         }
       );
-  
+   
       showAlert("Profile updated successfully", "success");
     } catch (error) {
       showAlert("Error updating profile", "error");
