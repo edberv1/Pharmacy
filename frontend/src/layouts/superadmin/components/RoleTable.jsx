@@ -70,7 +70,7 @@ function RoleTable() {
     };
 
     fetchRoles();
-  }, []);
+  }, [roles]);
 
   // useEffect(() => {
   //   // Filter roles based on search query

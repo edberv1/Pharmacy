@@ -72,12 +72,12 @@ function CreateRoleModal({ isOpen, onClose }) {
     };
   }, [isOpen, onClose]);
 
-  useEffect(() => {
-    // Reload the page if form is submitted successfully
-    if (formSubmitted) {
-      window.location.reload();
-    }
-  }, [formSubmitted]);
+  // useEffect(() => {
+  //   // Reload the page if form is submitted successfully
+  //   if (formSubmitted) {
+  //     window.location.reload();
+  //   }
+  // }, [formSubmitted]);
 
   if (!isOpen) {
     return null;
