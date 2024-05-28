@@ -25,7 +25,7 @@ function DeleteUserModal({ isOpen, onClose, userId}) {
   
       // If successful, log a success message
       console.log("User deleted successfully");
-      window.location.reload();
+      // window.location.reload();
   
        
 

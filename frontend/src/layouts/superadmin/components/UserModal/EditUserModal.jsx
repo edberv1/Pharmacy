@@ -47,7 +47,7 @@ function EditUserModal({ isOpen, onClose, user }) {
       const data = await response.json();
       console.log(data); // Log the response if needed
       onClose();
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       setError(error.message); // Set error state
     }
