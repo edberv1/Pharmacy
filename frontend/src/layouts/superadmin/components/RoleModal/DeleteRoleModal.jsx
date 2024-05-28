@@ -22,7 +22,7 @@ function DeleteRoleModal({ isOpen, onClose, roleId}) { //userId
   
       // If successful, log a success message
       console.log("Role deleted successfully");
-      window.location.reload();
+      // window.location.reload();
   
        
 
