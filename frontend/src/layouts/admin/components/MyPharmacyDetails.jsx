@@ -125,7 +125,7 @@ function MyPharmacyDetails() {
 
     fetchPharmacyProducts();
     fetchPharmacyDetails();
-  }, [id]);
+  }, [products, id]);
 
   useEffect(() => {
     const fetchPharmacies = async () => {

@@ -67,7 +67,6 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
       console.log(responseData);
       onClose();
       setFormSubmitted(true);
-      window.location.reload();
       showAlert("Product created successfully", "success");
       
     } catch (error) {
