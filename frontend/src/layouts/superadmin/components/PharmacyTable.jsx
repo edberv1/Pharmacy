@@ -74,7 +74,7 @@ function PharmacyTable() {
     };
 
     fetchPharmacies();
-  }, []);
+  }, [pharmacies]);
 
 
 
