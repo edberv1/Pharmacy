@@ -4,7 +4,7 @@ import { UserContext } from "../../../contexts/UserContexts";
 import { Menu, Transition } from "@headlessui/react";
 
 function Navbar() {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [productSuggestions, setProductSuggestions] = useState([]);
 
@@ -207,7 +207,7 @@ function Navbar() {
           ) : (
             <div className="flex items-center w-3/4 space-x-2 rtl:space-x-reverse">
               <div className="w-full relative">
-              <input
+                <input
                   type="text"
                   id="search"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2"
@@ -229,7 +229,36 @@ function Navbar() {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-              </div>
+                {productSuggestions.length > 0 && (
+                  <div className="absolute top-full mt-2 w-full bg-white z-50 border border-gray-200 rounded shadow-lg">
+                    {productSuggestions.map((product) => (
+                      <Link
+                        to={`/pharmacies/${product.pharmacyId}/products/${product.id}`}
+                        key={product.id}
+                        className="p-2 border-b border-gray-200 flex items-start"
+                        onClick={clearSearch}
+                      >
+                        <img
+                          src={`http://localhost:8081/${product.image.replace(
+                            "\\",
+                            "/"
+                          )}`}
+                          alt={product.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                        <div className="ml-4">
+                          <h2 className="text-lg font-semibold text-black">
+                            {product.name}
+                          </h2>
+                          <p className="text-sm text-gray-600">
+                            {product.description}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                </div>
 
               <div className="flex items-center w-52 pl-4">
                 <div className="w-full relative">
