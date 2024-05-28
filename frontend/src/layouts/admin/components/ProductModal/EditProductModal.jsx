@@ -41,7 +41,6 @@ function EditProductModal({ isOpen, onClose, product, pharmacyName }) {
       }
 
       onClose();
-      window.location.reload();
     } catch (error) {
       setError(error.message);
     }

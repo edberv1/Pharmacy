@@ -23,10 +23,7 @@ function DeleteProductModal({ isOpen, onClose, productId}) {
       
           // If successful, log a success message
           console.log("Product deleted successfully");
-          window.location.reload();
-      
-           
-    
+
            onClose();
       
         } catch (error) {
