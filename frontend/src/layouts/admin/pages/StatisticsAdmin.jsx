@@ -6,7 +6,7 @@ import CardStatistics from "../components/CardStatistics";
 
 function StatisticsAdmin() {
   return (
-    <div>
+    <div className="pl-8">
       <RandomStatistics />
       <CardStatistics />
       

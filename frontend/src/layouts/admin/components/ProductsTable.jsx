@@ -80,11 +80,6 @@ function ProductsTable() {
         console.error("Error fetching pharmacies: ", error);
       }
     };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
     const fetchPharmacies = async () => {
       try {
         const response = await fetch(
@@ -107,8 +102,10 @@ function ProductsTable() {
       }
     };
 
+    fetchProducts();
     fetchPharmacies();
-  }, []);
+  }, [products]);
+
 
   useEffect(() => {
     const handleOutsideClick = (event) => {

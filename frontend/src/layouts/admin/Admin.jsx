@@ -6,10 +6,10 @@ function Admin() {
   return (
     <>
     <div className="flex">
-        <div className="flex-none">
+        <div className="flex-none fixed">
           <Sidebar />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 pl-56 w-1/2">
            {/* Use Outlet to render the content of nested routes */}
            
             <Header />

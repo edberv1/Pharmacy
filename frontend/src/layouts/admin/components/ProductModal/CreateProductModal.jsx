@@ -67,7 +67,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
       console.log(responseData);
       onClose();
       setFormSubmitted(true);
-
+      window.location.reload();
       showAlert("Product created successfully", "success");
       
     } catch (error) {
@@ -78,6 +78,14 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
   };
 
   const handleClose = () => {
+    setFormData({
+    name: "",
+    description: "",
+    produced: "",
+    price: "",
+    pharmacyId: pharmacyId || "",
+    stock: "",
+    });
     onClose();
   };
 
@@ -141,7 +149,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
-              LICENSE FILE
+              Product Image
             </label>
             <input
               type="file"
