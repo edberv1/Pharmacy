@@ -48,7 +48,7 @@ function MyPharmacies() {
     };
 
     fetchPharmaciesforUser();
-  }, []);
+  }, [pharmacies]);
 
   useEffect(() => {
     let filtered = pharmacies.filter((pharmacy) =>
