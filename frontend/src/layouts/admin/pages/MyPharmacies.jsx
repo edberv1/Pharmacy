@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import MyPharmacyCard from "../components/MyPharmacyCard";
 import CreatePharmacyAdminModal from "../components/PharmacyAdminModal/CreatePharmacyAdminModal";
+import Alert from "../components/Alert"; 
 
 
 function MyPharmacies() {

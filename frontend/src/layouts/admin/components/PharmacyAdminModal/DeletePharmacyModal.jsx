@@ -1,13 +1,13 @@
-/* eslint-disable react/prop-types */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
 import Alert from "../Alert";
 import { AlertContext } from "../../../../contexts/AlertContext";
 
 function DeletePharmacyModal({ isOpen, onClose, pharmacyId }) {
   const modalRef = useRef(null);
   const { showAlert, message, type } = useContext(AlertContext);
+  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [showAlertAndNavigate, setShowAlertAndNavigate] = useState(false);
 
   const handleDeletePharmacy = async () => {
     try {
@@ -25,17 +25,26 @@ function DeletePharmacyModal({ isOpen, onClose, pharmacyId }) {
         throw new Error("Failed to delete Pharmacy");
       }
 
-      // If successful, log a success message and redirect
+      // If successful, log a success message and set showAlertAndNavigate to true
       showAlert("Pharmacy Deleted successfully", "success");
-      onClose();
-       
-
+      setShowAlertAndNavigate(true);
     } catch (error) {
       // Handle errors if the request fails
       showAlert("Error deleting Pharmacy", "error");
       // You can handle the error in the UI, display a notification, etc.
     }
   };
+
+  useEffect(() => {
+    if (showAlertAndNavigate) {
+      // Wait for a certain duration before navigating
+      const timeout = setTimeout(() => {
+        navigate("/admin/myPharmacies"); // Navigate to the myPharmacies page
+      }, 2000); // Change the duration as per your requirement
+
+      return () => clearTimeout(timeout);
+    }
+  }, [showAlertAndNavigate, navigate]);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
