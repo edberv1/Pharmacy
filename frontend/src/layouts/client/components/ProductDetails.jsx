@@ -1,10 +1,22 @@
 import { useState, useEffect } from "react";
-import { useParams ,Link} from "react-router-dom";
+import { useParams , Link, useNavigate} from "react-router-dom";
 
 const ProductDetails = () => {
   const { pharmacyId, productId } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Step 1: State to track login status
+  const navigate = useNavigate(); // Use useNavigate inside the functional component
+
+  useEffect(() => {
+    // Function to check login status (e.g., from localStorage)
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token); // Update login status based on token presence
+    };
+
+    checkLoginStatus();
+  }, []);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -26,6 +38,16 @@ const ProductDetails = () => {
   }, [pharmacyId, productId]);
 
   const addToCart = async (productId, quantity) => {
+
+
+    if (!isLoggedIn) {
+      // Step 2: Check login status before adding to cart
+      // Redirect to login page if not logged in
+      navigate("/login");
+      return;
+    }
+  
+  
     const token = localStorage.getItem("token"); // Get the token from local storage
     const response = await fetch("http://localhost:8081/payment/add-to-cart", {
       method: "POST",
