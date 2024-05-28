@@ -531,6 +531,29 @@ const searchProducts = async (req, res) => {
   });
 };
 
+const cartCount = async (req, res) => {
+  const userId = req.user.id;
+
+  if (!userId) {
+    return res.status(400).send('User ID is required');
+  }
+
+  const query = `
+    SELECT COUNT(DISTINCT productId) as productCount
+    FROM cart
+    WHERE userId = ?
+  `;
+
+  db.query(query, [userId], (error, results) => {
+    if (error) {
+      console.error('Error fetching cart count:', error);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    const productCount = results[0].productCount;
+    res.json({ count: productCount });
+  });
+};
 
 module.exports = {
   signup,
@@ -550,5 +573,6 @@ module.exports = {
   updateUserProfileClient,
   changePasswordClient,
   showAllProducts,
-  searchProducts
+  searchProducts,
+  cartCount
 };

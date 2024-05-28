@@ -59,6 +59,27 @@ function Navbar() {
     // This function will run whenever the user state changes
   }, [user]);
 
+  const [productCount, setProductCount] = useState(0);
+
+  useEffect(() => {
+    const fetchProductCount = async () => {
+      try {
+        const response = await fetch("http://localhost:8081/users/cartCount", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        const data = await response.json();
+        setProductCount(data.count);
+      } catch (error) {
+        console.error("Error fetching product count:", error);
+      }
+    };
+    
+    fetchProductCount();
+  }, []);
+
   return (
     <>
       <nav className="fixed top-0 w-full z-50 bg-gray-900 text-white">
@@ -130,14 +151,21 @@ function Navbar() {
                     ))}
                   </div>
                 )}
-                </div>
+              </div>
               <div className="flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 pl-2">
-                <Link
-                  to="/cart"
-                  className="text-md text-white dark:text-white-500 hover:underline"
-                >
-                  <i className="fa-solid fa-cart-shopping"></i>
-                </Link>
+                <div className="relative inline-block">
+                  <Link
+                    to="/cart"
+                    className="text-md text-white dark:text-white-500 hover:underline"
+                  >
+                    <i className="fa-solid fa-cart-shopping text-2xl"></i>
+                  </Link>
+                  {productCount > 0 && (
+                    <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                      {productCount}
+                    </span>
+                  )}
+                </div>
 
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3">
@@ -258,27 +286,27 @@ function Navbar() {
                     ))}
                   </div>
                 )}
-                </div>
+              </div>
 
               <div className="flex items-center w-52 pl-4">
                 <div className="w-full relative">
-                <Link
-                  to="/signup"
-                  className="text-md  text-white dark:text-white-500 hover:underline"
-                >
-                  <i className="fa-solid fa-user pr-2 "></i>
-                  Sign Up
-                </Link>
-
-                <span>
                   <Link
-                    to="/login"
-                    className="text-md pl-7 fixed text-white dark:text-white-500 hover:underline "
+                    to="/signup"
+                    className="text-md  text-white dark:text-white-500 hover:underline"
                   >
-                    <i className="fa-solid text-white fa-right-to-bracket pr-2"></i>
-                    Login
+                    <i className="fa-solid fa-user pr-2 "></i>
+                    Sign Up
                   </Link>
-                </span>
+
+                  <span>
+                    <Link
+                      to="/login"
+                      className="text-md pl-7 fixed text-white dark:text-white-500 hover:underline "
+                    >
+                      <i className="fa-solid text-white fa-right-to-bracket pr-2"></i>
+                      Login
+                    </Link>
+                  </span>
                 </div>
               </div>
             </div>
