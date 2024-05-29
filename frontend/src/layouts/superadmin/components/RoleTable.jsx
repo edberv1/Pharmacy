@@ -285,6 +285,7 @@ function RoleTable() {
                           />
                           <button
                             type="button"
+                            id="delete-role-button"
                             onClick={() => openDeleteModal(role.id)}
                             data-modal-target="delete-modal"
                             data-modal-toggle="delete-modal"

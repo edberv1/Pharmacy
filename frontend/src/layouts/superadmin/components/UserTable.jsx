@@ -344,6 +344,7 @@ function UserTable() {
                       <div className="flex items-center space-x-4">
                         <button
                           type="button"
+                          id="edit-user-button"
                           onClick={() => openEditModal(user)}
                           data-drawer-target="drawer-update-product"
                           data-drawer-show="drawer-update-product"
@@ -370,6 +371,7 @@ function UserTable() {
                           type="button"
                           onClick={() => openDeleteModal(user.id)}
                           data-modal-target="delete-modal"
+                          id="delete-user-button"
                           data-modal-toggle="delete-modal"
                           className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
                         >
