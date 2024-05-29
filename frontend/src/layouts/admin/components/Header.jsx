@@ -2,8 +2,12 @@ import React from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import defaultImage from '../assests/pharmacydemo.jpg' // Import your default image
+import Alert from "./Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
+import { useContext } from "react";
 
 export default function Header() {
+  const { showAlert, message, type } = useContext(AlertContext);
   const handleLogout = () => {
     // Call the logout API
     fetch("http://localhost:8081/users/logoutUser", {
@@ -23,6 +27,8 @@ export default function Header() {
           localStorage.removeItem("role");
           // Redirect the user to the login page (or wherever you want)
           window.location.href = "/";
+          showAlert("Signed Out Successfully", "success");
+          
         }
       });
   };
@@ -31,6 +37,7 @@ export default function Header() {
     <Disclosure as="nav" className="dark:bg-gray-900 dark:border-gray-700"  >
       <>
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <Alert message={message} type={type} />
           <div className="relative flex h-16 items-center justify-between">
             <div className="flex flex-1 items-center text-white justify-center sm:items-stretch sm:justify-start">
               Welcome Admin

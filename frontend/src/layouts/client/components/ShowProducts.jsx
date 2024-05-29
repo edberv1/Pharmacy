@@ -6,6 +6,7 @@ const ShowProducts = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
 
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -32,6 +33,7 @@ const ShowProducts = () => {
 
   return (
     <div className="flex flex-wrap justify-center">
+      
       {products.map((product) => (
         <div
           key={product.id}

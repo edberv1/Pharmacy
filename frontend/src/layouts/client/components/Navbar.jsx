@@ -2,11 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContexts";
 import { Menu, Transition } from "@headlessui/react";
+import Alert from "../../admin/components/Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 function Navbar() {
   const { user } = useContext(UserContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [productSuggestions, setProductSuggestions] = useState([]);
+  const { showAlert, message, type } = useContext(AlertContext);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -50,7 +53,10 @@ function Navbar() {
           localStorage.removeItem("email");
           localStorage.removeItem("role");
           // Redirect the user to the login page (or wherever you want)
+          
           window.location.href = "/";
+          showAlert("Signed out succesfully", "success"); 
+          
         }
       });
   };
@@ -83,6 +89,7 @@ function Navbar() {
   return (
     <>
       <nav className="fixed top-0 w-full z-50 bg-gray-900 text-white">
+      <Alert message={message} type={type} />
         <div className="flex flex-wrap justify-around items-center mx-auto max-w-screen-xl p-4">
           <Link
             to="/"
