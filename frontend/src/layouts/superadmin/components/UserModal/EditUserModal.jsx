@@ -188,19 +188,19 @@ function EditUserModal({ isOpen, onClose, user }) {
             </label>
             <select
               name="verified"
-              id="verified"
               value={formData.verified}
               onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
+              className="mt-1 p-2 w-full border rounded-md "
               required
             >
               <option value="" disabled>
                 Select Verification Status
               </option>
-              <option key={1} value="1">Verified</option>
-              <option key={0} value="0">Not Verified</option>
+              <option value="1">Verified</option>
+              <option value="0">Not Verified</option>
             </select>
           </div>
+          
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">
               Role
@@ -229,6 +229,7 @@ function EditUserModal({ isOpen, onClose, user }) {
             </button>
             <button
               type="submit"
+              id="update"
               className="px-4 py-2 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700"
             >
               Update User

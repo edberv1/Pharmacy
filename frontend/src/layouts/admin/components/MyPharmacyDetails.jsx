@@ -360,6 +360,7 @@ function MyPharmacyDetails() {
               <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
                 <button
                   type="button"
+                  id="create-product-id"
                   onClick={openModal}
                   className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
                 >
@@ -523,6 +524,7 @@ function MyPharmacyDetails() {
                           <button
                             type="button"
                             onClick={() => openDeleteModal(product.id)}
+                            id="delete-product-id"
                             data-modal-target="delete-modal"
                             data-modal-toggle="delete-modal"
                             className="flex items-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"

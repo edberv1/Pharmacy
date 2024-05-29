@@ -16,6 +16,7 @@ export default function Section() {
             data-te-ripple-color="light"
             href="#!"
             role="button"
+            id="pharmacyForm"
           >
             Get started
           </Link>

@@ -4,7 +4,7 @@ import defaultImage from '../assests/pharmacydemo.jpg' // Import your default im
 function MyPharmacyCard({ id, name, location, street, imageUrl}) {
   return (
     <Link to={`/admin/myPharmacies/${id}`}>
-      <div className="max-w-sm mb-9 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <div className="max-w-sm mb-9 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 see">
         
         <span>
           {/* Conditional rendering for imageUrl */}

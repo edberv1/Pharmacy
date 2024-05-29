@@ -109,7 +109,7 @@ function DeleteProductModal({ isOpen, onClose, productId}) {
               handleDeleteProduct(); // Call the handleDeleteProduct function
               onClose();
             }}
-            className="px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700"
+            className="confirm-delete px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700"
           >
             Delete
           </button>

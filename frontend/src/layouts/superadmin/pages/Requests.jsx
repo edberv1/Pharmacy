@@ -162,6 +162,7 @@ function Requests() {
                         className="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         href={`http://localhost:8081/superAdmin/downloadLicense/${license.id}`} 
                         target="_blank"
+                        name="view"
                         rel="noopener noreferrer"
                       >
                         View License
@@ -176,6 +177,7 @@ function Requests() {
                     <td className="px-4 py-3">{license.status}</td>
                     <td className="px-4 py-3 flex items-center justify-evenly">
                       <button
+                      name="approve"
                         className="flex items-center justify-center text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
                         onClick={() =>
                           handleApprove(

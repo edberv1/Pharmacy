@@ -234,6 +234,7 @@ function CreateProductModal({ isOpen, onClose, pharmacyId, pharmacyName }) {
             </button>
             <button
               type="submit"
+              name="create"
               className="px-4 py-2 text-sm rounded-md bg-green-600 text-white hover:bg-green-700"
             >
               Create Product
