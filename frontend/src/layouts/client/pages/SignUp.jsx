@@ -3,12 +3,14 @@ import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../contexts/UserContexts";
+import Alert from "../../admin/components/Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 function SignUp() {
 
   // Use user context
   const { setUser } = useContext(UserContext)
-
+  const { showAlert, message, type } = useContext(AlertContext);
   const [errorMessage, setErrorMessage] = useState(null);
   const [formData, setFormData] = useState({
     firstname: "",
@@ -68,6 +70,7 @@ function SignUp() {
       // Update the user state
       setUser({email: formData.email})
         navigate('/login')
+        showAlert("Signed Up Succesfully", "success");
       })
       .catch((error) => {
         setErrorMessage(error.message);
@@ -79,6 +82,7 @@ function SignUp() {
   return (
     <>
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <Alert message={message} type={type} />
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
             className="mx-auto h-10 w-auto"

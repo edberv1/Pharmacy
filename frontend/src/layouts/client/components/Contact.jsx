@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import Alert from "../../admin/components/Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
 
 function Contact() {
   const [fullName, setFullName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
-  const [message, setMessage] = useState("");
+  const [message1, setMessage1] = useState("");
+  const { showAlert, message, type } = useContext(AlertContext);
+
+ 
+
+
+
 
   const handleContact = async (event) => {
     event.preventDefault();
@@ -17,7 +25,7 @@ function Contact() {
         body: JSON.stringify({
           fullName,
           emailAddress,
-          message,
+          message1,
         }),
       });
 
@@ -26,17 +34,20 @@ function Contact() {
         // Optionally, reset form fields after successful submission
         setFullName("");
         setEmailAddress("");
-        setMessage("");
+        setMessage1("");
+        showAlert("Form Submited successfully", "success");
       } else {
         console.error("Failed to send message");
       }
     } catch (error) {
       console.error("Error sending message:", error);
+      showAlert("Error Submiting Form", "error");
     }
   };
 
   return (
     <section className="min-h-screen bg-cover ">
+        <Alert message={message} type={type} />
       <div className="flex flex-col min-h-screen">
         <div className="container flex flex-col flex-1 px-6 py-12 mx-auto">
           <div className="flex-1 lg:flex lg:items-center lg:-mx-6">
@@ -174,8 +185,8 @@ function Contact() {
                     <textarea
                       className="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md md:h-48 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
                       placeholder="Message"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
+                      value={message1}
+                      onChange={(e) => setMessage1(e.target.value)}
                     ></textarea>
                   </div>
                   <button
