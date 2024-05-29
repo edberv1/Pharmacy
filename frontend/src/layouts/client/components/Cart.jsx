@@ -3,6 +3,8 @@
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../../contexts/UserContexts";
 import { loadStripe } from "@stripe/stripe-js";
+import Alert from "../../admin/components/Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
 const stripePromise = loadStripe(
   "pk_test_51PGhlgRsfVBiTAkf6OY5ojJFtcdSr0Xg23qkWEGv8xbkXbeyFdgPBBJRpH44eBuOdJnL1xTSKFcwYXl4MWzkZpvz00CGIpyBQd"
 );
@@ -12,6 +14,7 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const { showAlert, message, type } = useContext(AlertContext);
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -72,8 +75,9 @@ export default function Cart() {
     if (response.ok) {
       // Remove the item from the local cart items state
       setCartItems(cartItems.filter((item) => item.id !== itemId));
+      showAlert("Product removed successfully", "success");
     } else {
-      alert("An error occurred while removing the item from the cart");
+      showAlert("Error removing product", "error");
     }
   };
 
@@ -105,6 +109,7 @@ export default function Cart() {
 
   return (
     <section className="relative mt-12 z-10 after:contents-[''] after:absolute after:z-0 after:h-full xl:after:w-1/3 after:top-0 after:right-0 after:bg-gray-50">
+       <Alert message={message} type={type} />
       <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto relative z-10">
         <div className="grid grid-cols-12">
           <div className="col-span-12 xl:col-span-8 lg:pr-8 pt-14 pb-8 lg:py-24 w-full max-xl:max-w-3xl max-xl:mx-auto">

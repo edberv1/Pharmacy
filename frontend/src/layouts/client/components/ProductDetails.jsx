@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import { useParams , Link, useNavigate} from "react-router-dom";
+import Alert from "../../admin/components/Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
+
 
 const ProductDetails = () => {
   const { pharmacyId, productId } = useParams();
@@ -7,6 +10,7 @@ const ProductDetails = () => {
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Step 1: State to track login status
   const navigate = useNavigate(); // Use useNavigate inside the functional component
+  const { showAlert, message, type } = useContext(AlertContext);
 
   useEffect(() => {
     // Function to check login status (e.g., from localStorage)
@@ -59,9 +63,9 @@ const ProductDetails = () => {
     });
 
     if (response.ok) {
-      alert("Product added to cart successfully");
+      showAlert("Product added to cart successfully", "success");
     } else {
-      alert("An error occurred while adding the product to the cart");
+      showAlert("Error adding the product to cart", "error");
     }
   };
 
@@ -71,6 +75,7 @@ const ProductDetails = () => {
 
   return (
     <div className="mt-16">
+      <Alert message={message} type={type} />
       <section className="text-gray-700 body-font overflow-hidden bg-white">
         <div className="container px-5 py-24 mx-auto">
         <nav className="flex pb-12" aria-label="Breadcrumb">

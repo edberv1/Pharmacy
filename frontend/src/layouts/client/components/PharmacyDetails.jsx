@@ -1,10 +1,12 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable no-unused-vars */
 
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect,useContext } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { Link, useParams } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import Alert from "../../admin/components/Alert";
+import { AlertContext } from "../../../contexts/AlertContext";
 import {
   ChevronDownIcon,
   FunnelIcon,
@@ -27,6 +29,7 @@ export default function Pharmacies() {
   const [products, setProducts] = useState([]);
   const [filterOptions, setFilterOptions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const { showAlert, message, type } = useContext(AlertContext);
 
   useEffect(() => {
     const fetchPharmacyDetails = async () => {
@@ -155,14 +158,15 @@ export default function Pharmacies() {
     });
 
     if (response.ok) {
-      alert("Product added to cart successfully");
+      showAlert("Added to cart successfully", "success");
     } else {
-      alert("An error occurred while adding the product to the cart");
+      showAlert("Error adding product to cart", "error");
     }
   };
 
   return (
     <div className="bg-gray-100 mt-12">
+      <Alert message={message} type={type} />
       <div>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
