@@ -55,7 +55,6 @@ function CreatePharmacyAdminModal({ isOpen, onClose }) {
       const data = await response.json();
 
       console.log(data); // Log the response if needed
-      
       onClose();
       setFormSubmitted(true); // Set form submission status to true
       showAlert("Pharmacy Created successfully", "success");
@@ -100,7 +99,6 @@ function CreatePharmacyAdminModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <Alert message={message} type={type} />
       <div className="bg-white rounded-lg w-1/2 p-6" ref={modalRef}>
         <div className="flex justify-end">
           <button

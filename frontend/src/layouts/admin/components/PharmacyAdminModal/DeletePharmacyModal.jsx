@@ -18,7 +18,7 @@ function DeletePharmacyModal({ isOpen, onClose, pharmacyId }) {
           "Content-Type": "application/json",
           "Authorization": "Bearer " + localStorage.getItem("token")
         },
-      });
+      }); 
 
       // Check if the request was successful
       if (!response.ok) {
@@ -28,6 +28,7 @@ function DeletePharmacyModal({ isOpen, onClose, pharmacyId }) {
       // If successful, log a success message and set showAlertAndNavigate to true
       showAlert("Pharmacy Deleted successfully", "success");
       setShowAlertAndNavigate(true);
+      navigate("/admin/myPharmacies")
     } catch (error) {
       // Handle errors if the request fails
       showAlert("Error deleting Pharmacy", "error");

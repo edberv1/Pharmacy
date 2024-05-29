@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'; 
 import { Link } from 'react-router-dom';
 import defaultImage from '../assests/pharmacydemo.jpg' // Import your default image
-
 function MyPharmacyCard({ id, name, location, street, imageUrl}) {
   return (
     <Link to={`/admin/myPharmacies/${id}`}>
       <div className="max-w-sm mb-9 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        
         <span>
           {/* Conditional rendering for imageUrl */}
           {imageUrl ? (
