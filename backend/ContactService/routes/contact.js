@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const {contactUs, getAllEmails, deleteEmail,contactChart} = require('../controllers/ContactController')
-const authMiddleware = require('../../microservice2/middlewares/authMiddleware')
+const authMiddleware = require('../../UserMenagement/middlewares/authMiddleware')
 
 router.delete('/email/:_id', authMiddleware, deleteEmail);
 router.post('/', contactUs);

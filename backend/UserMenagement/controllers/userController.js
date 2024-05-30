@@ -431,7 +431,7 @@ const getProductsByPharmacyId = async (req, res) => {
 };
 
 const getUserProfileClient = (req, res) => {
-  const userId = req.userId; // assuming the userId is set in the request
+  const userId = req.user.id; // assuming the userId is set in the request
 
   User.getUserById(userId, function (err, user) {
     if (err) {
@@ -445,8 +445,8 @@ const getUserProfileClient = (req, res) => {
 };
 
 const updateUserProfileClient = (req, res) => {
-  const { firstName, lastName, userId } = req.body; // Assuming you're sending userId in the request body
-
+  const { firstName, lastName } = req.body; // Assuming you're sending userId in the request body
+  const userId = req.user.id;
   // SQL query to update the user profile
   const sql = `UPDATE users SET firstname = ?, lastname = ? WHERE id = ?`; // Add WHERE clause here
 
@@ -464,8 +464,9 @@ const updateUserProfileClient = (req, res) => {
 
 const changePasswordClient = (req, res) => {
   const { currentPassword, newPassword } = req.body;
+  const userId = req.user.id;
 
-  User.getUserById(req.userId, function (err, user) {
+  User.getUserById(userId, function (err, user) {
     if (err) {
       res.status(500).send({ message: "Database error." });
     } else if (!user) {
@@ -481,7 +482,7 @@ const changePasswordClient = (req, res) => {
         const sql = `UPDATE users SET password = ? WHERE id = ?`;
 
         // Execute the query
-        db.query(sql, [hashedNewPassword, req.userId], (err, result) => {
+        db.query(sql, [hashedNewPassword, userId], (err, result) => {
           if (err) {
             console.error("Error updating user password: ", err);
             res.status(500).json({ message: "Server error" });
