@@ -7,6 +7,7 @@ const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin');
 const superAdminRouter = require('./routes/superAdmin.js');
 const paymentRouter = require('./routes/payment.js')
+const mbrojtjeRouter = require('./routes/mbrojtje.js')
 
 const app = express();
 app.use(
@@ -20,7 +21,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Apply bodyParser.json() middleware only to specific routes
-app.use(['/users', '/admin', '/superAdmin', '/uploads'], bodyParser.json());
+app.use(['/users', '/admin', '/superAdmin', '/uploads', '/mbrojtje'], bodyParser.json());
 
 
 app.use(
@@ -40,6 +41,7 @@ app.use('/admin', adminRouter);
 app.use('/superAdmin', superAdminRouter);
 app.use('/payment', paymentRouter);
 app.use('/uploads', express.static('uploads'));
+app.use('/mbrojtje', mbrojtjeRouter)
 
 app.listen(8081, () => {
   console.log("Listening to port 8081")

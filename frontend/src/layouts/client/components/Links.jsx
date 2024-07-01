@@ -36,6 +36,13 @@ function Links() {
           <i className="fa-solid fa-regular fa-circle-info pr-2"></i>
           About Us
         </Link>
+    
+        <Link
+          to="/mbrojtje"
+          className="text-l text-blue dark:text-white-500 hover:underline"
+        >
+          Mbrojtje
+        </Link>
 
       </div>
     </div>
